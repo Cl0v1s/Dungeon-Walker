@@ -1,0 +1,53 @@
+
+
+		//ajout d'obstacles
+		//attache gauche
+		rand=Math.random()*10+1;
+		rand=Math.floor(rand);
+		nbPassage=0;
+		if(rand>=1 && rand<=5 && this.height>3)
+		{
+			lng=Math.floor(Math.random()*(this.width+1)); 
+			y=0;
+			while(y<(Math.floor(this.y/32)+2) || y>(Math.floor(this.y/32)+this.height-2))
+			{
+				y=Math.floor(this.y/32)+Math.floor(Math.random()*(this.height))+1;
+				alert(y);
+			}
+
+			for(i=0;i<lng;i++)
+			{
+				rand=Math.random()*10+1;
+				rand=Math.floor(rand);
+				this.grill[Math.floor(this.x/32)+i][y]=2;
+				if(rand==1 && nbpassage==0)
+				{
+					this.grill[Math.floor(this.x/32)+i][y]=0;
+					nbPassage=1;
+				}
+			}
+			rand=Math.random()*2+1;
+			rand=Math.floor(rand);
+			//attache secondaire haut
+			if(rand=1)
+			{
+				for(i=y;i>Math.floor(this.y/32);i--)
+				{
+					rand=Math.random()*10+1;
+					rand=Math.floor(rand);
+					this.grill[Math.floor(this.x/32)+lng][i]=2;
+					if(rand==1 && nbpassage==0)
+					{
+						this.grill[Math.floor(this.x/32)+lng][i]=0;
+						nbPassage=1;
+					}				
+				}
+			}
+			//attache secondaire bas
+			if(rand=2)
+			{
+
+			}
+		}
+		
+
