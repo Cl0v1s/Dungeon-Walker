@@ -40,7 +40,7 @@ function title()
 		clean();
 		surface.font = "100px pixel";
 		surface.fillStyle = "rgb("+r+","+v+","+b+")";
-		surface.fillText("DUNGEON WALK",40, 70);
+		surface.fillText("DUNGEON WALKER",40, 70);
 		r+=ratio;
 		v+=ratio;
 		b+=ratio;

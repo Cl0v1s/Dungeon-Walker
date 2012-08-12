@@ -19,6 +19,8 @@
 //-permet l'action de boire afin de remonter la statiqtique soif 
 //-gère la maladie
 //-gère l'état "en feu"
+//-gère l'ouverture de l'inventaire
+//-gère la mort
 ////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -67,7 +69,7 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	
 
 	surface.fillStyle="rgb(50,150,50)";
-	surface.fillText("0", this.x*32, this.y*32);
+
 
 
 }
@@ -103,11 +105,11 @@ Player.prototype.draw=function()
 Player.prototype.move=function(dir)
 {
 	this.weapon=this.equipement.contains["weapon"];
-	for(a=0;a<RoomList[Xr*100+Yr].monsters.length;a++)
+	for(a=0;a<Motor.getCurrentRoom().monsters.length;a++)
 	{
-		if(RoomList[Xr*100+Yr].monsters[a] !=undefined)
+		if(Motor.getCurrentRoom().monsters[a] !=undefined)
 		{
-			if((RoomList[Xr*100+Yr].monsters[a].x-1==this.x && RoomList[Xr*100+Yr].monsters[a].y==this.y) || (RoomList[Xr*100+Yr].monsters[a].x+1==this.x && RoomList[Xr*100+Yr].monsters[a].y==this.y) || (RoomList[Xr*100+Yr].monsters[a].y-1==this.y && RoomList[Xr*100+Yr].monsters[a].x==this.x) || (RoomList[Xr*100+Yr].monsters[a].y+1==this.y && RoomList[Xr*100+Yr].monsters[a].x==this.x))
+			if((Motor.getCurrentRoom().monsters[a].x-1==this.x && Motor.getCurrentRoom().monsters[a].y==this.y) || (Motor.getCurrentRoom().monsters[a].x+1==this.x && Motor.getCurrentRoom().monsters[a].y==this.y) || (Motor.getCurrentRoom().monsters[a].y-1==this.y && Motor.getCurrentRoom().monsters[a].x==this.x) || (Motor.getCurrentRoom().monsters[a].y+1==this.y && Motor.getCurrentRoom().monsters[a].x==this.x))
 				{
 					return;
 
@@ -115,43 +117,50 @@ Player.prototype.move=function(dir)
 		}
 	}
 
-					RoomList[Xr*100+Yr].entityGrill[this.x][this.y]=1;
+					Motor.getCurrentRoom().entityGrill[this.x][this.y]=1;
 					switch(dir)
 					{
 						case "right":
-							if(RoomList[Xr*100+Yr].blocked(this.x+1,this.y)==false)
+							if(Motor.getCurrentRoom().blocked(this.x+1,this.y)==false)
 								this.x+=1;
 								break;
 						case "left":
-							if(RoomList[Xr*100+Yr].blocked(this.x-1,this.y)==false)
+							if(Motor.getCurrentRoom().blocked(this.x-1,this.y)==false)
 								this.x-=1;
 								break;
 						case "down":
-							if(RoomList[Xr*100+Yr].blocked(this.x,this.y+1)==false)
+							if(Motor.getCurrentRoom().blocked(this.x,this.y+1)==false)
 								this.y+=1;
 								break;
 						case "up" :		
-							if(RoomList[Xr*100+Yr].blocked(this.x,this.y-1)==false)
+							if(Motor.getCurrentRoom().blocked(this.x,this.y-1)==false)
 								this.y-=1;
 								break;
 					}
-					RoomList[Xr*100+Yr].entityGrill[this.x][this.y]=2;
+					Motor.getCurrentRoom().entityGrill[this.x][this.y]=2;
 
 	//messages en fonction du type de sol
-	if(RoomList[Xr*100+Yr].grill[this.x][this.y]==3)
+	if(Motor.getCurrentRoom().grill[this.x][this.y]==3)
 	{
 		this.onFire=false;
-		Msgzone.add("Vous marchez dans une petite mare d'eau, cree annees apres annees par l'infiltration.");
+		message="Vous marchez dans une petite mare d'eau";
+		if(Motor.getCurrentRoom().biome=="dungeon")
+		{
+				message=message+", cree annees apres annees par l'infiltration.";
+		}
+		else
+			message=messages+".";
+		Motor.messages.add(message);
 	}
-	if(RoomList[Xr*100+Yr].grill[this.x][this.y]==4)
+	if(Motor.getCurrentRoom().grill[this.x][this.y]==4)
 	{
 		this.onFire=false;
-		Msgzone.add("Quelque chose a frole vos jambes...BRRR...");
+		Motor.messages.add("Quelque chose a frole vos jambes...BRRR...");
 	}
-	if(RoomList[Xr*100+Yr].grill[this.x][this.y]==5 || RoomList[Xr*100+Yr].grill[this.x][this.y]==6)
+	if(Motor.getCurrentRoom().grill[this.x][this.y]==5 || Motor.getCurrentRoom().grill[this.x][this.y]==6)
 	{
 		this.onFire=true;
-		Msgzone.add("Idiot! vous avez marchez sur le feu!");
+		Motor.messages.add("Idiot! vous avez marchez sur le feu!");
 	}
 				
 	
@@ -166,11 +175,11 @@ Player.prototype.sick=function()
 		this.life-=(this.life*5/100);
 		if(this.life>=10)
 		{
-			Msgzone.add("La maladie vous affaiblie.");
+			Motor.messages.add("La maladie vous affaiblie.");
 		}
 		else
 		{
-			Msgzone.add("Vous toussez dans votre main et essuyez le sang qui s'y trouve sur votre pantalon.");
+			Motor.messages.add("Vous toussez dans votre main et essuyez le sang qui s'y trouve sur votre pantalon.");
 		}
 	}
 }
@@ -181,7 +190,7 @@ Player.prototype.fire=function()
 	if(this.onFire==true)
 	{		
 			this.life-=10;
-			Msgzone.add("Vous brulez a petit feu.");
+			Motor.messages.add("Vous brulez a petit feu.");
 	}
 }
 /////////////////////////////////////////////////////////////////////
@@ -207,17 +216,17 @@ Player.prototype.changeStat=function()
 
 Player.prototype.lap=function()
 {
-	grill=RoomList[Xr*100+Yr].grill[this.x][this.y];
+	grill=Motor.getCurrentRoom().grill[this.x][this.y];
 	if(grill==3)
 	{
 		if(this.soif<100)
 		{
 			this.soif+=1;
-			Msgzone.add("Vous buvez goulument l'eau limpide qui se trouve a vos pieds.");
+			Motor.messages.add("Vous buvez goulument l'eau limpide qui se trouve a vos pieds.");
 		}
 		else
 		{
-			Msgzone.add("Vous n'avez pas soif.");		
+			Motor.messages.add("Vous n'avez pas soif.");		
 		}
 	}
 	if(grill==4)
@@ -226,16 +235,16 @@ Player.prototype.lap=function()
 		{
 			this.isSick=true;
 			this.soif+=1;
-			Msgzone.add("Lorsque vous approchez le liquide de votre bouche, la puanteur assaille votre nez mais vous buvez tout de meme.");
+			Motor.messages.add("Lorsque vous approchez le liquide de votre bouche, la puanteur assaille votre nez mais vous buvez tout de meme.");
 		}
 		else
 		{
-			Msgzone.add("Vous n'avez pas soif.");	
+			Motor.messages.add("Vous n'avez pas soif.");	
 		}
 	}
 	if(grill !=3 && grill !=4)
 	{
-		Msgzone.add("Il n'y a pas d'eau a vos pieds.");
+		Motor.messages.add("Il n'y a pas d'eau a vos pieds.");
 	}
 }
 ////////////////////////////////////////////////////////////////////
@@ -271,16 +280,16 @@ Player.prototype.changeRoom=function(dir)
 	switch(dir)
 	{
 		case "right":
-			Xr+=1;
-			if(RoomList[Xr*100+Yr]==undefined)
-				createRoom(undefined,undefined,undefined,this.y);
+			Motor.xPosRoom+=1;
+			if(Motor.getCurrentRoom()==undefined)
+				Motor.generateRoom(undefined,undefined,undefined,this.y);
 
 			found=0;
 			for(i=0;i<19;i++)
 			{
 				for(u=0;u<10;u++)
 				{
-					if(RoomList[Xr*100+Yr].getGrill(i,u)=="doorLeft")
+					if(Motor.getCurrentRoom().getGrill(i,u)=="doorLeft")
 					{
 						found=1;
 						this.setX(i);
@@ -292,23 +301,23 @@ Player.prototype.changeRoom=function(dir)
 			if(found==0)
 			{
 
-				RoomList[Xr*100+Yr].createDoor("right");
-				Msgzone.add("Oh ! un passage secret !");
+				Motor.getCurrentRoom().createDoor("right");
+				Motor.messages.add("Oh ! un passage secret !");
 				found=1;
 			}
 	
 			break;
 		case "left" :
-			Xr-=1;
-			if(RoomList[Xr*100+Yr]==undefined)
-				createRoom(undefined,this.y,undefined,undefined);
+			Motor.xPosRoom-=1;
+			if(Motor.getCurrentRoom()==undefined)
+				Motor.generateRoom(undefined,this.y,undefined,undefined);
 
 			found=0;
 			for(i=0;i<19;i++)
 			{
 				for(u=0;u<10;u++)
 				{
-					if(RoomList[Xr*100+Yr].getGrill(i,u)=="doorRight")
+					if(Motor.getCurrentRoom().getGrill(i,u)=="doorRight")
 					{
 						found=1;
 						this.setX(i);
@@ -318,22 +327,22 @@ Player.prototype.changeRoom=function(dir)
 			}
 			if(found==0)
 			{
-				RoomList[Xr*100+Yr].createDoor("left");
-				Msgzone.add("Oh ! un passage secret !");
+				Motor.getCurrentRoom().createDoor("left");
+				Motor.messages.add("Oh ! un passage secret !");
 				found=1;
 			}	
 			break;
 		case "down" :
-			Yr+=1;
-			if(RoomList[Xr*100+Yr]==undefined)
-				createRoom(undefined,undefined,this.x,undefined);
+			Motor.yPosRoom+=1;
+			if(Motor.getCurrentRoom()==undefined)
+				Motor.generateRoom(undefined,undefined,this.x,undefined);
 
 			found=0;
 			for(i=0;i<19;i++)
 			{
 				for(u=0;u<10;u++)
 				{
-					if(RoomList[Xr*100+Yr].getGrill(i,u)=="doorUp")
+					if(Motor.getCurrentRoom().getGrill(i,u)=="doorUp")
 					{
 						found=1;
 						this.setX(i);
@@ -343,22 +352,22 @@ Player.prototype.changeRoom=function(dir)
 			}
 			if(found==0)
 			{
-				RoomList[Xr*100+Yr].createDoor("down");
-				Msgzone.add("Oh ! un passage secret !");
+				Motor.getCurrentRoom().createDoor("down");
+				Motor.messages.add("Oh ! un passage secret !");
 				found=1;
 			}	
 			break;
 		case "up" :
-			Yr-=1;
-			if(RoomList[Xr*100+Yr]==undefined)
-				createRoom(this.x,undefined,undefined,undefined);
+			Motor.yPosRoom-=1;
+			if(Motor.getCurrentRoom()==undefined)
+				Motor.generateRoom(this.x,undefined,undefined,undefined);
 
 			found=0;
 			for(i=0;i<19;i++)
 			{
 				for(u=0;u<10;u++)
 				{
-					if(RoomList[Xr*100+Yr].getGrill(i,u)=="doorDown")
+					if(Motor.getCurrentRoom().getGrill(i,u)=="doorDown")
 					{
 						found=1;
 						this.setX(i);
@@ -368,8 +377,8 @@ Player.prototype.changeRoom=function(dir)
 			}
 			if(found==0)
 			{
-				RoomList[Xr*100+Yr].createDoor("up");
-				Msgzone.add("Oh ! un passage secret !");
+				Motor.getCurrentRoom().createDoor("up");
+				Motor.messages.add("Oh ! un passage secret !");
 				found=1;
 			}	
 			break;
@@ -417,6 +426,20 @@ Player.prototype.turn=function(ennemy)
 	}
 	ennemy.setLife(ennemy.life-dmg)
 	return dmg;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+Player.prototype.openInventory=function()
+{
+		Motor.messages.add("Vous vous asseyez sur le sol et vous ouvrez votre sac.");
+		Scene=this.inventory;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+Player.prototype.openEquipement=function()
+{
+		Motor.messages.add("Vous vous asseyez sur le sol et vous otez votre equipement.");
+		Scene=this.equipement;
 }
 
 

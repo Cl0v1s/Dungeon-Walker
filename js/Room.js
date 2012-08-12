@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////
 //par chaipokoi
 //crée le : 7/05/2012
-//modifiée le :
 /////////////////////////////////////////////////////////////////////////////////////
 //permet de gérer les différentes salles,
 //Fonctionnalités:
@@ -288,23 +287,23 @@ function Room(top,left,down,right)
 	}
 	
 
-	if(typeof RoomList[Xr-1*100+Yr] !="undefined" || typeof RoomList[Xr+1*100+Yr] !="undefined" || typeof RoomList[Xr*100+Yr+1] !="undefined" || typeof RoomList[Xr*100+Yr-1] !="undefined")
+	if(typeof Motor.getLeftNextRoom() !="undefined" || typeof Motor.getRightNextRoom() !="undefined" || typeof Motor.getDownNextRoom() !="undefined" || typeof Motor.getUpNextRoom() !="undefined")
 	{
 		rand=Math.floor((Math.random()*2)+1);
 		switch(rand)
 		{
 			case 1:	
-			Msgzone.add("Vous entrez dans une salle sombre apparament rectangulaire,");
+			Motor.messages.add("Vous entrez dans une salle sombre apparament rectangulaire,");
 			break;
 			case 2:
-			Msgzone.add("Encore une salle de meme apparence...");
+			Motor.messages.add("Encore une salle de meme apparence...");
 			break;
 		}
 
 	}
 	else
 	{
-		Msgzone.add("Vous entrez dans une salle sombre apparament rectangulaire,");
+		Motor.messages.add("Vous entrez dans une salle sombre apparament rectangulaire,");
 	}
 
 	if(this.water==true)
@@ -313,10 +312,10 @@ function Room(top,left,down,right)
 		switch(rand)
 		{
 			case 1:
-				Msgzone.add("Il flotte dans l'air comme une odeur de moisissure."); 
+				Motor.messages.add("Il flotte dans l'air comme une odeur de moisissure."); 
 				break;
 			case 2:
-				Msgzone.add("Vous placez votre mains sur un mur puis vous la retiree, entierement humide.");
+				Motor.messages.add("Vous placez votre mains sur un mur puis vous la retiree, entierement humide.");
 				break;
 		}
 	}
@@ -327,16 +326,16 @@ function Room(top,left,down,right)
 		switch(rand)
 		{
 			case 1:
-				Msgzone.add("C'est un cul de sac !");
+				Motor.messages.add("C'est un cul de sac !");
 				break;
 			case 2:
-				Msgzone.add("La salle s'avere etre une petit alcove.");
+				Motor.messages.add("La salle s'avere etre une petit alcove.");
 				break;
 		}
 	}
 	if(this.doors==0)
 	{
-		Msgzone.add("Vous etes enferme ici a tout jamais ! Mouhahahahahahaha !");
+		Motor.messages.add("Vous etes enferme ici a tout jamais ! Mouhahahahahahaha !");
 	}
 	rand=Math.floor((Math.random()*1));
 	if(this.monsters.length>0+rand)
@@ -344,12 +343,12 @@ function Room(top,left,down,right)
 		rand=Math.floor((Math.random()*3)+1);
 		rand=rand*10;
 		rand=Math.floor(rand*this.monsters.length/100);
-		Msgzone.add("Vous pouvez sentir les mouvements des plusieurs monstres, ils sont peut-etre "+(this.monsters.length-rand)+".");
-		Msgzone.add("Restez sur vos gardes !");
+		Motor.messages.add("Vous pouvez sentir les mouvements des plusieurs monstres, ils sont peut-etre "+(this.monsters.length-rand)+".");
+		Motor.messages.add("Restez sur vos gardes !");
 	}
 	else
 	{
-		Msgzone.add("Vous pensez etre seul dans la piece...");	
+		Motor.messages.add("Vous pensez etre seul dans la piece...");	
 	}
 
 			
@@ -503,7 +502,7 @@ Room.prototype.moveMonsters=function()
 		battle=0;
 		if(this.monsters[a] !=undefined)
 		{
-			if (Tour>=this.monsters[a].fi)
+			if (Motor.turn>=this.monsters[a].fi)
 			{
 				this.monsters[a].fire();
 				if(this.monsters[a].life<=0)
@@ -557,7 +556,7 @@ Room.prototype.moveMonsters=function()
 					}
 					if(result==true)
 					{
-						gameOver();
+						Motor.gameOver();
 					}
 
 				}
@@ -605,7 +604,7 @@ Room.prototype.battle=function(fighter1,fighter2)
 	}
 
 	rand=Math.floor((Math.random()*2)+1);
-	Msgzone.changeMode("battle");
+	Motor.messages.changeMode("battle");
 	switch(rand)
 	{
 		case 1:
@@ -621,22 +620,22 @@ Room.prototype.battle=function(fighter1,fighter2)
 
 	}
 
-	Msgzone.add(sentence);
-	Msgzone.add(sentence2);
+	Motor.messages.add(sentence);
+	Motor.messages.add(sentence2);
 
 	if(fighter1.life<=0)
 	{
 		this.entityGrill[fighter1.x][fighter1.y]=1;
-		Msgzone.add(fighter2.nam+" a vaincu "+fighter1.nam+".");
-		Msgzone.changeMode("normal");
+		Motor.messages.add(fighter2.nam+" a vaincu "+fighter1.nam+".");
+		Motor.messages.changeMode("normal");
 		return true;
 	}
 
 	if(fighter2.life<=0)
 	{
 		this.entityGrill[fighter2.x][fighter2.y]=1;
-		Msgzone.add(fighter1.nam+" a vaincu "+fighter2.nam+".");
-		Msgzone.changeMode("normal");
+		Motor.messages.add(fighter1.nam+" a vaincu "+fighter2.nam+".");
+		Motor.messages.changeMode("normal");
 		return false;
 	}
 
@@ -716,18 +715,18 @@ Room.prototype.setFire=function(entity)
 		if(this.grill[entity.x][entity.y+1]==1)
 		{
 			this.grill[entity.x][entity.y+1]=5;
-			Msgzone.add("Vous reussissez a mettre le feu au sol.")
+			Motor.messages.add("Vous reussissez a mettre le feu au sol.")
 		}
 		else
 		{
-			Msgzone.add("Vous ne pouvez pas allumer un feu ici !");
+			Motor.messages.add("Vous ne pouvez pas allumer un feu ici !");
 		}
 	}
 	else
 	{
-			Msgzone.add("Une petite braise apparait...Mais ne survit malheureusement pas.")
+			Motor.messages.add("Une petite braise apparait...Mais ne survit malheureusement pas.")
 	}
-	action();
+	Motor.newTurn();
 	clean();
 	this.draw();
 

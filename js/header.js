@@ -20,7 +20,8 @@ var TOUCHE_REPUGNANT={
 "Atk" :0,
 "Launch" :3,
 "Lrm" : 1,
-"Price" : 0
+"Price" : 0,
+"Desc" : "Cet appendice semble etre recouvert de poison..."
 }
 var GRIFFES={
 "Name" : "griffes",
@@ -28,7 +29,8 @@ var GRIFFES={
 "Atk" :0,
 "Launch" :1,
 "Lrm" : 2,
-"Price" : 0
+"Price" : 0,
+"Desc" : "Des griffes de predateur, bien affutes et tranchante comme un rasoir."
 }
 var PIQUE={
 "Name" : "pique",
@@ -36,7 +38,8 @@ var PIQUE={
 "Atk" :0,
 "Launch" :1,
 "Lrm" : 6,
-"Price" : 5
+"Price" : 5,
+"Desc" : "Un baton disposant d'une extremite en fer travaille. Vous pouvez distinctmement lire des symboles magiques sur la pique."
 }
 var EPEE_A_DEUX_MAINS={
 "Name" : "epee a deux mains",
@@ -44,7 +47,8 @@ var EPEE_A_DEUX_MAINS={
 "Atk" :0,
 "Launch" :1,
 "Lrm" : 10,
-"Price" : 50
+"Price" : 50,
+"Desc" : "Une epee imposante, tellement lourde que vous la soutenez a peine avec vos deux bras."
 }
 var EPEE_A_SIMPLE_TRANCHANT={
 "Name" : "epee a simple tranchant",
@@ -52,7 +56,8 @@ var EPEE_A_SIMPLE_TRANCHANT={
 "Atk" :0,
 "Launch" :1,
 "Lrm" : 4,
-"Price" : 10
+"Price" : 10,
+"Desc" : "Une epee de fabrication simple, forgee par un novice."
 }
 var DAGUE={
 "Name" : "dague",
@@ -60,7 +65,8 @@ var DAGUE={
 "Atk" : 0,
 "Launch" : 1,
 "Lrm" : 3,
-"Price" : 2
+"Price" : 2,
+"Desc" : "Une lame courte et legere. Vous pouvez facilement la dissimuler dans une botte ou sous votre veste."
 }
 
 var Armurerie=new Array();
