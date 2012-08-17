@@ -274,7 +274,7 @@ Player.prototype.setLife=function(nb)
 	this.life=nb;
 }
 ////////////////////////////////////////////////////////////////////
-
+/*
 Player.prototype.changeRoom=function(dir)
 {
 	switch(dir)
@@ -301,7 +301,7 @@ Player.prototype.changeRoom=function(dir)
 			if(found==0)
 			{
 
-				Motor.getCurrentRoom().createDoor("right");
+				//Motor.getCurrentRoom().createDoor("right");
 				Motor.messages.add("Oh ! un passage secret !");
 				found=1;
 			}
@@ -327,7 +327,7 @@ Player.prototype.changeRoom=function(dir)
 			}
 			if(found==0)
 			{
-				Motor.getCurrentRoom().createDoor("left");
+				//Motor.getCurrentRoom().createDoor("left");
 				Motor.messages.add("Oh ! un passage secret !");
 				found=1;
 			}	
@@ -352,7 +352,7 @@ Player.prototype.changeRoom=function(dir)
 			}
 			if(found==0)
 			{
-				Motor.getCurrentRoom().createDoor("down");
+				//Motor.getCurrentRoom().createDoor("down");
 				Motor.messages.add("Oh ! un passage secret !");
 				found=1;
 			}	
@@ -377,7 +377,7 @@ Player.prototype.changeRoom=function(dir)
 			}
 			if(found==0)
 			{
-				Motor.getCurrentRoom().createDoor("up");
+				//Motor.getCurrentRoom().createDoor("up");
 				Motor.messages.add("Oh ! un passage secret !");
 				found=1;
 			}	
@@ -385,6 +385,7 @@ Player.prototype.changeRoom=function(dir)
 		
 	}
 }
+ */
 ////////////////////////////////////////////////////////////////////////////////////////
 
 Player.prototype.turn=function(ennemy)

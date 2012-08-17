@@ -190,7 +190,7 @@ Inventory.prototype.use=function()
 		}
 		if(this.contains[this.index].Effect=="fire")
 		{
-			Motor.getCurrentRoom().setFire(player);
+			//Motor.getCurrentRoom().setFire(player);
 		}
 		this.examination=0;
 	}

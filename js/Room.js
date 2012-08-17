@@ -16,6 +16,7 @@
 
 
 var DungeonTile={
+"Ground" : ".",
 "Wall" : "#",
 "WallColor" : "rgb(153,153,153)",
 "Water_1" : "-",
@@ -27,453 +28,147 @@ var DungeonTile={
 "Fire_2" : "W",
 "Fire_2Color" : "rgb(250,50,50)",
 "Unknow" : "/",
-"UnknowColor" :  "rgb(255,255,255)"
+"UnknowColor" :  "rgb(255,255,255)",
 }
 
 
 
-function Room(top,left,down,right)
+function Room(x,y)
 {
+	this.tile=DungeonTile;
+	this.x=x;
+	this.y=y;
 	this.width=0;
 	this.height=0;
-	this.biome="dungeon";
-	this.tile=undefined;
-	this.doors=0;
-	this.monsters=new Array();
-	this.frame=0;
-	this.fireFrame=0;
-	this.water=false;
-	//paramétrage de la police 
-	surface.font = "32px pixel";
-	//création de la grille
-	this.grill=new Array();
-	this.entityGrill=new Array();
-	for(i=0;i<19;i++)
+	this.connected=false;
+	while(this.width<5)
 	{
-		this.grill[i]=new Array();
-		this.entityGrill[i]=new Array();
-		for(u=0;u<10;u++)
+		this.width=Math.floor(Math.random()*21+1);
+	}
+	while(this.height<5)
+	{
+		this.height=Math.floor(Math.random()*16+1);
+	}
+	this.map=new Array();
+	for(p=0;p<this.width;p++)
+	{
+		this.map[p]=new Array();
+		for(q=0;q<this.height;q++)
 		{
-			this.grill[i][u]=0;
-			this.entityGrill[i][u]=1;
+			this.map[p][q]=1;
 		}
 	}
-	this.grill;
-	//détermination de la taille de la salle
-	while (this.width<3)
-	{
-		this.width=Math.floor((Math.random()*16)+1);
-	}
-	while(this.height<3)
-	{
-	this.height=Math.floor((Math.random()*8)+1);
-	}
-	this.x=Math.floor(19*32/2-this.width*32/2);
-	this.y=Math.floor(10*32/2-this.height*32/2);
-
-	//génaration de la salle en fonction du biome, qui lui même est déterminé a partir de celui des salles avoisi
-	if(this.biome=="dungeon")
-	{
-	
-		this.tile=DungeonTile;
-		surface.fillStyle = this.tile.WallColor;
-		//mur haut
-		placed=false;
-		for(i=0;i<this.width;i++)
-		{
-			if(placed==false)
-				door=Math.floor(Math.random()*this.width+2)-1;
-
-			if(i !=door)
-			{
-				surface.fillText("#", this.x+i*32, this.y);
-				this.grill[Math.floor((this.x+i*32)/32)][Math.floor(this.y/32)]=2;
-			}
-			if(down !=undefined && i>1)
-			{
-				door=i;
-			}
-
-			if(i==door && placed==false)
-			{
-				this.doors+=1;
-				placed=true;
-				this.grill[Math.floor((this.x+i*32)/32)][Math.floor(this.y/32)]="doorUp";
-				door=100;
-			}	
-		}
-		//mur bas
-		placed=false;
-		for(i=0;i<this.width;i++)
-		{
-			if(placed==false)
-			{
-				door=0;
-				while(door==0)
-				{
-					door=Math.floor(Math.random()*this.height-1);
-				}
-					
-			}
-
-			if(i !=door)
-			{
-			surface.fillText("#", this.x+i*32, this.y+this.height*32);
-			this.grill[Math.floor((this.x+i*32)/32)][Math.floor((this.y+this.height*32)/32)]=2;
-			}
-			if(top !=undefined && i>1)
-			{
-				door=i;
-			}
-
-			if(i==door && placed==false)
-			{
-				this.doors+=1;
-				placed=true;
-				this.grill[Math.floor((this.x+i*32)/32)][Math.floor((this.y+this.height*32)/32)]="doorDown";
-				door=100;
-			}	
-		}
-		//mur gauche
-		placed=false;
-		for(i=0;i<this.height;i++)
-		{
-			if(placed==false)
-			{
-				door=0;
-				while(door==0)
-				{
-					door=Math.floor(Math.random()*this.height-1);
-				}
-					
-			}
-			if(i !=door)
-			{
-			surface.fillText("#", this.x, this.y+i*32);
-			this.grill[Math.floor(this.x/32)][Math.floor((this.y+i*32)/32)]=2;
-			}
-			if(right !=undefined && i>1)
-			{
-				door=i;
-			}
-
-			if(i==door && placed==false)
-			{
-				this.doors+=1;
-				placed=true;
-				this.grill[Math.floor(this.x/32)][Math.floor((this.y+i*32)/32)]="doorLeft";
-				door=100;
-			}	
-		}
-		//mur droite
-		placed=false;
-		for(i=0;i<this.height+1;i++)
-		{
-			if(placed==false)
-			{
-				door=0;
-				while(door==0)
-				{
-					door=Math.floor(Math.random()*this.height-1);
-				}
-					
-			}
-
-			if(i !=door)
-			{
-			surface.fillText("#", this.x+this.width*32, this.y+i*32);
-			this.grill[Math.floor((this.x+this.width*32)/32)][Math.floor((this.y+i*32)/32)]=2;
-			}
-			if(left !=undefined && i>1)
-			{
-				door=i;
-			}
-
-			if(i==door && placed==false)
-			{
-				this.doors+=1;
-				placed=true;
-				this.grill[Math.floor((this.x+this.width*32)/32)][Math.floor((this.y+i*32)/32)]="doorRight";
-				door=100;
-			}	
-			
-		}
-	
-
-
-
-		//"remplissage" de la salle
-		for(i=Math.floor(this.x/32)+1;i<Math.floor(this.x/32)+this.width;i++)
-		{
-			for(u=Math.floor(this.y/32)+1;u<Math.floor(this.y/32)+this.height;u++)
-			{
-				this.grill[i][u]=1;
-			}		
-		}
-
-
-
-		
-		
-  		//gestion de l'eau
-		rand=Math.random()*20+1;
-		rand=Math.floor(rand);
-		if(rand>=1 && rand<=5)
-		{
-			i=Math.floor((Math.random()*(this.width-Math.floor(this.x/32)))+1)+Math.floor(this.x/32);
-			u=Math.floor((Math.random()*(this.height-Math.floor(this.y/32)))+1)+Math.floor(this.y/32);
-			if(this.grill[i][u] !=2 && this.grill[i][u] !="doorRight" && this.grill[i][u] !="doorLeft" && this.grill[i][u] !="doorUp" && this.grill[i][u] !="doorDown" && i>Math.floor(this.x/32))
-				this.grill[i][u]=3;
-				this.water=true;
-
-		}
-			boucle=1;
-			for(i=Math.floor(this.x/32)+1;i<Math.floor(this.x/32)+this.width;i++)
-			{
-		
-					for(u=Math.floor(this.y/32)+1;u<Math.floor(this.y/32)+this.height;u++)
-					{
-						rand=Math.random()*10+1;
-						rand=Math.floor(rand);
-						if(rand>1 && this.grill[i][u]==3)
-						{
-							if(this.grill[i-1][u] !=2 && this.grill[i-1][u] !="doorRight" && this.grill[i-1][u] !="doorLeft" && this.grill[i-1][u] !="doorUp" && this.grill[i-1][u] !="doorDown")
-							{
-								this.grill[i-1][u]=3;
-							}
-							if(this.grill[i+1][u] !=2 && this.grill[i+1][u] !="doorRight" && this.grill[i+1][u] !="doorLeft" && this.grill[i+1][u] !="doorUp" && this.grill[i+1][u] !="doorDown")
-							{
-								this.grill[i+1][u]=3;
-							}
-							if(this.grill[i][u-1] !=2 && this.grill[i][u-1] !="doorRight" && this.grill[i][u-1] !="doorLeft" && this.grill[i][u-1] !="doorUp" && this.grill[i][u-1] !="doorDown")
-							{
-								this.grill[i][u-1]=3;
-							}
-							if(this.grill[i][u+1] !=2 && this.grill[i][u+1] !="doorRight" && this.grill[i][u+1] !="doorLeft" && this.grill[i][u+1] !="doorUp" && this.grill[i][u+1] !="doorDown")
-							{
-								this.grill[i][u+1]=3;
-							}
-						}
-			
-					
-				}
-			}
-
-	}
-
-	//création des monstres
-	monster_nb=Math.floor(Math.random()*((Math.floor(this.width*this.height/8))+1));
-	for (z=0;z<monster_nb;z+=1)
-	{
-		monster_type=Math.floor(Math.random()*Bestiaire.length);
-		monster_x=0;
-		monster_y=this.y;
-		monster_x=Math.floor((this.x+32)/32)+1+(Math.floor(Math.random()*this.width-2));
-		monster_y=Math.floor((this.y+32)/32)+1+(Math.floor(Math.random()*this.height-2));
-
-		if(this.grill[monster_x][monster_y]==1 && this.entityGrill[monster_x][monster_y]==1)
-		{
-			score=0;
-			if(typeof player !="undefined")
-				score=player.score
-
-			if(Bestiaire[monster_type].Biome==this.biome && score>=Bestiaire[monster_type].Level)
-			{
-				this.entityGrill[monster_x][monster_y]=2;
-				this.monsters[z]=new Monster(monster_x,monster_y,Bestiaire[monster_type]);
-			}
-
-		}
-	}
-	
-
-	if(typeof Motor.getLeftNextRoom() !="undefined" || typeof Motor.getRightNextRoom() !="undefined" || typeof Motor.getDownNextRoom() !="undefined" || typeof Motor.getUpNextRoom() !="undefined")
-	{
-		rand=Math.floor((Math.random()*2)+1);
-		switch(rand)
-		{
-			case 1:	
-			Motor.messages.add("Vous entrez dans une salle sombre apparament rectangulaire,");
-			break;
-			case 2:
-			Motor.messages.add("Encore une salle de meme apparence...");
-			break;
-		}
-
-	}
-	else
-	{
-		Motor.messages.add("Vous entrez dans une salle sombre apparament rectangulaire,");
-	}
-
-	if(this.water==true)
-	{
-		rand=Math.floor((Math.random()*2)+1);
-		switch(rand)
-		{
-			case 1:
-				Motor.messages.add("Il flotte dans l'air comme une odeur de moisissure."); 
-				break;
-			case 2:
-				Motor.messages.add("Vous placez votre mains sur un mur puis vous la retiree, entierement humide.");
-				break;
-		}
-	}
-		
-	if(this.doors==1)
-	{
-		rand=Math.floor((Math.random()*2)+1);
-		switch(rand)
-		{
-			case 1:
-				Motor.messages.add("C'est un cul de sac !");
-				break;
-			case 2:
-				Motor.messages.add("La salle s'avere etre une petit alcove.");
-				break;
-		}
-	}
-	if(this.doors==0)
-	{
-		Motor.messages.add("Vous etes enferme ici a tout jamais ! Mouhahahahahahaha !");
-	}
-	rand=Math.floor((Math.random()*1));
-	if(this.monsters.length>0+rand)
-	{
-		rand=Math.floor((Math.random()*3)+1);
-		rand=rand*10;
-		rand=Math.floor(rand*this.monsters.length/100);
-		Motor.messages.add("Vous pouvez sentir les mouvements des plusieurs monstres, ils sont peut-etre "+(this.monsters.length-rand)+".");
-		Motor.messages.add("Restez sur vos gardes !");
-	}
-	else
-	{
-		Motor.messages.add("Vous pensez etre seul dans la piece...");	
-	}
-
-			
+	this.generateWalls();
 }
 
-
-Room.prototype.draw=function(xD,yD)
+/**
+ * This method puts the walls numbers in the Room's grid
+ */
+Room.prototype.generateWalls=function()
 {
-
-	if(xD==undefined || yD==undefined)
+	for(p=0;p<this.width;p++)
 	{
-		xD=0;
-		yD=0;
-	}
-
-	surface.font = "32px pixel";
-	for(i=0;i<19;i++)
-	{
-		for(u=0;u<10;u++)
-		{
-			switch(this.grill[i][u])
-			{
-				case 2 :
-				surface.fillStyle = this.tile.WallColor;
-				surface.fillText(this.tile.Wall,xD+i*32, yD+u*32);			
-				break;
-				case 3 :
-				surface.fillStyle = this.tile.Water_1Color;
-				surface.fillText(this.tile.Water_1,xD+i*32, yD+u*32);
-				this.frame+=1;
-				if(this.frame>=(550+Math.floor(Math.random()*51)))
-				{	
-				this.grill[i][u]=4;	
-				this.frame=0;
-				}	
-				break;	
-				case 4 :
-				surface.fillStyle = this.tile.Water_2Color;
-				surface.fillText(this.tile.Water_2,xD+i*32, yD+u*32);	
-				this.frame+=1;
-				if(this.frame>=(250+Math.floor(Math.random()*51)))
-				{	
-				this.grill[i][u]=3;	
-				this.frame=0;
-				}	
-				break;	
-				case 5 :
-				surface.fillStyle = this.tile.Fire_1Color;
-				surface.fillText(this.tile.Fire_1,xD+i*32, yD+u*32);
-				this.fireFrame+=1;
-				if(this.fireFrame>=(30+Math.floor(Math.random()*51)))
-				{	
-				rand=Math.floor(Math.random()*11);
-				if(rand==0)
-				{
-					this.grill[i][u]=1;
-					break;
-				}
-				else
-				{
-					this.grill[i][u]=6;	
-					this.fireFrame=0;
-				}
-
-				}	
-				break;	
-				case 6:
-				surface.fillStyle = this.tile.Fire_2Color;
-				surface.fillText(this.tile.Fire_2,xD+i*32, yD+u*32);	
-				this.fireFrame+=1;
-				if(this.fireFrame>=(30+Math.floor(Math.random()*51)))
-				{	
-				this.grill[i][u]=5;	
-				this.fireFrame=0;
-				}	
-				break;			
-			}
-			if(this.entityGrill[i][u]>=10)
-			{
-				surface.fillText("$",xD+i*32, yD+u*32);				
-			}
-		}
-	}
-	for(i=0;i<this.monsters.length;i++)
-	{
-		if(this.monsters[i] !=undefined)
-			this.monsters[i].draw();
-	}	
-}
-
-Room.prototype.blocked=function(x,y)
-{
-
-	if(this.grill[x][y]=="doorUp")
-	{
-		player.changeRoom("up");
-	}
-	if(this.grill[x][y]=="doorDown")
-	{
-		player.changeRoom("down");
-	}
-	if(this.grill[x][y]=="doorLeft")
-	{
-		player.changeRoom("left");
-	}
-	if(this.grill[x][y]=="doorRight")
-	{
-		player.changeRoom("right");
+			this.map[p][0]=2;
+			this.map[p][this.height-1]=2;
 	}
 	
-	if(this.entityGrill[x][y]>=10)
+	for(q=0;q<this.height;q++)
 	{
-		player.inventory.add((this.entityGrill[x][y]-10));
+			this.map[0][q]=2;
+			this.map[this.width-1][q]=2;
 	}
-
-
-	if(this.grill[x][y]!=2 && this.entityGrill[x][y]!=2)
-	{
-		return false;
-	}
-
-	return true;
-
 }
 
+
+/**
+ * this method returns the room's x position.
+ * Used to place the room's map into the Dungeon Map.
+ */
+Room.prototype.getX=function()
+{
+		return this.x;
+}
+
+/**
+ * this method returns the room's y position.
+ * Used to place the room's map into the Dungeon Map.
+ */
+Room.prototype.getY=function()
+{
+		return this.y;
+}
+
+/**
+ * this method returns the room's width.
+ * Used to place the room's map into the Dungeon Map.
+ */
+Room.prototype.getWidth=function()
+{
+		return this.width;
+}
+
+/**
+ * this method returns the room's width.
+ * Used to place the room's map into the Dungeon Map.
+ */
+Room.prototype.getHeight=function()
+{
+		return this.height;
+}
+
+/**
+ * this method returns the room's map.
+ */
+Room.prototype.getMap=function()
+{
+		return this.map;
+}
+
+/**
+ * Returns if the room id connected to the other rooms or not
+ */
+Room.prototype.isConnected=function()
+{
+		return this.connected;
+}
+
+/**
+ * Sets the specified cell value to the sent value
+ */
+Room.prototype.setCell=function(x,y,value)
+{
+	this.map[x][y]=value;
+}
+
+/**
+ * Move the rom to the specified position
+ */
+Room.prototype.setPos=function(xTemp,yTemp)
+{
+	this.x=xTemp;
+	this.y=yTemp;
+}
+
+
+Room.prototype.draw=function()
+{
+	for(o=0;o<this.width;o++)
+	{
+		for(p=0;p<this.height;p++)
+		{
+				if(this.map[o][p]==2)
+				{
+							surface.fillStyle = this.tile.WallColor;
+							surface.fillText(this.tile.Wall,this.x+o*5, this.y+p*5);
+				}
+		}
+	}
+	
+	
+}
+
+
+/*
 Room.prototype.research=function(bloc)
 {
 	for(i=0;i<19;i++)
@@ -773,5 +468,5 @@ Room.prototype.setEntityGrill= function(x,y,valeur)
 {
 	this.entityGrill[x][y]=valeur;
 }
-
+*/
 
