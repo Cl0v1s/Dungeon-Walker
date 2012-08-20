@@ -29,6 +29,7 @@ var DungeonTile={
 "Fire_2Color" : "rgb(250,50,50)",
 "Unknow" : "/",
 "UnknowColor" :  "rgb(255,255,255)",
+"Stair" : ">"
 }
 
 
@@ -41,6 +42,7 @@ function Room(x,y)
 	this.width=0;
 	this.height=0;
 	this.connected=false;
+	this.spawn=false;
 	while(this.width<5)
 	{
 		this.width=Math.floor(Math.random()*21+1);
@@ -132,6 +134,11 @@ Room.prototype.isConnected=function()
 		return this.connected;
 }
 
+Room.prototype.setConnected=function(value)
+{
+	this.connected=value;
+}
+
 /**
  * Sets the specified cell value to the sent value
  */
@@ -150,21 +157,44 @@ Room.prototype.setPos=function(xTemp,yTemp)
 }
 
 
-Room.prototype.draw=function()
+/**
+ * returns the coordinate of the spawn point, if doesn't exists, return false
+ */
+Room.prototype.getSpawn=function()
 {
-	for(o=0;o<this.width;o++)
+	return this.spawn;
+}
+
+/**
+ * Create the spawn point
+ */
+Room.prototype.setSpawn=function()
+{
+	xTemp=1;
+	yTemp=1;
+	while(xTemp==1 || yTemp==1 || this.map[xTemp][yTemp]!=1)
 	{
-		for(p=0;p<this.height;p++)
-		{
-				if(this.map[o][p]==2)
-				{
-							surface.fillStyle = this.tile.WallColor;
-							surface.fillText(this.tile.Wall,this.x+o*5, this.y+p*5);
-				}
-		}
+		xTemp=Math.floor(Math.random()*(this.width-1))+1;
+		yTemp=Math.floor(Math.random()*(this.height-1))+1;
 	}
-	
-	
+	this.spawn=[xTemp,yTemp];
+	return [xTemp,yTemp];
+}
+
+/**
+ * Place a stair in the room
+ */
+Room.prototype.placeStair=function()
+{
+	xTemp=0;
+	yTemp=0;
+	while(xTemp==0 || yTemp==0 || this.map[xTemp][yTemp]!=1)
+	{
+		xTemp=Math.floor(Math.random()*(this.width-1))+1;
+		yTemp=Math.floor(Math.random()*(this.height-1))+1;
+	}
+	this.setCell(xTemp,yTemp,"stair");
+	return [xTemp,yTemp];
 }
 
 

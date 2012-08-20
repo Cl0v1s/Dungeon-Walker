@@ -93,7 +93,7 @@ Player.prototype.draw=function()
 
 	surface.font = "30px pixel";
 	surface.fillStyle="rgb(50,150,50)";
-	surface.fillText(this.img, this.x*32, this.y*32);
+	surface.fillText(this.img, Motor.getXPos()+this.x*32, Motor.getYPos()+this.y*32);
 	if(this.onFire==true)
 	{
 		surface.fillStyle="rgb(250,50,50)";
@@ -273,119 +273,7 @@ Player.prototype.setLife=function(nb)
 {
 	this.life=nb;
 }
-////////////////////////////////////////////////////////////////////
-/*
-Player.prototype.changeRoom=function(dir)
-{
-	switch(dir)
-	{
-		case "right":
-			Motor.xPosRoom+=1;
-			if(Motor.getCurrentRoom()==undefined)
-				Motor.generateRoom(undefined,undefined,undefined,this.y);
 
-			found=0;
-			for(i=0;i<19;i++)
-			{
-				for(u=0;u<10;u++)
-				{
-					if(Motor.getCurrentRoom().getGrill(i,u)=="doorLeft")
-					{
-						found=1;
-						this.setX(i);
-						this.setY(u);
-					}
-				}
-			}
-
-			if(found==0)
-			{
-
-				//Motor.getCurrentRoom().createDoor("right");
-				Motor.messages.add("Oh ! un passage secret !");
-				found=1;
-			}
-	
-			break;
-		case "left" :
-			Motor.xPosRoom-=1;
-			if(Motor.getCurrentRoom()==undefined)
-				Motor.generateRoom(undefined,this.y,undefined,undefined);
-
-			found=0;
-			for(i=0;i<19;i++)
-			{
-				for(u=0;u<10;u++)
-				{
-					if(Motor.getCurrentRoom().getGrill(i,u)=="doorRight")
-					{
-						found=1;
-						this.setX(i);
-						this.setY(u);
-					}
-				}
-			}
-			if(found==0)
-			{
-				//Motor.getCurrentRoom().createDoor("left");
-				Motor.messages.add("Oh ! un passage secret !");
-				found=1;
-			}	
-			break;
-		case "down" :
-			Motor.yPosRoom+=1;
-			if(Motor.getCurrentRoom()==undefined)
-				Motor.generateRoom(undefined,undefined,this.x,undefined);
-
-			found=0;
-			for(i=0;i<19;i++)
-			{
-				for(u=0;u<10;u++)
-				{
-					if(Motor.getCurrentRoom().getGrill(i,u)=="doorUp")
-					{
-						found=1;
-						this.setX(i);
-						this.setY(u);
-					}
-				}
-			}
-			if(found==0)
-			{
-				//Motor.getCurrentRoom().createDoor("down");
-				Motor.messages.add("Oh ! un passage secret !");
-				found=1;
-			}	
-			break;
-		case "up" :
-			Motor.yPosRoom-=1;
-			if(Motor.getCurrentRoom()==undefined)
-				Motor.generateRoom(this.x,undefined,undefined,undefined);
-
-			found=0;
-			for(i=0;i<19;i++)
-			{
-				for(u=0;u<10;u++)
-				{
-					if(Motor.getCurrentRoom().getGrill(i,u)=="doorDown")
-					{
-						found=1;
-						this.setX(i);
-						this.setY(u);
-					}
-				}
-			}
-			if(found==0)
-			{
-				//Motor.getCurrentRoom().createDoor("up");
-				Motor.messages.add("Oh ! un passage secret !");
-				found=1;
-			}	
-			break;
-		
-	}
-}
- */
 ////////////////////////////////////////////////////////////////////////////////////////
 
 Player.prototype.turn=function(ennemy)

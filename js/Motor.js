@@ -15,7 +15,7 @@
 function Motor()
 {
 	this.player=undefined;
-	this.stair=undefined;
+	this.dungeon=undefined;
 	this.turn=0;
 	this.dayInterval=144;
 	this.time="Day";
@@ -31,6 +31,11 @@ function Motor()
 Motor.prototype.start=function(par1)
 {
 		this.player=par1;
+		x=this.dungeon.getCurrentStair().getSpawnPoint()[0]+this.dungeon.getCurrentStair().getSpawnPoint()[2].getX();
+		y=this.dungeon.getCurrentStair().getSpawnPoint()[1]+this.dungeon.getCurrentStair().getSpawnPoint()[2].getY();
+		this.player.setX(x);
+		this.player.setY(y);
+
 }
 
 Motor.prototype.getXPos=function()
@@ -43,34 +48,9 @@ Motor.prototype.getYPos=function()
 		return this.yPos;
 }
 
-Motor.prototype.getCurrentRoom=function()
-{
-	return RoomList[this.xPosRoom*100+this.yPosRoom];	
-}
-
-Motor.prototype.getLeftNextRoom=function()
-{
-	return RoomList[(this.xPosRoom-1)*100+this.yPosRoom];		
-}
-
-Motor.prototype.getRightNextRoom=function()
-{
-	return RoomList[(this.xPosRoom+1)*100+this.yPosRoom];		
-}
-
-Motor.prototype.getUpNextRoom=function()
-{
-	return RoomList[this.xPosRoom*100+this.yPosRoom-1];		
-}
-
-Motor.prototype.getDownNextRoom=function()
-{
-	return RoomList[this.xPosRoom*100+this.yPosRoom+1];		
-}
-
 Motor.prototype.generateStair=function(top,left,down,right)
 {
-	this.stair=new Dungeon();
+	this.dungeon=new Dungeon();
 }
 
 Motor.prototype.update=function()
@@ -79,40 +59,41 @@ Motor.prototype.update=function()
 	clean();
 	//affichage des infos 
 	//this.messages.draw();
-	this.stair.draw();
+	this.dungeon.getCurrentStair().draw();
 	this.inputUpdate();
-	//this.player.draw();
+	this.player.draw();
 }
 
 
 Motor.prototype.inputUpdate=function()
 {
 	if(!Input.equals(0))
+	{
+		this.moveCanvas();
 		//this.newTurn();
+	}
+		
+	if(Input.equals(13))
+		alert("player at "+this.player.getX()*32+"/"+this.player.getY()*32);
 		
 	if(Input.equals(39))
 	{
 		//this.player.move("right");
-		this.xPos=this.xPos-32;
 	}
 
 	if(Input.equals(40))
 	{
-		//this.player.move("down");
-		this.yPos=this.yPos-32;		
+		//this.player.move("down");		
 	}
 		
 	if(Input.equals(37))
 	{
 		//this.player.move("left");
-		this.xPos=this.xPos+32;
 	}
 		
 	if(Input.equals(38))
 	{
 		//this.player.move("up");
-		this.yPos=this.yPos+32;
-		
 	}
 		
 	if(Input.equals(76))
@@ -123,6 +104,8 @@ Motor.prototype.inputUpdate=function()
 		
 	if(Input.equals(69))
 		this.player.openEquipement();
+		
+
 }
 
 Motor.prototype.newTurn=function()
@@ -163,6 +146,15 @@ Motor.prototype.newTurn=function()
 	}
 //	this.getCurrentRoom().moveMonsters();
 }
+
+Motor.prototype.moveCanvas=function()
+{
+	this.xPos=this.player.getX()*32;
+	this.yPos=this.player.getY()*32;
+	alert("camera at "+this.xPos+"/"+this.yPos)
+}
+
+
 
 Motor.prototype.gameOver=function()
 {

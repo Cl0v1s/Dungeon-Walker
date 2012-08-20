@@ -83,7 +83,7 @@ function a_star(start, destination, board, columns, rows)
 		for (var new_node_x = Math.max(0, current_node.x-1); new_node_x <= Math.min(columns-1, current_node.x+1); new_node_x++)
 			for (var new_node_y = Math.max(0, current_node.y-1); new_node_y <= Math.min(rows-1, current_node.y+1); new_node_y++)
 			{
-				if (board[new_node_x][new_node_y] == 0 //If the new node is open
+				if (board[new_node_x][new_node_y] ==0 || board[new_node_x][new_node_y] ==1 || board[new_node_x][new_node_y] ==2
 					|| (destination.x == new_node_x && destination.y == new_node_y)) //or the new node is our destination
 				{
 					//See if the node is already in our closed list. If so, skip it.
