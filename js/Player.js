@@ -30,6 +30,7 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.y=y;
 	this.nam="Conan";
 	this.class=race;
+	this.light=this.class.Light;
 	//calcul des caractéristiques
 	this.force=FOR*this.class.For;
 	this.constitution=CON*this.class.Con;
@@ -104,67 +105,38 @@ Player.prototype.draw=function()
 
 Player.prototype.move=function(dir)
 {
-	this.weapon=this.equipement.contains["weapon"];
-	for(a=0;a<Motor.getCurrentRoom().monsters.length;a++)
-	{
-		if(Motor.getCurrentRoom().monsters[a] !=undefined)
-		{
-			if((Motor.getCurrentRoom().monsters[a].x-1==this.x && Motor.getCurrentRoom().monsters[a].y==this.y) || (Motor.getCurrentRoom().monsters[a].x+1==this.x && Motor.getCurrentRoom().monsters[a].y==this.y) || (Motor.getCurrentRoom().monsters[a].y-1==this.y && Motor.getCurrentRoom().monsters[a].x==this.x) || (Motor.getCurrentRoom().monsters[a].y+1==this.y && Motor.getCurrentRoom().monsters[a].x==this.x))
-				{
-					return;
-
-				}
-		}
+	stair=Motor.dungeon.getCurrentStair();
+	switch(dir)
+	{				
+		case "right":
+			if(stair.walkable(this.x+1,this.y))
+			{
+				this.x+=1;
+				Motor.setXPos(Motor.getXPos()-32);
+			}
+			break;
+		case "left":
+			if(stair.walkable(this.x-1,this.y))
+			{
+				this.x-=1;
+				Motor.setXPos(Motor.getXPos()+32);
+			}
+			break;
+		case "down":
+			if(stair.walkable(this.x,this.y+1))
+			{
+				this.y+=1;
+				Motor.setYPos(Motor.getYPos()-32);
+			}
+			break;
+		case "up" :		
+			if(stair.walkable(this.x,this.y-1))
+			{
+				this.y-=1;
+				Motor.setYPos(Motor.getYPos()+32);
+			}
+			break;
 	}
-
-					Motor.getCurrentRoom().entityGrill[this.x][this.y]=1;
-					switch(dir)
-					{
-						case "right":
-							if(Motor.getCurrentRoom().blocked(this.x+1,this.y)==false)
-								this.x+=1;
-								break;
-						case "left":
-							if(Motor.getCurrentRoom().blocked(this.x-1,this.y)==false)
-								this.x-=1;
-								break;
-						case "down":
-							if(Motor.getCurrentRoom().blocked(this.x,this.y+1)==false)
-								this.y+=1;
-								break;
-						case "up" :		
-							if(Motor.getCurrentRoom().blocked(this.x,this.y-1)==false)
-								this.y-=1;
-								break;
-					}
-					Motor.getCurrentRoom().entityGrill[this.x][this.y]=2;
-
-	//messages en fonction du type de sol
-	if(Motor.getCurrentRoom().grill[this.x][this.y]==3)
-	{
-		this.onFire=false;
-		message="Vous marchez dans une petite mare d'eau";
-		if(Motor.getCurrentRoom().biome=="dungeon")
-		{
-				message=message+", cree annees apres annees par l'infiltration.";
-		}
-		else
-			message=messages+".";
-		Motor.messages.add(message);
-	}
-	if(Motor.getCurrentRoom().grill[this.x][this.y]==4)
-	{
-		this.onFire=false;
-		Motor.messages.add("Quelque chose a frole vos jambes...BRRR...");
-	}
-	if(Motor.getCurrentRoom().grill[this.x][this.y]==5 || Motor.getCurrentRoom().grill[this.x][this.y]==6)
-	{
-		this.onFire=true;
-		Motor.messages.add("Idiot! vous avez marchez sur le feu!");
-	}
-				
-	
-	
 }
 //////////////////////////////////////////////////////////////////:
 
@@ -329,6 +301,12 @@ Player.prototype.openEquipement=function()
 {
 		Motor.messages.add("Vous vous asseyez sur le sol et vous otez votre equipement.");
 		Scene=this.equipement;
+}
+
+
+Player.prototype.getLight=function()
+{
+	return this.light;
 }
 
 

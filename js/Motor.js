@@ -24,6 +24,7 @@ function Motor()
 	
 	this.xPos=0;
 	this.yPos=0;
+	this.canvasPlaced=false;
 
 
 }
@@ -35,7 +36,6 @@ Motor.prototype.start=function(par1)
 		y=this.dungeon.getCurrentStair().getSpawnPoint()[1]+this.dungeon.getCurrentStair().getSpawnPoint()[2].getY();
 		this.player.setX(x);
 		this.player.setY(y);
-
 }
 
 Motor.prototype.getXPos=function()
@@ -48,6 +48,16 @@ Motor.prototype.getYPos=function()
 		return this.yPos;
 }
 
+Motor.prototype.setXPos=function(value)
+{
+	this.xPos=value;
+}
+
+Motor.prototype.setYPos=function(value)
+{
+	this.yPos=value;
+}
+
 Motor.prototype.generateStair=function(top,left,down,right)
 {
 	this.dungeon=new Dungeon();
@@ -57,19 +67,20 @@ Motor.prototype.update=function()
 {
 	
 	clean();
-	//affichage des infos 
-	//this.messages.draw();
 	this.dungeon.getCurrentStair().draw();
 	this.inputUpdate();
 	this.player.draw();
+	this.messages.draw();
 }
 
 
 Motor.prototype.inputUpdate=function()
 {
+	if(!this.canvasPlaced)
+		this.moveCanvas();
+	
 	if(!Input.equals(0))
 	{
-		this.moveCanvas();
 		//this.newTurn();
 	}
 		
@@ -78,22 +89,22 @@ Motor.prototype.inputUpdate=function()
 		
 	if(Input.equals(39))
 	{
-		//this.player.move("right");
+		this.player.move("right");
 	}
 
 	if(Input.equals(40))
 	{
-		//this.player.move("down");		
+		this.player.move("down");		
 	}
 		
 	if(Input.equals(37))
 	{
-		//this.player.move("left");
+		this.player.move("left");
 	}
 		
 	if(Input.equals(38))
 	{
-		//this.player.move("up");
+		this.player.move("up");
 	}
 		
 	if(Input.equals(76))
@@ -149,9 +160,37 @@ Motor.prototype.newTurn=function()
 
 Motor.prototype.moveCanvas=function()
 {
-	this.xPos=this.player.getX()*32;
-	this.yPos=this.player.getY()*32;
-	alert("camera at "+this.xPos+"/"+this.yPos)
+	objX=this.player.getX()*32;
+	objY=this.player.getY()*32;
+	canvasWidth=document.getElementById('canvas').width;
+	canvasHeight=document.getElementById('canvas').height;
+	if(!(this.xPos+canvasWidth/2>=objX && this.xPos+canvasWidth/2<=objX+canvasWidth) || !(this.yPos+canvasHeight/2>=objY && this.yPos+canvasHeight/2<=objY+canvasHeight))
+	{
+			this.xPos=this.xPos*-1;
+			this.yPos=this.yPos*-1;
+			if(this.xPos+canvasWidth/2<objX)
+			{
+				this.xPos=this.xPos+32;
+			}
+			if(this.xPos+canvasWidth/2>objX)
+			{
+				this.xPos=this.xPos-32;
+			}
+			if(this.yPos+canvasHeight/2<objY)
+			{
+				this.yPos=this.yPos+32;
+			}
+			if(this.xPos+canvasHeight/2>objY)
+			{
+				this.yPos=this.yPos-32;
+			}
+			if(Math.abs(this.xPos+canvasWidth/2-objX)<=32 && Math.abs(this.yPos+canvasHeight/2-objY)<=32)
+				this.canvasPlaced=true;
+			
+				
+			this.xPos=this.xPos*-1;
+			this.yPos=this.yPos*-1;
+	}
 }
 
 

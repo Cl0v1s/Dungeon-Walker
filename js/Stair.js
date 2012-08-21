@@ -11,6 +11,7 @@ function Stair()
 			this.map[i][u]=0;
 		}
 	}
+	this.light=Math.floor(Math.random()*4)+5;
 	this.spawnPoint=null;
 	this.rooms=new Array();
 	this.roomsNumber=0;
@@ -289,37 +290,48 @@ Stair.prototype.generateCorridor=function(room1,room2)
 Stair.prototype.draw=function()
 {
 	surface.font = "32px pixel";
-
+	side=Motor.player.getLight()*this.light;
+	originX=Math.floor(Motor.player.getX()-side/2);
+	originY=Math.floor(Motor.player.getY()-side/2);
+	tile="";	
 	for(o=0;o<88;o++)
 	{
-		if(o<Math.abs(Math.floor(Motor.getXPos()/32)))
-			continue;
-		
-		if(o>Math.abs(Math.floor(Motor.getXPos()*32))+Math.floor(document.getElementById('canvas').width/32))
-			break;
-
 		for(p=0;p<48;p++)
 		{
 			
 				if(this.map[o][p]==2)
-				{
 							surface.fillStyle = DungeonTile.WallColor;
-							surface.fillText(DungeonTile.Wall,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
-				}
-				else if(this.map[o][p]==1)
-				{
-							surface.fillStyle = DungeonTile.WallColor;
-							surface.fillText(DungeonTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
-				}
 				else if(this.map[o][p]=="stair")
-				{
 							surface.fillStyle = DungeonTile.WallColor;
-							surface.fillText(DungeonTile.Stair,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+				
+				if(o<originX)
+				{
+							value=10-Math.abs(originX-o);
+							surface.fillStyle="rgb("+value+","+value+","+value+")";
 				}
-
+				if(o>originX+side)
+				{
+							value=10-Math.abs((originX+side)-o);
+							surface.fillStyle="rgb("+value+","+value+","+value+")";
+				}
+				if(p<originY)
+				{
+							value=10-Math.abs(originY-p);
+							surface.fillStyle="rgb("+value+","+value+","+value+")";
+				}
+				if(p>originY+side)
+				{
+							value=10-Math.abs(originY-p);
+							surface.fillStyle="rgb("+value+","+value+","+value+")";
+				}
+				if(this.map[o][p]==2)
+								surface.fillText(DungeonTile.Wall,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+				else if(this.map[o][p]=="stair")
+								surface.fillText(DungeonTile.Stair,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				
 		}
 	}
+	
 }
 
 /**
@@ -337,7 +349,26 @@ Stair.prototype.placeStairAndPlayer=function()
 	this.map[this.rooms[room].getX()+emp[0]][this.rooms[room].getY()+emp[1]]="stair";
 }
 
+/**
+ * Returns the coordinates and the room of the spawnPoint
+ */
 Stair.prototype.getSpawnPoint=function()
 {
 	return this.spawnPoint;
+}
+
+/**
+ * Returns the map of the stair
+ */
+Stair.prototype.getMap=function()
+{
+		return this.map;
+}
+
+Stair.prototype.walkable=function(xTemp,yTemp)
+{
+		if(this.map[xTemp][yTemp]==1)
+			return true;
+		else
+			return false;
 }

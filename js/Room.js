@@ -43,6 +43,7 @@ function Room(x,y)
 	this.height=0;
 	this.connected=false;
 	this.spawn=false;
+	this.monsters=new Array();
 	while(this.width<5)
 	{
 		this.width=Math.floor(Math.random()*21+1);
@@ -216,7 +217,18 @@ Room.prototype.research=function(bloc)
 	}
 	return false;
 }
+*/
 
+Room.prototype.generateMonsters=function()
+{
+		nb=Math.floor(Math.random());
+}
+
+
+/**
+ * This method move the geneated Monsters of the room.
+ * If the player is on collid with the Monster, the game begin a fight.
+ */
 Room.prototype.moveMonsters=function()
 {
 	for(a=0;a<this.monsters.length;a++)
@@ -262,20 +274,20 @@ Room.prototype.moveMonsters=function()
 				}
 
 
-				if((this.monsters[a].x-1==player.x && this.monsters[a].y==player.y) || (this.monsters[a].x+1==player.x && this.monsters[a].y==player.y) || (this.monsters[a].y-1==player.y && this.monsters[a].x==player.x) || (this.monsters[a].y+1==player.y && this.monsters[a].x==player.x))
+				if((this.monsters[a].x-1==Motor.player.getX() && this.monsters[a].y==Motor.player.getY()) || (this.monsters[a].x+1==Motor.player.getX() && this.monsters[a].y==Motor.player.getY()) || (this.monsters[a].y-1==Motor.player.getY() && this.monsters[a].x==Motor.player.getX()) || (this.monsters[a].y+1==Motor.player.getY() && this.monsters[a].x==Motor.player.getX()))
 				{
 					battle=1;
 					result=this.battle(player,this.monsters[a]);
 					if(result==false)
 					{
 						drop=Math.floor(Math.random()*2)+1;
-						player.score+=this.monsters[a].race.Score;
+						Motor.player.score+=this.monsters[a].race.Score;
 						if(drop==1)
 						{
 							rand=Math.floor(Math.random()*this.monsters[a].race.Drop.length);
 							drop=this.monsters[a].race.Drop[rand];
 							drop=drop+10;
-							this.entityGrill[this.monsters[a].x][this.monsters[a].y]=drop;
+							//this.entityGrill[this.monsters[a].x][this.monsters[a].y]=drop;
 						}
 						this.monsters[a]=undefined;
 					}
@@ -288,9 +300,10 @@ Room.prototype.moveMonsters=function()
 				
 				if(battle==0)
 				{
-					this.entityGrill[this.monsters[a].x][this.monsters[a].y]=1;
-					this.monsters[a].selectDir(this.grill,this.entityGrill);
-					this.entityGrill[this.monsters[a].x][this.monsters[a].y]=2;
+					//this.entityGrill[this.monsters[a].x][this.monsters[a].y]=1;
+					//this.monsters[a].selectDir(this.grill,this.entityGrill);
+					this.monsters[a].selectDir(this.map);
+					//this.entityGrill[this.monsters[a].x][this.monsters[a].y]=2;
 				}
 		
 
@@ -370,68 +383,7 @@ Room.prototype.battle=function(fighter1,fighter2)
 }
 
 
-Room.prototype.createDoor=function(wall)
-{
-	
-	if(wall=="right")
-	{
-			door=Math.floor(Math.random()*this.height-1);	
-				this.doors+=1;
-				placed=true;
-				player.setX(Math.floor(this.x/32));
-				player.setY(Math.floor((this.y+door*32)/32));
-				this.grill[Math.floor(this.x/32)][Math.floor((this.y+door*32)/32)]="doorLeft";
-				door=100;
-				
-		
-
-	}
-	if(wall=="left")
-	{
-			door=Math.floor(Math.random()*this.height-1);	
-				this.doors+=1;
-				placed=true;
-				player.setX(Math.floor((this.x+this.width*32)/32));
-				player.setY(Math.floor((this.y+door*32)/32));
-				this.grill[Math.floor((this.x+this.width*32)/32)][Math.floor((this.y+door*32)/32)]="doorRight";
-				door=100;	
-			
-		
-	}
-	if(wall=="up")
-	{
-			door=Math.floor(Math.random()*this.height-1);
-				this.doors+=1;
-				placed=true;
-				player.setX(Math.floor((this.x+this.width*32)/32));
-				player.setY(Math.floor((this.y+door*32)/32));
-				this.grill[Math.floor((this.x+this.width*32)/32)][Math.floor((this.y+door*32)/32)]="doorRight";
-				door=100;	
-
-	}
-	if(wall=="down")
-	{
-		placed=false;
-		for(i=0;i<this.width;i++)
-		{
-			if(placed==false)
-				door=Math.floor(Math.random()*this.width+2)-1;
-
-			if(i==door && placed==false)
-			{
-				this.doors+=1;
-				placed=true;
-				player.setX(Math.floor((this.x+i*32)/32));
-				player.setY(Math.floorMath.floor(this.y/32)+1);
-				this.grill[Math.floor((this.x+i*32)/32)][Math.floor(this.y/32)]="doorUp";
-				door=100;
-			}	
-		}
-
-
-	}
-}
-
+/*
 Room.prototype.setFire=function(entity)
 {
 	rand=Math.floor(Math.random()*6);
