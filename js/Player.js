@@ -137,6 +137,8 @@ Player.prototype.move=function(dir)
 			}
 			break;
 	}
+	this.getObject();
+	this.getUp();
 }
 //////////////////////////////////////////////////////////////////:
 
@@ -303,17 +305,48 @@ Player.prototype.openEquipement=function()
 		Scene=this.equipement;
 }
 
+/**
+ * This method allow the player to get the object if there are.
+ */
+Player.prototype.getObject=function()
+{
+		if(Motor.dungeon.getCurrentStair().getMap()[this.x][this.y]>=10)
+		{
+			this.inventory.add(Motor.dungeon.getCurrentStair().getMap()[this.x][this.y]-10);
+			Motor.dungeon.getCurrentStair().map[this.x][this.y]=1;
+		}
+}
 
+/**
+ * if the player is on a stair then generate a new stair.
+ */
+Player.prototype.getUp=function()
+{
+		if(Motor.dungeon.getCurrentStair().getMap()[this.x][this.y]=="stair")
+		{
+			Motor.dungeon.upStair();
+			x=Motor.dungeon.getCurrentStair().getSpawnPoint()[0]+Motor.dungeon.getCurrentStair().getSpawnPoint()[2].getX();
+			y=Motor.dungeon.getCurrentStair().getSpawnPoint()[1]+Motor.dungeon.getCurrentStair().getSpawnPoint()[2].getY();
+			this.setX(x);
+			this.setY(y);
+		}
+}
+
+/**
+ * Returns the light of the player
+ */
 Player.prototype.getLight=function()
 {
 	return this.light;
 }
 
 
-
+/**
+ * Kill the player
+ */
 Player.prototype.kill=function()
 {
-	gameOver();
+	Motor.gameOver();
 }
 
 

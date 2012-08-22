@@ -21,12 +21,6 @@ function clean()
 	surface.fillRect (0, 0,document.getElementById('canvas').width,document.getElementById('canvas').height);
 }
 
-window.onkeydown = function(event) {
-	var e = event || window.event;
-	var key = e.which || e.keyCode;
-	LastKey=key;
-}
-
 function exit()
 {
 	clearInterval(Interval);

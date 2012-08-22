@@ -38,7 +38,26 @@ function Stair()
 		}
 	}
 	this.placeStairAndPlayer();
+}
 
+/**
+ * this method puts monsters into the rooms
+ */
+Stair.prototype.generateMonsters=function()
+{
+	for(i=0;i<this.rooms.length;i++)
+	{
+		this.rooms[i].generateMonsters();
+	}
+}
+
+
+Stair.prototype.moveMonsters=function()
+{
+	for(i=0;i<this.rooms.length;i++)
+	{
+		this.rooms[i].moveMonsters();
+	}
 }
 
 
@@ -303,6 +322,8 @@ Stair.prototype.draw=function()
 							surface.fillStyle = DungeonTile.WallColor;
 				else if(this.map[o][p]=="stair")
 							surface.fillStyle = DungeonTile.WallColor;
+				else if(this.map[o][p]>=10)
+							surface.fillStyle="rgb(248,214,0)";
 				
 				if(o<originX)
 				{
@@ -328,7 +349,28 @@ Stair.prototype.draw=function()
 								surface.fillText(DungeonTile.Wall,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				else if(this.map[o][p]=="stair")
 								surface.fillText(DungeonTile.Stair,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+				else if(this.map[o][p]>=10)
+								surface.fillText("$",Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				
+		}
+	}
+	for(o=0;o<this.rooms.length;o++)
+	{
+		for(p=0;p<this.rooms[o].monsters.length;p++)
+		{
+				intancity=1;
+				if(this.rooms[o].monsters[p] != undefined)
+				{
+					if(this.rooms[o].monsters[p].getX()<originX || this.rooms[o].monsters[p].getX()>originX+side || this.rooms[o].monsters[p].getY()<originY || this.rooms[o].monsters[p].getY()>originY+side)
+					{
+						xDistance=Math.abs(this.rooms[o].monsters[p].getX()-originX);
+						yDistance=Math.abs(this.rooms[o].monsters[p].getY()-originY);
+						distance=xDistance*xDistance+yDistance*yDistance;
+						distance=Math.sqrt(distance);
+						intancity=1/distance;
+					}
+					this.rooms[o].monsters[p].draw(intancity);
+				}
 		}
 	}
 	
@@ -365,10 +407,13 @@ Stair.prototype.getMap=function()
 		return this.map;
 }
 
+/**
+ * Return is the specified tile is walkable or not
+ */
 Stair.prototype.walkable=function(xTemp,yTemp)
 {
-		if(this.map[xTemp][yTemp]==1)
-			return true;
-		else
+		if(this.map[xTemp][yTemp]==2 || this.map[xTemp][yTemp]==0)
 			return false;
+		else
+			return true;
 }

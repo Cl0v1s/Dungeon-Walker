@@ -7,6 +7,16 @@
 //Redistribue les entrées.
 ////////////////////////////////////////////////////////////////////////////////////
 
+window.onkeydown = function(event) {
+	var e = event || window.event;
+	var key = e.which || e.keyCode;
+	LastKey=key;
+}
+
+window.onkeyup = function(event) {
+	LastKey=0;
+}
+
 
 function Input()
 {

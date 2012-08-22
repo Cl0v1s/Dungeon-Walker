@@ -28,20 +28,20 @@ Monster.prototype.setLife=function(nb)
 	this.life=nb;
 }
 
-Monster.prototype.draw=function()
+Monster.prototype.draw=function(intancity)
 {
 	surface.font = "30px pixel";
 	if(this.follow==false)
-		surface.fillStyle="rgb(150,50,50)";
+		surface.fillStyle="rgb("+Math.floor(150*intancity)+","+Math.floor(50*intancity)+","+Math.floor(50*intancity)+")";
 
 	if(this.follow==true)
-		surface.fillStyle="rgb(250,10,10)";
+		surface.fillStyle="rgb("+Math.floor(250*intancity)+","+Math.floor(50*intancity)+","+Math.floor(50*intancity)+")";
 
-	surface.fillText(this.img, this.x*32, this.y*32);
+	surface.fillText(this.img, Motor.getXPos()+this.x*32, Motor.getYPos()+this.y*32);
 	if(this.onFire==true)
 	{
 		surface.fillStyle="rgb(250,50,50)";
-		surface.fillText("W", this.x*32, this.y*32);
+		surface.fillText("W",Motor.getXPos()+this.x*32, Motor.getYPos()+this.y*32);
 	}
 }
 
@@ -87,7 +87,7 @@ Monster.prototype.turn=function(ennemy)
 
 }
 
-Monster.prototype.selectDir=function(grill,entityGrill)
+Monster.prototype.selectDir=function()
 {
 	if(this.follow==false)
 	{
@@ -99,16 +99,16 @@ Monster.prototype.selectDir=function(grill,entityGrill)
 		switch(dir)
 		{	
 			case 1 :
-				this.move("right",grill,entityGrill);
+				this.move("right");
 			break;
 			case 2 :
-				this.move("left",grill,entityGrill);	
+				this.move("left");	
 			break;
 			case 3 :
-				this.move("down",grill,entityGrill);
+				this.move("down");
 			break;
 			case 4 :
-				this.move("up",grill,entityGrill);	
+				this.move("up");	
 			break;
 
 
@@ -117,45 +117,29 @@ Monster.prototype.selectDir=function(grill,entityGrill)
 }
 
 
-Monster.prototype.blocked=function(grill,entityGrill,x,y)
+Monster.prototype.move=function(dir)
 {
-	if((grill[x][y]==1 || grill[x][y]==5 || grill[x][y]==6)&& entityGrill[x][y]==1)
-	{
-		if(grill[x][y]==5 || grill[x][y]==6)
-		{
-			this.onFire=true;
-		}
-		return false;
-	}
-
-	return true;
-
-
-
-}
-
-Monster.prototype.move=function(dir,grill,entityGrill)
-{
-
+	Motor.dungeon.getCurrentStair().map[this.x][this.y]=1;
 	switch(dir)
 	{
 		case "right":
-			if(this.blocked(grill,entityGrill,this.x+1,this.y)==false)
+			if(Motor.dungeon.getCurrentStair().walkable(this.x+1,this.y))
 				this.x+=1;
 				break;
 		case "left":
-			if(this.blocked(grill,entityGrill,this.x-1,this.y)==false)
+			if(Motor.dungeon.getCurrentStair().walkable(this.x-1,this.y))
 				this.x-=1;
 				break;
 		case "down":
-			if(this.blocked(grill,entityGrill,this.x,this.y+1)==false)
+			if(Motor.dungeon.getCurrentStair().walkable(this.x,this.y+1))
 				this.y+=1;
 				break;
 		case "up" :		
-			if(this.blocked(grill,entityGrill,this.x,this.y-1)==false)
+			if(Motor.dungeon.getCurrentStair().walkable(this.x,this.y-1))
 				this.y-=1;
 				break;
 	}
+	Motor.dungeon.getCurrentStair().map[this.x][this.y]=0;
 	
 }
 
@@ -174,4 +158,16 @@ Monster.prototype.fire=function()
 Monster.prototype.setFire=function()
 {
 	this.onFire=true;
+}
+
+
+Monster.prototype.getX=function()
+{
+	return this.x;
+}
+
+
+Monster.prototype.getY=function()
+{
+		return this.y;
 }

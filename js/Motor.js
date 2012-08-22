@@ -61,6 +61,7 @@ Motor.prototype.setYPos=function(value)
 Motor.prototype.generateStair=function(top,left,down,right)
 {
 	this.dungeon=new Dungeon();
+	this.dungeon.getCurrentStair().generateMonsters();
 }
 
 Motor.prototype.update=function()
@@ -81,11 +82,11 @@ Motor.prototype.inputUpdate=function()
 	
 	if(!Input.equals(0))
 	{
-		//this.newTurn();
+		this.newTurn();
 	}
 		
 	if(Input.equals(13))
-		alert("player at "+this.player.getX()*32+"/"+this.player.getY()*32);
+		alert(Motor.dungeon.getCurrentStair().getMap()[this.player.getX()][this.player.getY()]);
 		
 	if(Input.equals(39))
 	{
@@ -155,7 +156,7 @@ Motor.prototype.newTurn=function()
 		}
 		this.dayInterval+=this.turn;
 	}
-//	this.getCurrentRoom().moveMonsters();
+	this.dungeon.getCurrentStair().moveMonsters();
 }
 
 Motor.prototype.moveCanvas=function()

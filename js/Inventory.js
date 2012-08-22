@@ -49,7 +49,6 @@ Inventory.prototype.add=function(id)
 
 Inventory.prototype.update=function()
 {
-	Motor.player.draw();
 	this.inputUpdate();
 	surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (0, 0,320,320);

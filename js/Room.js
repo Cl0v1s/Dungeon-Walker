@@ -219,9 +219,28 @@ Room.prototype.research=function(bloc)
 }
 */
 
+/**
+ * Generates Monsters and puts them on the map
+ */
 Room.prototype.generateMonsters=function()
 {
-		nb=Math.floor(Math.random());
+		nb=Math.floor(Math.random()*(Motor.dungeon.getCurrentStairId()+5));
+		for(n=0;n<nb;n++)
+		{
+			xM=Math.floor(Math.random()*this.width)+1;
+			xM=this.x+xM;
+			yM=Math.floor(Math.random()*this.height)+1;
+			yM=this.y+yM;
+			while(Motor.dungeon.getCurrentStair().getMap()[xM][yM] != 1)
+			{
+				xM=Math.floor(Math.random()*this.width)+1;
+				xM=this.x+xM;
+				yM=Math.floor(Math.random()*this.height)+1;
+				yM=this.y+yM;
+			}
+			race=Math.floor(Math.random()*Motor.dungeon.getCurrentStairId());
+			this.monsters[n]=new Monster(xM,yM,Bestiaire[race]);
+		}
 }
 
 
@@ -247,7 +266,7 @@ Room.prototype.moveMonsters=function()
 			}	
 				for(m=0;m<this.monsters.length;m++)
 				{
-					if(a !=m && this.monsters[m] !=undefined)
+					if(a !=m && this.monsters[m] !=undefined && this.monsters[a] !=undefined)
 					{
 							if((this.monsters[a].x-1==this.monsters[m].x && this.monsters[a].y==this.monsters[m].y) || (this.monsters[a].x+1==this.monsters[m].x && this.monsters[a].y==this.monsters[m].y) || (this.monsters[a].y-1==this.monsters[m].y && this.monsters[a].x==this.monsters[m].x) || (this.monsters[a].y+1==this.monsters[m].y && this.monsters[a].x==this.monsters[m].x))
 						{
@@ -287,7 +306,7 @@ Room.prototype.moveMonsters=function()
 							rand=Math.floor(Math.random()*this.monsters[a].race.Drop.length);
 							drop=this.monsters[a].race.Drop[rand];
 							drop=drop+10;
-							//this.entityGrill[this.monsters[a].x][this.monsters[a].y]=drop;
+							Motor.dungeon.getCurrentStair().map[this.monsters[a].getX()][this.monsters[a].getY()]=drop;
 						}
 						this.monsters[a]=undefined;
 					}
@@ -300,10 +319,7 @@ Room.prototype.moveMonsters=function()
 				
 				if(battle==0)
 				{
-					//this.entityGrill[this.monsters[a].x][this.monsters[a].y]=1;
-					//this.monsters[a].selectDir(this.grill,this.entityGrill);
 					this.monsters[a].selectDir(this.map);
-					//this.entityGrill[this.monsters[a].x][this.monsters[a].y]=2;
 				}
 		
 
@@ -371,7 +387,7 @@ Room.prototype.battle=function(fighter1,fighter2)
 
 	if(fighter2.life<=0)
 	{
-		this.entityGrill[fighter2.x][fighter2.y]=1;
+		Motor.dungeon.getCurrentStair().map[fighter2.x][fighter2.y]=1;
 		Motor.messages.add(fighter1.nam+" a vaincu "+fighter2.nam+".");
 		Motor.messages.changeMode("normal");
 		return false;
