@@ -135,7 +135,7 @@ Stair.prototype.generateWater=function()
 			if(this.map[i][u]==1 && this.getRoomAt(i,u) != false)
 			{
 					flag=Math.floor(Math.random()*this.rooms.length*10)+1;
-					if(flag==1 && this.getRoomAt(i,u).getBiome()=="dungeon")
+					if(flag==1)
 					{
 						this.map[i][u]=3;
 					}
@@ -387,7 +387,12 @@ Stair.prototype.draw=function()
 		for(p=0;p<48;p++)
 		{
 			
-				if(this.map[o][p]==2)
+				if(this.map[o][p]==1 && this.getRoomAt(o,p)!=false)
+				{
+						if(this.getRoomAt(o,p).getBiome()=="plain")
+							surface.fillStyle = PlainTile.GroundColor;
+				}
+				else if(this.map[o][p]==2)
 							surface.fillStyle = DungeonTile.WallColor;
 				else if(this.map[o][p]=="stair")
 							surface.fillStyle = DungeonTile.WallColor;
@@ -395,28 +400,62 @@ Stair.prototype.draw=function()
 							surface.fillStyle="rgb(248,214,0)";
 				else if(this.map[o][p]==3)
 							surface.fillStyle=DungeonTile.Water_1Color;
-				
-				if(o<originX)
+							
+				if(this.getRoomAt(o,p) != false)
 				{
-							value=10-Math.abs(originX-o);
-							surface.fillStyle="rgb("+value+","+value+","+value+")";
+					if(this.getRoomAt(o,p).getBiome()!="plain")
+					{
+						if(o<originX)
+						{
+									value=10-Math.abs(originX-o);
+									surface.fillStyle="rgb("+value+","+value+","+value+")";
+						}
+						if(o>originX+side)
+						{
+									value=10-Math.abs((originX+side)-o);
+									surface.fillStyle="rgb("+value+","+value+","+value+")";
+						}
+						if(p<originY)
+						{
+									value=10-Math.abs(originY-p);
+									surface.fillStyle="rgb("+value+","+value+","+value+")";
+						}
+						if(p>originY+side)
+						{
+									value=10-Math.abs(originY-p);
+									surface.fillStyle="rgb("+value+","+value+","+value+")";
+						}
+					}
 				}
-				if(o>originX+side)
+				else
 				{
-							value=10-Math.abs((originX+side)-o);
-							surface.fillStyle="rgb("+value+","+value+","+value+")";
+						if(o<originX)
+						{
+									value=10-Math.abs(originX-o);
+									surface.fillStyle="rgb("+value+","+value+","+value+")";
+						}
+						if(o>originX+side)
+						{
+									value=10-Math.abs((originX+side)-o);
+									surface.fillStyle="rgb("+value+","+value+","+value+")";
+						}
+						if(p<originY)
+						{
+									value=10-Math.abs(originY-p);
+									surface.fillStyle="rgb("+value+","+value+","+value+")";
+						}
+						if(p>originY+side)
+						{
+									value=10-Math.abs(originY-p);
+									surface.fillStyle="rgb("+value+","+value+","+value+")";
+						}
 				}
-				if(p<originY)
+				if(this.map[o][p]==1 && this.getRoomAt(o,p)!=false)
 				{
-							value=10-Math.abs(originY-p);
-							surface.fillStyle="rgb("+value+","+value+","+value+")";
+							if(this.getRoomAt(o,p).getBiome()=="plain")
+								surface.fillText(PlainTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				}
-				if(p>originY+side)
-				{
-							value=10-Math.abs(originY-p);
-							surface.fillStyle="rgb("+value+","+value+","+value+")";
-				}
-				if(this.map[o][p]==2)
+				else if(this.map[o][p]==2)
 								surface.fillText(DungeonTile.Wall,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				else if(this.map[o][p]=="stair")
 								surface.fillText(DungeonTile.Stair,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
@@ -424,6 +463,8 @@ Stair.prototype.draw=function()
 								surface.fillText("$",Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				else if(this.map[o][p]==3)
 							surface.fillText(DungeonTile.Water_1,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+				else if(this.map[o][p]>=10)
+							surface.fillText("/",Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				
 		}
 	}

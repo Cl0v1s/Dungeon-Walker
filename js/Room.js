@@ -32,13 +32,40 @@ var DungeonTile={
 "Stair" : ">"
 }
 
+var PlainTile={
+"Ground" : "'",
+"GroundColor" : "rgb(0,153,0)",
+"Wall" : "#",
+"WallColor" : "rgb(153,153,153)",
+"Water_1" : "-",
+"Water_1Color" : "rgb(50,50,150)",
+"Water_2" : ">",
+"Water_2Color" : "rgb(50,50,250)",
+"Fire_1" : "w",
+"Fire_1Color" : "rgb(150,50,50)",
+"Fire_2" : "W",
+"Fire_2Color" : "rgb(250,50,50)",
+"Unknow" : "/",
+"UnknowColor" :  "rgb(255,255,255)",
+"Stair" : ">"
+}
+
 
 
 function Room(x,y)
 {
-	this.biome="dungeon";
-	if(this.biome=="dungeon")
+	biomeTemp=Math.floor(Math.random()*10)+1;
+	if(biomeTemp>=1 && biomeTemp<=3)
+	{
+		this.biome="plain";
+		this.tile=PlainTile;
+	}
+	else
+	{
+		this.biome="dungeon";
 		this.tile=DungeonTile;
+	}
+
 	this.x=x;
 	this.y=y;
 	this.width=0;
@@ -60,10 +87,15 @@ function Room(x,y)
 		this.map[p]=new Array();
 		for(q=0;q<this.height;q++)
 		{
-			this.map[p][q]=1;
+				this.map[p][q]=1;
 		}
 	}
 	this.generateWalls();
+	if(this.biome=="plain")
+		this.generateVegetation();
+		
+	
+		
 }
 
 /**
@@ -81,6 +113,29 @@ Room.prototype.generateWalls=function()
 	{
 			this.map[0][q]=2;
 			this.map[this.width-1][q]=2;
+	}
+}
+
+/**
+ * This method generates trees on the map
+*/
+Room.prototype.generateVegetation=function()
+{
+	number=Math.floor(Math.random()*5)+1;
+	alert(number);
+	for(q=0;q<number;q++)
+	{
+		xTemp=Math.floor(Math.random()*(this.width-2))+2;
+		yTemp=Math.floor(Math.random()*(this.height-2))+2;
+		this.map[xTemp][yTemp]=5;
+		if(this.map[xTemp][yTemp-1] !=undefined)
+			this.map[xTemp][yTemp-1]=5;
+		if(this.map[xTemp][yTemp-2] !=undefined)
+			this.map[xTemp][yTemp-2]=6;
+		if(this.map[xTemp-1][yTemp-2] !=undefined)
+			this.map[xTemp-1][yTemp-2]=6;
+		if(this.map[xTemp+1]!=undefined && this.map[xTemp+1][yTemp-2] !=undefined)
+			this.map[xTemp+1][yTemp-2]=6;
 	}
 }
 
