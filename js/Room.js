@@ -36,7 +36,9 @@ var DungeonTile={
 
 function Room(x,y)
 {
-	this.tile=DungeonTile;
+	this.biome="dungeon";
+	if(this.biome=="dungeon")
+		this.tile=DungeonTile;
 	this.x=x;
 	this.y=y;
 	this.width=0;
@@ -82,7 +84,6 @@ Room.prototype.generateWalls=function()
 	}
 }
 
-
 /**
  * this method returns the room's x position.
  * Used to place the room's map into the Dungeon Map.
@@ -119,6 +120,15 @@ Room.prototype.getHeight=function()
 		return this.height;
 }
 
+
+/**
+ * Returns the biome of the room
+ */
+Room.prototype.getBiome=function()
+{
+	return this.biome;
+}
+
 /**
  * this method returns the room's map.
  */
@@ -135,6 +145,9 @@ Room.prototype.isConnected=function()
 		return this.connected;
 }
 
+/**
+ * Sets the map connected
+ */
 Room.prototype.setConnected=function(value)
 {
 	this.connected=value;
@@ -197,27 +210,6 @@ Room.prototype.placeStair=function()
 	this.setCell(xTemp,yTemp,"stair");
 	return [xTemp,yTemp];
 }
-
-
-/*
-Room.prototype.research=function(bloc)
-{
-	for(i=0;i<19;i++)
-	{
-		for(u=0;u<10;u++)
-		{
-			if(this.grill[i][u]==bloc)
-			{
-				response=new Array();
-				response[1]=i;
-				response[2]=u;
-				return response;
-			}
-		}
-	}
-	return false;
-}
-*/
 
 /**
  * Generates Monsters and puts them on the map
@@ -328,7 +320,9 @@ Room.prototype.moveMonsters=function()
 
 }
 
-
+/**
+ * allow battle between two entities
+ */
 Room.prototype.battle=function(fighter1,fighter2)
 {
 	fighter1_total=0;
@@ -423,48 +417,6 @@ Room.prototype.setFire=function(entity)
 	clean();
 	this.draw();
 
-}
-
-Room.prototype.getGrill=function(x,y)
-{
-	return this.grill[x][y];
-}
-
-
-Room.prototype.getBiome= function()
-{
-	return this.biome;
-}
-
-Room.prototype.getX= function()
-{
-	return this.x;
-}
-
-Room.prototype.setX= function(x)
-{
-	this.x=x;
-}
-
-
-Room.prototype.getY= function()
-{
-	return this.y;
-}
-
-Room.prototype.getH= function()
-{
-	return this.height;
-}
-
-Room.prototype.getW= function()
-{
-	return this.width;
-}
-
-Room.prototype.setEntityGrill= function(x,y,valeur)
-{
-	this.entityGrill[x][y]=valeur;
 }
 */
 

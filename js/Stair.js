@@ -37,6 +37,7 @@ function Stair()
 				continue;
 		}
 	}
+	this.generateWater();
 	this.placeStairAndPlayer();
 }
 
@@ -51,7 +52,9 @@ Stair.prototype.generateMonsters=function()
 	}
 }
 
-
+/**
+ * This method moves the monstrers of the room
+ */
 Stair.prototype.moveMonsters=function()
 {
 	for(i=0;i<this.rooms.length;i++)
@@ -104,6 +107,84 @@ Stair.prototype.generateRooms=function()
 					}
 				}
 		}
+}
+
+/**
+ * Returns the room who contains the specified position
+ */
+Stair.prototype.getRoomAt=function(xTemp,yTemp)
+{
+		for(q=0;q<this.rooms.length;q++)
+		{
+			if(xTemp>=this.rooms[q].getX() && xTemp<=this.rooms[q].getX()+this.rooms[q].getWidth() && yTemp>=this.rooms[q].getY() && yTemp<=this.rooms[q].getY()+this.rooms[q].getHeight())
+				return this.rooms[q];
+		}
+			return false;
+}
+
+
+/**
+ * This method adds water tiles on the map using a layer algorythm.
+ */
+Stair.prototype.generateWater=function()
+{
+	for(i=0;i<88;i++)
+	{
+		for(u=0;u<48;u++)
+		{
+			if(this.map[i][u]==1 && this.getRoomAt(i,u) != false)
+			{
+					flag=Math.floor(Math.random()*this.rooms.length*10)+1;
+					if(flag==1 && this.getRoomAt(i,u).getBiome()=="dungeon")
+					{
+						this.map[i][u]=3;
+					}
+			}
+		}
+	}
+	for(n=0;n<5;n++)
+	{
+		for(i=0;i<88;i++)
+		{
+			for(u=0;u<48;u++)
+			{
+				if(this.map[i][u]==3)
+				{
+						flag=Math.floor(Math.random()*5)+1;
+						switch(flag)
+						{
+							case 1:
+								if(this.map[i][u+1]==1)
+									this.map[i][u+1]=3
+								break;
+							case 2:
+								if(this.map[i][u-1]==1)
+									this.map[i][u-1]=3
+								break;
+							case 3:
+								if(this.map[i+1][u]==1)
+									this.map[i+1][u]=3
+								break;
+							case 4:
+								if(this.map[i-1][u]==1)
+									this.map[i-1][u]=3
+								break;
+						}
+				}
+			}
+		}
+	}	
+		for(i=0;i<87;i++)
+		{
+			for(u=0;u<47;u++)
+			{
+				if((this.map[i][u+1]==3 && this.map[i][u-1]==3) || (this.map[i+1][u]==3 && this.map[i-1][u]==3))
+				{
+					if(this.map[i][u]==1)
+						this.map[i][u]==3
+				}
+			}
+		}	
 }
 
 /**
@@ -236,37 +317,25 @@ Stair.prototype.generateCorridor=function(room1,room2)
 		{
 			if(this.map[o][p]==1 && this.map[o+1][p+1]==1)
 			{
-					//if(this.map[o+1][p] !=2)
 						this.map[o+1][p]=1;
-					/*else if(this.map[o][p+1] !=2)
-						this.map[o][p+1]=1;*/
 						
 					continue;
 			}
 			else if(this.map[o][p]==1 && this.map[o-1][p-1]==1)
 			{
-					//if(this.map[o-1][p] !=2)
 						this.map[o-1][p]=1;
-					/*else if(this.map[o][p-1] !=2)
-						this.map[o][p-1]=1;*/
 						
 					continue;
 			}
 			else if(this.map[o][p]==1 && this.map[o+1][p-1]==1)
 			{
-					//if(this.map[o+1][p] !=2)
 						this.map[o+1][p]=1;
-					/*else if(this.map[o][p-1] !=2)
-						this.map[o][p-1]=1;*/
 						
 					continue;
 			}
 			else if(this.map[o][p]==1 && this.map[o-1][p+1]==1)
 			{
-					//if(this.map[o-1][p] !=2)
 						this.map[o-1][p]=1;
-					/*else if(this.map[o][p+1] !=2)
-						this.map[o][p+1]=1;*/
 						
 					continue;
 			}
@@ -324,6 +393,8 @@ Stair.prototype.draw=function()
 							surface.fillStyle = DungeonTile.WallColor;
 				else if(this.map[o][p]>=10)
 							surface.fillStyle="rgb(248,214,0)";
+				else if(this.map[o][p]==3)
+							surface.fillStyle=DungeonTile.Water_1Color;
 				
 				if(o<originX)
 				{
@@ -351,6 +422,8 @@ Stair.prototype.draw=function()
 								surface.fillText(DungeonTile.Stair,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				else if(this.map[o][p]>=10)
 								surface.fillText("$",Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+				else if(this.map[o][p]==3)
+							surface.fillText(DungeonTile.Water_1,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				
 		}
 	}
@@ -408,11 +481,22 @@ Stair.prototype.getMap=function()
 }
 
 /**
- * Return is the specified tile is walkable or not
+ * Return is the specified tile is walkable or not for the player
  */
 Stair.prototype.walkable=function(xTemp,yTemp)
 {
 		if(this.map[xTemp][yTemp]==2 || this.map[xTemp][yTemp]==0)
+			return false;
+		else
+			return true;
+}
+
+/**
+ * Return is the specified tile is walkable or not for the monsters
+ */
+Stair.prototype.walkableMonster=function(xTemp,yTemp)
+{
+		if(this.map[xTemp][yTemp] !=1)
 			return false;
 		else
 			return true;

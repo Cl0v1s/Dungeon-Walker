@@ -58,6 +58,13 @@ Motor.prototype.setYPos=function(value)
 	this.yPos=value;
 }
 
+Motor.prototype.resetCanvas=function()
+{
+		this.xPos=0;
+		this.yPos=0;
+		this.canvasPlaced=false;
+}
+
 Motor.prototype.generateStair=function(top,left,down,right)
 {
 	this.dungeon=new Dungeon();

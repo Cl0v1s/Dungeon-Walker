@@ -123,19 +123,19 @@ Monster.prototype.move=function(dir)
 	switch(dir)
 	{
 		case "right":
-			if(Motor.dungeon.getCurrentStair().walkable(this.x+1,this.y))
+			if(Motor.dungeon.getCurrentStair().walkableMonster(this.x+1,this.y))
 				this.x+=1;
 				break;
 		case "left":
-			if(Motor.dungeon.getCurrentStair().walkable(this.x-1,this.y))
+			if(Motor.dungeon.getCurrentStair().walkableMonster(this.x-1,this.y))
 				this.x-=1;
 				break;
 		case "down":
-			if(Motor.dungeon.getCurrentStair().walkable(this.x,this.y+1))
+			if(Motor.dungeon.getCurrentStair().walkableMonster(this.x,this.y+1))
 				this.y+=1;
 				break;
 		case "up" :		
-			if(Motor.dungeon.getCurrentStair().walkable(this.x,this.y-1))
+			if(Motor.dungeon.getCurrentStair().walkableMonster(this.x,this.y-1))
 				this.y-=1;
 				break;
 	}

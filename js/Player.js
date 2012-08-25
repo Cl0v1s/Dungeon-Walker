@@ -190,7 +190,7 @@ Player.prototype.changeStat=function()
 
 Player.prototype.lap=function()
 {
-	grill=Motor.getCurrentRoom().grill[this.x][this.y];
+	grill=Motor.dungeon.getCurrentStair().map[this.x][this.y];
 	if(grill==3)
 	{
 		if(this.soif<100)
@@ -329,6 +329,7 @@ Player.prototype.getUp=function()
 			y=Motor.dungeon.getCurrentStair().getSpawnPoint()[1]+Motor.dungeon.getCurrentStair().getSpawnPoint()[2].getY();
 			this.setX(x);
 			this.setY(y);
+			Motor.resetCanvas();
 		}
 }
 
