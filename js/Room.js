@@ -16,7 +16,8 @@
 
 
 var DungeonTile={
-"Ground" : ".",
+"Stone" : "@",
+"StoneColor" : "rgb(120,100,120)",
 "Wall" : "#",
 "WallColor" : "rgb(153,153,153)",
 "Water_1" : "-",
@@ -35,6 +36,8 @@ var DungeonTile={
 var PlainTile={
 "Ground" : "'",
 "GroundColor" : "rgb(0,153,0)",
+"Tree" : "T",
+"TreeColor" : "rgb(50,153,50)",
 "Wall" : "#",
 "WallColor" : "rgb(153,153,153)",
 "Water_1" : "-",
@@ -90,12 +93,7 @@ function Room(x,y)
 				this.map[p][q]=1;
 		}
 	}
-	this.generateWalls();
-	if(this.biome=="plain")
-		this.generateVegetation();
-		
-	
-		
+	this.generateWalls();	
 }
 
 /**
@@ -113,29 +111,6 @@ Room.prototype.generateWalls=function()
 	{
 			this.map[0][q]=2;
 			this.map[this.width-1][q]=2;
-	}
-}
-
-/**
- * This method generates trees on the map
-*/
-Room.prototype.generateVegetation=function()
-{
-	number=Math.floor(Math.random()*5)+1;
-	alert(number);
-	for(q=0;q<number;q++)
-	{
-		xTemp=Math.floor(Math.random()*(this.width-2))+2;
-		yTemp=Math.floor(Math.random()*(this.height-2))+2;
-		this.map[xTemp][yTemp]=5;
-		if(this.map[xTemp][yTemp-1] !=undefined)
-			this.map[xTemp][yTemp-1]=5;
-		if(this.map[xTemp][yTemp-2] !=undefined)
-			this.map[xTemp][yTemp-2]=6;
-		if(this.map[xTemp-1][yTemp-2] !=undefined)
-			this.map[xTemp-1][yTemp-2]=6;
-		if(this.map[xTemp+1]!=undefined && this.map[xTemp+1][yTemp-2] !=undefined)
-			this.map[xTemp+1][yTemp-2]=6;
 	}
 }
 

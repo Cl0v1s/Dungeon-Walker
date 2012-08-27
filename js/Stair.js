@@ -38,6 +38,7 @@ function Stair()
 		}
 	}
 	this.generateWater();
+	this.generateObstacles();
 	this.placeStairAndPlayer();
 }
 
@@ -97,7 +98,6 @@ Stair.prototype.generateRooms=function()
 					attempt=attempt+1;
 				}
 				this.rooms[i]=new Room(roomX,roomY);
-
 				roomMap=this.rooms[i].getMap();
 				for(m=0;m<roomMap.length;m++)
 				{
@@ -122,6 +122,62 @@ Stair.prototype.getRoomAt=function(xTemp,yTemp)
 			return false;
 }
 
+
+/**
+ * This method adds some trees on the map in the plain biomes
+ */
+Stair.prototype.generateObstacles=function()
+{
+		for(i=0;i<88;i++)
+		{
+				for(u=0;u<48;u++)
+				{
+					roomTemp=this.getRoomAt(i,u);
+					if(roomTemp != false)
+					{
+						if(roomTemp.getBiome()=="plain")
+						{
+							rand=Math.floor(Math.random()*50);
+							if(rand==1)
+							{
+									xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+									yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;
+									tentatives=0;
+									while(this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp] != 1 && tentatives < 50)
+									{
+										tentatives+=1;
+										xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+										yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;									
+									}
+									if(tentatives>=50)
+										continue;
+									this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp]=5;
+							}
+						}
+						else if(roomTemp.getBiome()=="dungeon")
+						{
+							rand=Math.floor(Math.random()*70);
+							if(rand==1)
+							{
+									xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+									yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;
+									tentatives=0;
+									while(this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp] != 1 && tentatives < 50)
+									{
+										tentatives+=1;
+										xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+										yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;									
+									}
+									if(tentatives>=50)
+										continue;
+									this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp]=5;
+							}
+						}
+					}
+				}
+		}
+	
+}
 
 /**
  * This method adds water tiles on the map using a layer algorythm.
@@ -378,21 +434,31 @@ Stair.prototype.generateCorridor=function(room1,room2)
 Stair.prototype.draw=function()
 {
 	surface.font = "32px pixel";
+	tile="";	
 	side=Motor.player.getLight()*this.light;
 	originX=Math.floor(Motor.player.getX()-side/2);
 	originY=Math.floor(Motor.player.getY()-side/2);
-	tile="";	
 	for(o=0;o<88;o++)
 	{
 		for(p=0;p<48;p++)
 		{
 			
-				if(this.map[o][p]==1 && this.getRoomAt(o,p)!=false)
+				if(this.getRoomAt(o,p)!=false)
 				{
-						if(this.getRoomAt(o,p).getBiome()=="plain")
-							surface.fillStyle = PlainTile.GroundColor;
+							if(this.getRoomAt(o,p).getBiome()=="plain")
+							{
+								if(this.map[o][p]==1)
+									surface.fillStyle = PlainTile.GroundColor;
+								else if(this.map[o][p]==5)
+									surface.fillStyle = PlainTile.TreeColor;
+							}
+							else if(this.getRoomAt(o,p).getBiome()=="dungeon")
+							{
+								if(this.map[o][p]==5)
+									surface.fillStyle = DungeonTile.StoneColor;
+							}
 				}
-				else if(this.map[o][p]==2)
+				if(this.map[o][p]==2)
 							surface.fillStyle = DungeonTile.WallColor;
 				else if(this.map[o][p]=="stair")
 							surface.fillStyle = DungeonTile.WallColor;
@@ -403,29 +469,29 @@ Stair.prototype.draw=function()
 							
 				if(this.getRoomAt(o,p) != false)
 				{
-					if(this.getRoomAt(o,p).getBiome()!="plain")
-					{
-						if(o<originX)
+						if(this.getRoomAt(o,p).getBiome() !="plain")
 						{
-									value=10-Math.abs(originX-o);
-									surface.fillStyle="rgb("+value+","+value+","+value+")";
-						}
-						if(o>originX+side)
-						{
-									value=10-Math.abs((originX+side)-o);
-									surface.fillStyle="rgb("+value+","+value+","+value+")";
-						}
-						if(p<originY)
-						{
-									value=10-Math.abs(originY-p);
-									surface.fillStyle="rgb("+value+","+value+","+value+")";
-						}
-						if(p>originY+side)
-						{
-									value=10-Math.abs(originY-p);
-									surface.fillStyle="rgb("+value+","+value+","+value+")";
-						}
-					}
+							if(o<originX)
+							{
+										value=10-Math.abs(originX-o);
+										surface.fillStyle="rgb("+value+","+value+","+value+")";
+							}
+							if(o>originX+side)
+							{
+										value=10-Math.abs((originX+side)-o);
+										surface.fillStyle="rgb("+value+","+value+","+value+")";
+							}
+							if(p<originY)
+							{
+										value=10-Math.abs(originY-p);
+										surface.fillStyle="rgb("+value+","+value+","+value+")";
+							}
+							if(p>originY+side)
+							{
+										value=10-Math.abs(originY-p);
+										surface.fillStyle="rgb("+value+","+value+","+value+")";
+							}
+						}					
 				}
 				else
 				{
@@ -449,13 +515,24 @@ Stair.prototype.draw=function()
 									value=10-Math.abs(originY-p);
 									surface.fillStyle="rgb("+value+","+value+","+value+")";
 						}
-				}
-				if(this.map[o][p]==1 && this.getRoomAt(o,p)!=false)
+				}	
+						
+				if(this.getRoomAt(o,p)!=false)
 				{
 							if(this.getRoomAt(o,p).getBiome()=="plain")
-								surface.fillText(PlainTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+							{
+								if(this.map[o][p]==1)
+									surface.fillText(PlainTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+								else if(this.map[o][p]==5)
+									surface.fillText(PlainTile.Tree,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+							}
+							else if(this.getRoomAt(o,p).getBiome()=="dungeon")
+							{
+								if(this.map[o][p]==5)
+									surface.fillText(DungeonTile.Stone,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+							}
 				}
-				else if(this.map[o][p]==2)
+				if(this.map[o][p]==2)
 								surface.fillText(DungeonTile.Wall,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				else if(this.map[o][p]=="stair")
 								surface.fillText(DungeonTile.Stair,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
@@ -526,7 +603,7 @@ Stair.prototype.getMap=function()
  */
 Stair.prototype.walkable=function(xTemp,yTemp)
 {
-		if(this.map[xTemp][yTemp]==2 || this.map[xTemp][yTemp]==0)
+		if(this.map[xTemp][yTemp]==2 || this.map[xTemp][yTemp]==0 || this.map[xTemp][yTemp]==5)
 			return false;
 		else
 			return true;
