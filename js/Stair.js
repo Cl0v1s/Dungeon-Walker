@@ -12,6 +12,8 @@ function Stair()
 		}
 	}
 	this.light=Math.floor(Math.random()*4)+5;
+	this.animationFrame=0;
+	this.fireNumber=1;
 	this.spawnPoint=null;
 	this.rooms=new Array();
 	this.roomsNumber=0;
@@ -151,6 +153,16 @@ Stair.prototype.generateObstacles=function()
 									}
 									if(tentatives>=50)
 										continue;
+										
+									tentative=0;
+									while((this.map[roomTemp.getX()+xTemp-1][roomTemp.getY()+yTemp] != 1 || this.map[roomTemp.getX()+xTemp+1][roomTemp.getY()+yTemp] != 1 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp+1] != 1 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp-1] != 1) && tentative<50)
+									{
+										tentatives+=1;
+										xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+										yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;
+									}
+									if(tentatives>=50)
+										continue;
 									this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp]=5;
 							}
 						}
@@ -167,6 +179,15 @@ Stair.prototype.generateObstacles=function()
 										tentatives+=1;
 										xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
 										yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;									
+									}
+									if(tentatives>=50)
+										continue;
+									tentative=0;
+									while((this.map[roomTemp.getX()+xTemp-1][roomTemp.getY()+yTemp] == 2 || this.map[roomTemp.getX()+xTemp+1][roomTemp.getY()+yTemp] == 2 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp+1] == 2 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp-1] == 2) && tentative<50)
+									{
+										tentatives+=1;
+										xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+										yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;
 									}
 									if(tentatives>=50)
 										continue;
@@ -439,6 +460,7 @@ Stair.prototype.draw=function()
 	side=Motor.player.getLight()*this.light;
 	originX=Math.floor(Motor.player.getX()-side/2);
 	originY=Math.floor(Motor.player.getY()-side/2);
+	this.animationFrame+=1;
 	for(o=0;o<88;o++)
 	{
 		for(p=0;p<48;p++)
@@ -465,8 +487,6 @@ Stair.prototype.draw=function()
 							surface.fillStyle = DungeonTile.WallColor;
 				else if(this.map[o][p]>=10)
 							surface.fillStyle="rgb(248,214,0)";
-				else if(this.map[o][p]==3)
-							surface.fillStyle=DungeonTile.Water_1Color;
 							
 				if(this.getRoomAt(o,p) != false)
 				{
@@ -540,7 +560,9 @@ Stair.prototype.draw=function()
 				else if(this.map[o][p]>=10)
 								surface.fillText("$",Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				else if(this.map[o][p]==3)
-							surface.fillText(DungeonTile.Water_1,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+							this.drawWater(o,p);
+				else if(this.map[o][p]==4)
+							this.drawFire(o,p);
 				
 		}
 	}
@@ -565,6 +587,81 @@ Stair.prototype.draw=function()
 	}
 	
 }
+
+/**
+ * This method draw draws and animates the water on the screen
+ */
+Stair.prototype.drawWater=function(xTemp,yTemp)
+{
+	if(this.animationFrame<=50)
+	{
+		surface.fillStyle = DungeonTile.Water_1Color;
+		surface.fillText(DungeonTile.Water_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+	}
+	else if(this.animationFrame>50 && this.animationFrame<=100)
+	{
+		surface.fillStyle = DungeonTile.Water_2Color;
+		surface.fillText(DungeonTile.Water_2,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+	}
+	else
+	{
+			this.animationFrame=0;
+			surface.fillStyle = DungeonTile.Water_1Color;
+			surface.fillText(DungeonTile.Water_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+	}	
+}
+
+
+
+/**
+ * This method draws and animates the fire on the screen.
+ */
+Stair.prototype.drawFire=function(xTemp,yTemp)
+{
+	rand=Math.floor(Math.random()*100)+1;
+	if(rand==1)
+	{
+		this.map[xTemp][yTemp]=1;
+		return;
+	}
+	if(rand==6 && this.getRoomAt(xTemp,yTemp)!=false)
+	{
+		if(this.getRoomAt(xTemp,yTemp).getBiome()=="plain")
+		{
+				rand=Math.floor(Math.random()*4)+1;
+				if(rand==1 && this.map[xTemp-1][yTemp]==1)
+					this.map[xTemp-1][yTemp]=4;
+				else if(rand==2 && this.map[xTemp][yTemp-1]==1)
+					this.map[xTemp][yTemp-1]=4;
+				else if(rand==3 && this.map[xTemp+1][yTemp]==1)
+					this.map[xTemp+1][yTemp]=4;
+				else if(rand==4 && this.map[xTemp][yTemp+1]==1)
+					this.map[xTemp][yTemp+1]=4;
+		}
+	}
+	
+
+	
+	if(this.animationFrame<=20)
+	{
+		surface.fillStyle = DungeonTile.Fire_1Color;
+		surface.fillText(DungeonTile.Fire_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+	}
+	else if(this.animationFrame>20 && this.animationFrame<=40)
+	{
+		surface.fillStyle = DungeonTile.Fire_2Color;
+		surface.fillText(DungeonTile.Fire_2,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+	}
+	else
+	{
+			this.animationFrame=0;
+			surface.fillStyle = DungeonTile.Fire_1Color;
+			surface.fillText(DungeonTile.Fire_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+	}
+	
+}
+
+
 
 /**
  * This method puts the stairs and the spawn point
@@ -595,6 +692,15 @@ Stair.prototype.getSpawnPoint=function()
 Stair.prototype.getMap=function()
 {
 		return this.map;
+}
+
+/**
+ * Sets the specified position to the fire Tile id
+ */
+Stair.prototype.setFire=function(xTemp,yTemp)
+{
+	if(this.map[xTemp][yTemp]==1)
+		this.map[xTemp][yTemp]=4;
 }
 
 /**

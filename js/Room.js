@@ -22,7 +22,7 @@ var DungeonTile={
 "WallColor" : "rgb(153,153,153)",
 "Water_1" : "-",
 "Water_1Color" : "rgb(50,50,150)",
-"Water_2" : ">",
+"Water_2" : "_",
 "Water_2Color" : "rgb(50,50,250)",
 "Fire_1" : "w",
 "Fire_1Color" : "rgb(150,50,50)",

@@ -23,3 +23,8 @@ var SpiderEye=new Item("oeil d'arai.",2,"Un oeil visqueux arachee du corps d'une
 var RottenFlesh=new ItemFood("chair infame",2,2,undefined,"Un bout de chair a l'aspect fort peu apetissant.",2);
 var Steak=new ItemFood("steak",2,10,undefined,"Un bon morceau de muscle cuit a point.",15);
 var RawSteak=new ItemFood("steak cru",2,5,Steak,"Un morceau de muscle juteux preleve sur un cadavre.",5);
+
+/**
+ * The specials items.
+ */
+var Lighter=new ItemLighter("briquet",5,"un petit briquet constitue d'un pierre et d'un bout de fer rouille.",3);

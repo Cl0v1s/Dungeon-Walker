@@ -1,17 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////////////
-//class Equipement
-//////////////////////////////////////////////////////////////////////////////////////
-//par chaipokoi
-//crée le : 12/08/2012
-/////////////////////////////////////////////////////////////////////////////////////
-//gère les equipements du joueur.
-//-permet au joueur d'equiper des items
-//-gère le tri et l'affichage du contenu
-//-permet au joueur de retirer des items
-//-gère la lecture de la description des items
-////////////////////////////////////////////////////////////////////////////////////
-
-
 function Equipement()
 {
 	this.index=0;
@@ -40,6 +26,9 @@ Equipement.prototype.wear=function(zone,id)
 
 Equipement.prototype.update=function()
 {
+	clean();
+	Motor.player.draw();
+	Motor.dungeon.getCurrentStair().draw();
 	this.contains[0]=this.contains["head"];
 	this.contains[1]=this.contains["torse"];
 	this.contains[2]=this.contains["weapon"];

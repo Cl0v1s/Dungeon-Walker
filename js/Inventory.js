@@ -8,7 +8,7 @@ function Inventory(owner)
 	this.pointer_x=0;
 	this.pointer_y=1;
 	this.examination=0;
-	this.add(5);
+	this.add(7);
 }
 
 /**
@@ -42,6 +42,9 @@ Inventory.prototype.add=function(id)
 Inventory.prototype.update=function()
 {
 	this.inputUpdate();
+	clean();
+	Motor.player.draw();
+	Motor.dungeon.getCurrentStair().draw();
 	surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (0, 0,320,320);
 	surface.fillRect (Motor.messages.x*32-100, (Motor.messages.y-1)*32,600,500);

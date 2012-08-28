@@ -1,4 +1,3 @@
-
 function Monster(x,y,race)
 {
 	this.x=x;
@@ -19,15 +18,21 @@ function Monster(x,y,race)
 	this.life_max=this.life;
 	this.weapon=this.race.weapon;
 	this.onFire=false;
-	this.fi=5;;
+	this.fi=5;
 
 }
 
+/**
+ * Sets the monster's life counter
+ */
 Monster.prototype.setLife=function(nb)
 {
 	this.life=nb;
 }
 
+/**
+ * Draws the monster on the screen
+ */
 Monster.prototype.draw=function(intancity)
 {
 	surface.font = "30px pixel";
@@ -45,6 +50,9 @@ Monster.prototype.draw=function(intancity)
 	}
 }
 
+/**
+ * This method manages the monster's fight actions
+ */
 Monster.prototype.turn=function(ennemy)
 {
 	//détermination des degats de base de l'arme
@@ -87,6 +95,10 @@ Monster.prototype.turn=function(ennemy)
 
 }
 
+/**
+ * This method is the monster's basic movement IA.
+ * This method selects a walkable direction for the monster.
+ */
 Monster.prototype.selectDir=function()
 {
 	if(this.follow==false)
@@ -116,7 +128,9 @@ Monster.prototype.selectDir=function()
 	}
 }
 
-
+/**
+ * This method moves the monster
+ */
 Monster.prototype.move=function(dir)
 {
 	Motor.dungeon.getCurrentStair().map[this.x][this.y]=1;
@@ -143,6 +157,10 @@ Monster.prototype.move=function(dir)
 	
 }
 
+
+/**
+ * If the onFire trigger is on true, then this method apply damages on the monster.
+ */
 Monster.prototype.fire=function()
 {
 	if(this.onFire==true)
@@ -154,19 +172,25 @@ Monster.prototype.fire=function()
 	}
 }
 
-
+/**
+ * Sets the onFire trigger to true.
+ */
 Monster.prototype.setFire=function()
 {
 	this.onFire=true;
 }
 
-
+/**
+ * Returns the monster's x coordinate 
+ */
 Monster.prototype.getX=function()
 {
 	return this.x;
 }
 
-
+/**
+ * Returns the monster's y coordinate.
+ */
 Monster.prototype.getY=function()
 {
 		return this.y;
