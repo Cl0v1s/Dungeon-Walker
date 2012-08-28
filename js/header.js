@@ -81,51 +81,11 @@ Armurerie[6]=EPEE_A_SIMPLE_TRANCHANT;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Items
-var STEAK_CUIT={
-"Name" : "steak cuit",
-"Pound" : 2,
-"Desc" : " Un bon morceau de muscle cuit a point.",
-"Effect" : "eat",
-"EffectValue" : 10,
-"Cookable" : false,
-"Price" : 15
-}
-var STEAK_CRU={
-"Name" : "steak cru",
-"Pound" : 2,
-"Desc" : " Un morceau de muscle juteux preleve sur un cadavre.",
-"Effect" : "eat",
-"EffectValue" : 5,
-"Cookable" : STEAK_CUIT,
-"Price" : 5
-}
-var PATTE_D_ARAIGNEE={
-"Name" : "patte d'arai.",
-"Pound" : 2,
-"Desc" : " Une patte velue arachee du corps d'une enorme araignee.",
-"Effect" : "",
-"EffectValue" : 0,
-"Cookable" : false,
-"Price" : 2
-}
-var OEIL_D_ARAIGNEE={
-"Name" : "oeil d'arai.",
-"Pound" : 2,
-"Desc" : " Un oeil visqueux arachee du corps d'une enorme araignee.",
-"Effect" : "",
-"EffectValue" : 0,
-"Cookable" : false,
-"Price" : 2
-}
-var CHAIR_INFAME={
-"Name" : "chair infame",
-"Pound" : 2,
-"Desc" : " Un bout de chair a l'aspect fort peu apetissant.",
-"Effect" : "eat",
-"EffectValue" : 2,
-"Cookable" : false,
-"Price" : 2
-}
+
+
+
+
+
 var BRIQUET={
 "Name" : "briquet",
 "Pound" : 3,
@@ -136,15 +96,8 @@ var BRIQUET={
 "Price" : 30
 }
 
-var Item=new Array();
-Item[0]=STEAK_CUIT;
-Item[1]=STEAK_CRU;
-Item[2]=PATTE_D_ARAIGNEE;
-Item[3]=OEIL_D_ARAIGNEE;
-Item[4]=CHAIR_INFAME;
 
-
-
+Item=new Array();
 Item[100]=Armurerie[0];
 Item[101]=Armurerie[1];
 Item[102]=Armurerie[2];
@@ -166,11 +119,12 @@ var ARAIGNEE_VELUE={
 "Desc" : "On trouve cette araignée de la taille d'une main et à la morsure redoutable dans les jungles, les tombes, les grottes, et bien sur, dans tout l'Outreterre. Elles ne tissent pas de toile, mais peuvent s'installer sur celles d'autres araignees.",
 "Score" : 10,
 "Level" : 0,
-"Drop" :new Array()
+"Drop" : new Array()
 }
-ARAIGNEE_VELUE.Drop[0]=2;
-ARAIGNEE_VELUE.Drop[1]=3;
-ARAIGNEE_VELUE.Drop[2]=4;
+ARAIGNEE_VELUE.Drop[0]=SpiderLeg.getId();
+ARAIGNEE_VELUE.Drop[1]=SpiderEye.getId();
+ARAIGNEE_VELUE.Drop[2]=RottenFlesh.getId();
+
 
 var CUBE_GELATINEUX={
 "Name" : "cube gelatineux",

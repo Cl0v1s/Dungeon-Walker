@@ -234,6 +234,7 @@ Stair.prototype.generateWater=function()
 		{
 			for(u=0;u<47;u++)
 			{
+				//BUG A CORRIGER (RARE) 
 				if((this.map[i][u+1]==3 && this.map[i][u-1]==3) || (this.map[i+1][u]==3 && this.map[i-1][u]==3))
 				{
 					if(this.map[i][u]==1)
@@ -469,7 +470,7 @@ Stair.prototype.draw=function()
 							
 				if(this.getRoomAt(o,p) != false)
 				{
-						if(this.getRoomAt(o,p).getBiome() !="plain")
+						if(this.getRoomAt(o,p).getBiome() !="plain" || (this.getRoomAt(o,p).getBiome() =="plain" && this.map[o][p]==2))
 						{
 							if(o<originX)
 							{
@@ -540,8 +541,6 @@ Stair.prototype.draw=function()
 								surface.fillText("$",Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				else if(this.map[o][p]==3)
 							surface.fillText(DungeonTile.Water_1,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
-				else if(this.map[o][p]>=10)
-							surface.fillText("/",Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				
 		}
 	}

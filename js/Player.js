@@ -60,7 +60,7 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.onFire=false;
 	//autre
 	this.score=0;
-	this.inventory=new Inventory(15);
+	this.inventory=new Inventory(this);
 
 	this.hi=this.class.Hi;
 	this.fi=5;
@@ -72,13 +72,11 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	surface.fillStyle="rgb(50,150,50)";
 
 
-
 }
 //////////////////////////////////////////////////////////////
 
 Player.prototype.draw=function()
 {
-
 	if(this.faim>100)
 		this.faim=100;
 
@@ -90,6 +88,18 @@ Player.prototype.draw=function()
 
 	if(this.hygiene>100)
 		this.hygiene=100;
+		
+	if(this.faim<0)
+		this.faim=0;
+
+	if(this.soif<0)
+		this.soif=0;
+
+	if(this.sommeil<0)
+		this.sommeil=0;
+
+	if(this.hygiene<0)
+		this.hygiene=0;
 
 
 	surface.font = "30px pixel";
@@ -233,23 +243,34 @@ Player.prototype.setY=function(y)
 	this.y=y;
 }
 
+/**
+ * Returns the player x pos
+ */
 Player.prototype.getX=function()
 {
 	return this.x;
 }
 
+/**
+ * Returns the player's y pos
+ */
 Player.prototype.getY=function()
 {
 	return this.y;
 }
 
+/**
+ * Sets the player's life counter
+ */
 Player.prototype.setLife=function(nb)
 {
 	this.life=nb;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * This method manage the player's fight actions
+ */
 Player.prototype.turn=function(ennemy)
 {
 	//détermination des degats de base de l'arme
@@ -291,14 +312,18 @@ Player.prototype.turn=function(ennemy)
 	return dmg;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Allow the player to open the inventory GUI
+ */
 Player.prototype.openInventory=function()
 {
 		Motor.messages.add("Vous vous asseyez sur le sol et vous ouvrez votre sac.");
 		Scene=this.inventory;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Allow the player to open the equipement GUI
+ */
 Player.prototype.openEquipement=function()
 {
 		Motor.messages.add("Vous vous asseyez sur le sol et vous otez votre equipement.");
@@ -339,6 +364,31 @@ Player.prototype.getUp=function()
 Player.prototype.getLight=function()
 {
 	return this.light;
+}
+
+
+/**
+ * Returns the player's hungry counter
+ */
+Player.prototype.getHungry=function()
+{
+	return this.faim;
+}
+
+/**
+ * Sets the player's hungry counter
+ */
+Player.prototype.setHungry=function(faimTemp)
+{
+	this.faim=faimTemp;
+}
+
+/**
+ * Returns the player's weight capacity
+ */
+Player.prototype.getPound=function()
+{
+		return this.pound;
 }
 
 

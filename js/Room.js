@@ -327,7 +327,7 @@ Room.prototype.moveMonsters=function()
 						{
 							rand=Math.floor(Math.random()*this.monsters[a].race.Drop.length);
 							drop=this.monsters[a].race.Drop[rand];
-							drop=drop+10;
+							drop=drop+11;
 							Motor.dungeon.getCurrentStair().map[this.monsters[a].getX()][this.monsters[a].getY()]=drop;
 						}
 						this.monsters[a]=undefined;

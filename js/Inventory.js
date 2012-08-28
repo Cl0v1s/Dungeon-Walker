@@ -1,52 +1,44 @@
-//////////////////////////////////////////////////////////////////////////////////////
-//class Inventory
-//////////////////////////////////////////////////////////////////////////////////////
-//par chaipokoi
-//crée le : 7/05/2012
-//modifiée le : 12/08/2012
-/////////////////////////////////////////////////////////////////////////////////////
-//gère un inventaire.
-//-gère la récupération d'objets
-//-gère le tri et l'affichage du contenu
-//-gère l'utilisation des objets
-//-gère la supression des objets
-//-gère la lecture de la description des objets
-////////////////////////////////////////////////////////////////////////////////////
 
-
-function Inventory(size)
+function Inventory(owner)
 {
+	this.owner=owner;
 	this.size=0;
 	this.index=0;
 	this.contains=new Array();
-	this.contains[0]=BRIQUET;
 	this.pointer_x=0;
 	this.pointer_y=1;
 	this.examination=0;
+	this.add(5);
 }
 
-
+/**
+ * Adds an object to the inventory list
+ */
 Inventory.prototype.add=function(id)
 {
-
-	if(this.size<player.pound)
+	if(this.size<this.owner.getPound())
 	{
 		for(i=0;i<=this.contains.length;i++)
 		{
 			if(typeof this.contains[i]=="undefined")
 			{
-				this.contains[i]=Item[id];
-				Motor.messages.add("Vous placez l'objet "+Item[id].Name+" dans votre sac.");
-				this.size+=Item[id].Pound;
+				this.contains[i]=ItemList[id];
+				Motor.messages.add("Vous placez l'objet "+ItemList[id].getName()+" dans votre sac.");
+				this.size+=ItemList[id].getPod();
 				return true;
 			}
 		}
 	}
-	Motor.messages.add("Vous ne pouvez plus rien porter, vous laissez donc l'objet sur le sol.");
-	return false;
-
+	else
+	{
+		Motor.messages.add("Vous ne pouvez plus rien porter, vous laissez donc l'objet sur le sol.");
+		return false;
+	}
 }
 
+/**
+ * Update the inventory GUI
+ */
 Inventory.prototype.update=function()
 {
 	this.inputUpdate();
@@ -57,7 +49,7 @@ Inventory.prototype.update=function()
 	surface.font = "24px pixel";
 	surface.fillStyle = "rgb(150,150,150)";
 	surface.fillText("(e) examiner     (enter) utiliser",5,24);
-	surface.fillText("(d) lacher",5,48);
+	surface.fillText("(c) cuire        (d) lacher",5,48);
 	surface.font = "20px pixel";
 	x=0;
 	y=0;
@@ -67,16 +59,7 @@ Inventory.prototype.update=function()
 		surface.fillStyle = "rgb(150,150,150)";
 		if(typeof this.contains[i] !="undefined")
 		{
-			
-			if(this.contains[i].Effect !="")
-				surface.fillStyle="rgb(0,10,250)";
-			
-			
-			if(this.contains[i].Effect=="eat")
-				surface.fillStyle="rgb(95,54,14)";
-
-
-			surface.fillText(this.contains[i].Name,20+x*100,56+20*y);
+			surface.fillText(this.contains[i].getName(),20+x*100,56+20*y);
 		}
 		else
 			surface.fillText("vide",20+x*100,56+20*y);				
@@ -98,18 +81,21 @@ Inventory.prototype.update=function()
 
 }
 
+/**
+ * Update the player's input
+ */
 Inventory.prototype.inputUpdate=function()
 {
 	if(Input.equals(68))
 	{
-		Motor.messages.add("Vous abandonnez l'objet "+this.contains[this.index].Name+".");
+		Motor.messages.add("Vous abandonnez l'objet "+this.contains[this.index].getName()+".");
 		this.remove(this.index);
 	}
 	if(Input.equals(69))
 	{
 			if(this.examination==0)
 			{
-				Motor.messages.add("Vous regardez l'objet "+this.contains[this.index].Name+" de plus pres.");
+				Motor.messages.add("Vous regardez l'objet "+this.contains[this.index].getName()+" de plus pres.");
 				this.examination+=1;
 				return;
 			}
@@ -129,6 +115,9 @@ Inventory.prototype.inputUpdate=function()
 	if(Input.equals(13))
 		this.use();
 		
+	if(Input.equals(67))
+		this.cook();
+		
 	if(Input.equals(27))
 	{
 		Motor.messages.add("Vous fermez votre sac et vous vous redressez pret a repartir.");
@@ -136,6 +125,9 @@ Inventory.prototype.inputUpdate=function()
 	}	
 }
 
+/**
+ * allow to go down in the list
+ */
 Inventory.prototype.downList=function()
 {
 	if(this.index<this.contains.length-1)
@@ -150,7 +142,9 @@ Inventory.prototype.downList=function()
 	}
 }
 
-
+/**
+ * allow to go up in the list
+ */
 Inventory.prototype.upList=function()
 {
 	if(this.index>0)
@@ -166,42 +160,54 @@ Inventory.prototype.upList=function()
 
 }
 
+/**
+ * Allow the player to use an item. 
+ * This method call the use method of the target item.
+ */
 Inventory.prototype.use=function()
 {
 	if(typeof this.contains[this.index] !="undefined")
 	{
-		if(this.contains[this.index].Effect=="eat" && this.contains[this.index].Cookable==false)
-		{
-			player.faim+=this.contains[this.index].EffectValue;
-			Motor.messages.add("Vous mangez attivement le "+this.contains[this.index].Name+".");
-			this.remove(this.index);
-		}
-		if(this.contains[this.index].Cookable !=false && (Motor.getCurrentRoom().grill[Motor.player.x][Motor.player.y+1]==5 || Motor.getCurrentRoom().grill[Motor.player.x][(Motor.player.y+1)]==6) )
-		{
-			Motor.messages.add("Vous placez l'objet "+this.contains[this.index].Name+" au-dessus du feu.");
-			for(i=0;i<5;i++)
-			{
-				Motor.newTurn();
-			}
-			this.contains[this.index]=this.contains[this.index].Cookable;
-			Motor.messages.add("L'objet "+this.contains[this.index].Name+" est pret.");
-
-		}
-		if(this.contains[this.index].Effect=="fire")
-		{
-			//Motor.getCurrentRoom().setFire(player);
-		}
+		this.contains[this.index]=this.contains[this.index].use(this.owner);
 		this.examination=0;
 	}
 }
 
+/**
+ * Allow the player to cook a item.
+ * This method call the cook method of the target item.
+ */
+Inventory.prototype.cook=function()
+{
+	if(typeof this.contains[this.index] !="undefined")
+	{
+		x=this.owner.getX();
+		y=this.owner.getY();
+		if(Motor.dungeon.getCurrentStair().getMap()[x-1][y]==4 || Motor.dungeon.getCurrentStair().getMap()[x+1][y]==4 || Motor.dungeon.getCurrentStair().getMap()[x][y+1]==4 || Motor.dungeon.getCurrentStair().getMap()[x][y-1]==4)
+		{
+			Motor.messages.add("Vous placez l'objet "+this.contains[this.index].getName()+" au dessus du feu et patientez...");
+			this.contains[this.index]=this.contains[this.index].cook();
+			this.examination=0;
+		}
+		else
+		{
+			Motor.messages.add("Faire cuir un truc ? Mais sur quoi ?");			
+		}
+	}	
+}
+
+/**
+ * Removes an objetc from the list.
+ */
 Inventory.prototype.remove=function(id)
 {
 	this.size-=this.contains[id].Pound;
 	this.contains[id]=undefined;
 }
 
-
+/**
+ * Draw the selectionned item's descritption on the screen.
+ */
 Inventory.prototype.examine=function(id)
 {
 		if(typeof this.contains[id]=="undefined")
@@ -219,10 +225,10 @@ Inventory.prototype.examine=function(id)
 	surface.fillText("(e) fermer     (enter) utiliser",5,24);
 	surface.fillText("(d) lacher",5,48);
 		surface.font="28px pixel";
-		surface.fillText(this.contains[id].Name+" :",5,56+24);
+		surface.fillText(this.contains[id].getName()+" :",5,56+24);
 		surface.font="20px pixel";
 		surface.fillStyle="rgb(150,150,150)";
-		word=this.contains[id].Desc.split("");
+		word=this.contains[id].getDesc().split("");
 		y=0;
 		x=0;
 		flag=15;
