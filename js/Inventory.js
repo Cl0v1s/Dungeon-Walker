@@ -8,7 +8,7 @@ function Inventory(owner)
 	this.pointer_x=0;
 	this.pointer_y=1;
 	this.examination=0;
-	this.add(7);
+	this.add(9);
 }
 
 /**
@@ -171,7 +171,15 @@ Inventory.prototype.use=function()
 {
 	if(typeof this.contains[this.index] !="undefined")
 	{
-		this.contains[this.index]=this.contains[this.index].use(this.owner);
+		if(this.contains[this.index] instanceof ItemEquipement)
+		{
+			this.contains[this.index]=this.owner.equipement.wear(this.contains[this.index]);
+			
+		}
+		else
+		{
+			this.contains[this.index]=this.contains[this.index].use(this.owner);
+		}
 		this.examination=0;
 	}
 }

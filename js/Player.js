@@ -20,10 +20,13 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	}
 	total=total*this.class.Lrm;
 	this.life+=total;
+
+	this.atk=1;
+	this.lrm=this.class.Lrm;
+	this.launch=this.class.Launch;
+	
 	this.img=this.class.Img;
-	this.equipement=new Equipement();
-	this.equipement.wear("weapon",(this.class.Weapon.Id+100));
-	this.weapon=this.equipement.contains["weapon"];
+	this.equipement=new Equipement(this);
 	this.pound=Math.floor(((this.taille*2+this.constitution)/3)/4);
 	//statistiques de survie
 	this.hygiene=100;
@@ -284,13 +287,13 @@ Player.prototype.turn=function(ennemy)
 {
 	//détermination des degats de base de l'arme
 	total=0;
-	for(i=0;i<this.weapon.Launch;i++)
+	for(i=0;i<this.launch;i++)
 	{
 		lancer=Math.random()*6+1;
 		lancer=Math.floor(lancer);
 		total=total+lancer;
 	}
-	dmg=this.weapon.Atk+total*this.weapon.Lrm+Math.floor(this.dexterite/10);
+	dmg=this.atk*this.force+total*this.lrm+Math.floor(this.dexterite/10);
 	//bonus de zone
 	zone=Math.floor((Math.random()*3)+1);
 	switch(zone)
@@ -313,9 +316,9 @@ Player.prototype.turn=function(ennemy)
 	//parade réussi 
 	if(test==2)
 	{
-	parade=Math.floor((Math.random()*30)+1);
-	parade=dmg*parade/100;
-	dmg=dmg-Math.floor(parade);
+		parade=Math.floor((Math.random()*30)+1);
+		parade=dmg*parade/100;
+		dmg=dmg-Math.floor(parade);
 	}
 	ennemy.setLife(ennemy.life-dmg)
 	return dmg;
@@ -431,5 +434,79 @@ Player.prototype.contextMessage=function()
 		}
 }
 
+/**
+ * Returns the player's attack amount
+ */
+Player.prototype.getAtk=function()
+{
+	return this.atk;
+}
 
+/**
+ * Returns the player's lrm amount
+ */
+Player.prototype.getLrm=function()
+{
+	return this.lrm;
+}
 
+/**
+ * Returns the player's launch number
+ */
+Player.prototype.getLaunch=function()
+{
+	return this.launch;
+}
+
+/**
+ * Returns the player's consititution amount
+ */
+Player.prototype.getConst=function()
+{
+	return this.constitution;
+}
+
+/**
+ * Returns the player's dexterity amount
+ */
+Player.prototype.getDex=function()
+{
+	return this.dexterite;
+}
+
+/**
+ * Sets the player's attack amount
+ */
+Player.prototype.setAtk=function(value)
+{
+	this.atk=value;
+}
+
+/**
+ * Sets the player's lrm amount
+ */
+Player.prototype.setLrm=function(value)
+{
+	this.lrm=value;
+}
+/**
+ * Sets the player's launch number
+ */
+Player.prototype.setLaunch=function(value)
+{
+	this.launch=value;
+}
+/**
+ * Sets the player's consitution amount
+ */
+Player.prototype.setConst=function(value)
+{
+	this.constitution=value;
+}
+/**
+ * Sets the player's dexerity amount
+ */
+Player.prototype.setDex=function(value)
+{
+	this.dexterite=value;
+}

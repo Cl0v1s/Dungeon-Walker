@@ -413,30 +413,3 @@ Room.prototype.battle=function(fighter1,fighter2)
 }
 
 
-/*
-Room.prototype.setFire=function(entity)
-{
-	rand=Math.floor(Math.random()*6);
-	if(rand>=1 && rand<=3)
-	{
-		if(this.grill[entity.x][entity.y+1]==1)
-		{
-			this.grill[entity.x][entity.y+1]=5;
-			Motor.messages.add("Vous reussissez a mettre le feu au sol.")
-		}
-		else
-		{
-			Motor.messages.add("Vous ne pouvez pas allumer un feu ici !");
-		}
-	}
-	else
-	{
-			Motor.messages.add("Une petite braise apparait...Mais ne survit malheureusement pas.")
-	}
-	Motor.newTurn();
-	clean();
-	this.draw();
-
-}
-*/
-

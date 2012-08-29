@@ -6,8 +6,9 @@ function Item(nameTemp,poundTemp,descTemp,priceTemp)
 		this.pod=poundTemp;
 		this.desc=descTemp;
 		this.price=priceTemp;
-		this.id=ItemList.length-1;
+		this.id=ItemList.length;
 		ItemList.push(this);
+		//alert(this.name+":"+this.id);
 }
 
 /**

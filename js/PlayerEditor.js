@@ -111,7 +111,7 @@ PlayerEditor.prototype.update=function()
 PlayerEditor.prototype.validate=function()
 {
 	Motor.generateStair();
-	player=new Player(0,0,50,50,180,50,Class[this.index]);
+	player=new Player(0,0,1,50,180,50,Class[this.index]);
 	Motor.start(player);
 	Scene=Motor;
 }
