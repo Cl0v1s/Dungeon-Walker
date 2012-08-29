@@ -18,8 +18,10 @@ function Monster(x,y,race)
 	this.life_max=this.life;
 	this.weapon=this.race.weapon;
 	this.onFire=false;
-	this.fi=5;
-
+	this.fireFrame=0;
+	this.fireInterval=5;
+	this.previousTile=1;
+	this.death=false;
 }
 
 /**
@@ -35,6 +37,10 @@ Monster.prototype.setLife=function(nb)
  */
 Monster.prototype.draw=function(intancity)
 {
+	if(this.life<=0)
+	{
+		return;
+	}
 	surface.font = "30px pixel";
 	if(this.follow==false)
 		surface.fillStyle="rgb("+Math.floor(150*intancity)+","+Math.floor(50*intancity)+","+Math.floor(50*intancity)+")";
@@ -133,7 +139,10 @@ Monster.prototype.selectDir=function()
  */
 Monster.prototype.move=function(dir)
 {
-	Motor.dungeon.getCurrentStair().map[this.x][this.y]=1;
+	if(this.life<=0)
+		return;
+	this.fire();
+	Motor.dungeon.getCurrentStair().map[this.x][this.y]=this.previousTile;
 	switch(dir)
 	{
 		case "right":
@@ -153,22 +162,35 @@ Monster.prototype.move=function(dir)
 				this.y-=1;
 				break;
 	}
+	this.previousTile=Motor.dungeon.getCurrentStair().map[this.x][this.y];
+	if(this.previousTile==4)
+		this.setFire();
 	Motor.dungeon.getCurrentStair().map[this.x][this.y]=0;
 	
 }
 
 
 /**
- * If the onFire trigger is on true, then this method apply damages on the monster.
+ * if the onFire trigger is on true, then inflict some damages to the monster
  */
 Monster.prototype.fire=function()
 {
 	if(this.onFire==true)
 	{		
-			this.fi+=5;
-			this.life-=(20*this.life_max/100);
-			this.life=Math.floor(this.life);
-			Msgzone.add(this.nam+" brule en criant.");
+			this.fireFrame+=1;
+			if(this.fireFrame>=this.fireInterval)
+			{
+				this.fireFrame=0;
+				this.life-=(20*this.life_max/100);
+				this.life=Math.floor(this.life);
+				if(this.life>0)
+					Motor.messages.add(this.nam+" brule en criant.");
+				else
+				{
+					Motor.messages.add(this.nam+" disparait dans un petit nuage de poussieres.");
+					this.kill("burnt");
+				}
+			}
 	}
 }
 
@@ -195,3 +217,35 @@ Monster.prototype.getY=function()
 {
 		return this.y;
 }
+
+/**
+ * Return if the monster is dead or not
+ */
+Monster.prototype.isDead=function()
+{
+	return this.death;
+}
+
+/**
+ * Kill the monster
+ */
+Monster.prototype.kill=function(reason)
+{
+	if(reason=="slain")
+	{
+						drop=Math.floor(Math.random()*2)+1;
+						if(drop==1)
+						{
+							rand=Math.floor(Math.random()*this.race.Drop.length);
+							drop=this.race.Drop[rand];
+							drop=drop+11;
+							Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=drop;
+						}
+						else
+							Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=this.previousTile;
+	}
+	else
+		Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=this.previousTile;
+	this.death=true;
+}
+

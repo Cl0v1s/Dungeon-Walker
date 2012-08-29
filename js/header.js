@@ -81,22 +81,6 @@ Armurerie[6]=EPEE_A_SIMPLE_TRANCHANT;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Items
-
-
-
-
-
-var BRIQUET={
-"Name" : "briquet",
-"Pound" : 3,
-"Desc" : " un petit briquet constitue d'un silex et d'un fragment de fer.",
-"Effect" : "fire",
-"EffectValue" : 0,
-"Cookable" : false,
-"Price" : 30
-}
-
-
 Item=new Array();
 Item[100]=Armurerie[0];
 Item[101]=Armurerie[1];

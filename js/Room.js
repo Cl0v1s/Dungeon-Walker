@@ -16,6 +16,7 @@
 
 
 var DungeonTile={
+"Ground" : ".",
 "Stone" : "@",
 "StoneColor" : "rgb(120,100,120)",
 "Wall" : "#",
@@ -274,9 +275,6 @@ Room.prototype.moveMonsters=function()
 {
 	for(a=0;a<this.monsters.length;a++)
 	{
-
-	
-
 		battle=0;
 		if(this.monsters[a] !=undefined)
 		{
@@ -298,11 +296,11 @@ Room.prototype.moveMonsters=function()
 								result=this.battle(this.monsters[m],this.monsters[a]);
 								if(result==false)
 								{
-									this.monsters[a]=undefined;
+									this.monsters[a].kill("slain");
 								}
 								if(result==true)
 								{
-									this.monsters[m]=undefined;
+									this.monsters[m].kill("slain");
 								}
 							}
 							if(this.monsters[m].onFire==true)
@@ -321,16 +319,8 @@ Room.prototype.moveMonsters=function()
 					result=this.battle(player,this.monsters[a]);
 					if(result==false)
 					{
-						drop=Math.floor(Math.random()*2)+1;
 						Motor.player.score+=this.monsters[a].race.Score;
-						if(drop==1)
-						{
-							rand=Math.floor(Math.random()*this.monsters[a].race.Drop.length);
-							drop=this.monsters[a].race.Drop[rand];
-							drop=drop+11;
-							Motor.dungeon.getCurrentStair().map[this.monsters[a].getX()][this.monsters[a].getY()]=drop;
-						}
-						this.monsters[a]=undefined;
+						this.monsters[a].kill("slain");
 					}
 					if(result==true)
 					{
@@ -344,7 +334,8 @@ Room.prototype.moveMonsters=function()
 					this.monsters[a].selectDir(this.map);
 				}
 		
-
+				if(this.monsters[a].isDead())
+					this.monsters[a]=undefined;
 		}
 	}
 
@@ -403,7 +394,6 @@ Room.prototype.battle=function(fighter1,fighter2)
 
 	if(fighter1.life<=0)
 	{
-		this.entityGrill[fighter1.x][fighter1.y]=1;
 		Motor.messages.add(fighter2.nam+" a vaincu "+fighter1.nam+".");
 		Motor.messages.changeMode("normal");
 		return true;

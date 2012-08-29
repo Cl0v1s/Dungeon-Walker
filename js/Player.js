@@ -1,29 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////////////
-//class Player
-//////////////////////////////////////////////////////////////////////////////////////
-//par chaipokoi
-//crée le : 6/05/2012
-//modifiée le : 16/06/2012
-//-17/06/2012
-//-20/06/2012
-/////////////////////////////////////////////////////////////////////////////////////
-//permet de gérer le joueur local,
-//Fonctionnalités:
-//-déplacement dans la salle=move(dir)
-//-changement de salle=changeRoom(dir)
-//-affichage à l'écran=draw()
-//-récupération des positions x et y du joueur=getX() et getY()
-//-régalage des positions x et y  du joueur
-//-soigne le joueur a l'intervalle donné par la classe du joueur
-//-modifie les statistiques de survie du joueur
-//-permet l'action de boire afin de remonter la statiqtique soif 
-//-gère la maladie
-//-gère l'état "en feu"
-//-gère l'ouverture de l'inventaire
-//-gère la mort
-////////////////////////////////////////////////////////////////////////////////////
-
-
 function Player(x,y,FOR,CON,TAI,DEX,race)
 {
 	this.x=x;
@@ -61,9 +35,12 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	//autre
 	this.score=0;
 	this.inventory=new Inventory(this);
+	this.fireInterval=5;
+	this.fireFrame=0;
+	this.previousTile=1;
+
 
 	this.hi=this.class.Hi;
-	this.fi=5;
 	this.si=20;
 	
 
@@ -73,8 +50,10 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 
 
 }
-//////////////////////////////////////////////////////////////
 
+/**
+ * Draws the player on the screen
+ */
 Player.prototype.draw=function()
 {
 	if(this.faim>100)
@@ -108,14 +87,18 @@ Player.prototype.draw=function()
 	if(this.onFire==true)
 	{
 		surface.fillStyle="rgb(250,50,50)";
-		surface.fillText("W", this.x*32, this.y*32);
+		surface.fillText("W", Motor.getXPos()+this.x*32, Motor.getYPos()+this.y*32);
 	}
 }
-////////////////////////////////////////////////////////////////
 
+/**
+ * Manages the player's movements 
+ */
 Player.prototype.move=function(dir)
 {
 	stair=Motor.dungeon.getCurrentStair();
+	this.fire();
+	stair.map[this.x][this.y]=this.previousTile;
 	switch(dir)
 	{				
 		case "right":
@@ -149,9 +132,14 @@ Player.prototype.move=function(dir)
 	}
 	this.getObject();
 	this.getUp();
+	this.previousTile=stair.getMap()[this.x][this.y];
+	this.contextMessage();
+	stair.map[this.x][this.y]=0;
 }
-//////////////////////////////////////////////////////////////////:
 
+/**
+ * if the isSick trigger is on true, then inflict some damages to the player 
+ */
 Player.prototype.sick=function()
 {
 	if(this.isSick==true)
@@ -168,17 +156,27 @@ Player.prototype.sick=function()
 	}
 }
 
-/////////////////////////////////////////////////////////////////////
+/**
+ * if the onFire trigger is on true, then inflict some damages to the player
+ */
 Player.prototype.fire=function()
 {
 	if(this.onFire==true)
 	{		
-			this.life-=10;
-			Motor.messages.add("Vous brulez a petit feu.");
+			this.fireFrame+=1;
+			if(this.fireFrame>=this.fireInterval)
+			{
+				this.fireFrame=0;
+				this.life-=10;
+				Motor.messages.add("Vous brulez a petit feu.");
+			}
 	}
 }
-/////////////////////////////////////////////////////////////////////
 
+
+/**
+ * Heals the player
+ */
 Player.prototype.heal=function()
 {
 	if(this.isSick==false && this.faim>50)
@@ -188,16 +186,22 @@ Player.prototype.heal=function()
 	}
 
 }
-////////////////////////////////////////////////////////////////////
 
+
+/**
+ * This method manages the player's stats
+ */
 Player.prototype.changeStat=function()
 {
 	this.soif-=(100/5);
 	this.sommeil-=(50/3);
 	this.faim-=30+(Math.floor(Math.random()*20));
 }
-////////////////////////////////////////////////////////////////////
 
+
+/**
+ * This method allow the player to drink some water.
+ */
 Player.prototype.lap=function()
 {
 	grill=Motor.dungeon.getCurrentStair().map[this.x][this.y];
@@ -231,13 +235,18 @@ Player.prototype.lap=function()
 		Motor.messages.add("Il n'y a pas d'eau a vos pieds.");
 	}
 }
-////////////////////////////////////////////////////////////////////
 
+/**
+ * Sets the player's x pos
+ */
 Player.prototype.setX=function(x)
 {
 	this.x=x;
 }
 
+/**
+ * Sets the player's y pos
+ */
 Player.prototype.setY=function(y)
 {
 	this.y=y;
@@ -398,6 +407,28 @@ Player.prototype.getPound=function()
 Player.prototype.kill=function()
 {
 	Motor.gameOver();
+}
+
+/**
+ * Send a message to the HUD in accord with the player's situation.
+ * Can be change the player's stats.
+ */
+Player.prototype.contextMessage=function()
+{
+		if(this.previousTile==3)
+		{
+			Motor.messages.add("Vous marchez dans une flaque d'eau, formee annee apres annee par l'infiltration.");
+			if(this.onFire==true)
+			{
+				Motor.messages.add("Vous laisser l'eau fraiche recouvrir vos brulure...");
+				this.onFire=false;
+			}
+		}
+		else if(this.previousTile==4)
+		{
+			Motor.messages.add("Vous marchez dans des flammes, idiot !");
+			this.onFire=true;
+		}
 }
 
 

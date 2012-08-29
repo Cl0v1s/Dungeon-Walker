@@ -477,13 +477,18 @@ Stair.prototype.draw=function()
 							}
 							else if(this.getRoomAt(o,p).getBiome()=="dungeon")
 							{
-								if(this.map[o][p]==5)
+								if(this.map[o][p]==1)
+									surface.fillStyle = DungeonTile.WallColor;
+								else if(this.map[o][p]==5)
 									surface.fillStyle = DungeonTile.StoneColor;
 							}
 				}
-				if(this.map[o][p]==2)
-							surface.fillStyle = DungeonTile.WallColor;
-				else if(this.map[o][p]=="stair")
+				else
+				{
+					if(this.map[o][p]==1)
+						surface.fillStyle = DungeonTile.WallColor;	
+				}
+				if(this.map[o][p]==2 || this.map[o][p]=="stair")
 							surface.fillStyle = DungeonTile.WallColor;
 				else if(this.map[o][p]>=10)
 							surface.fillStyle="rgb(248,214,0)";
@@ -549,9 +554,16 @@ Stair.prototype.draw=function()
 							}
 							else if(this.getRoomAt(o,p).getBiome()=="dungeon")
 							{
-								if(this.map[o][p]==5)
+								if(this.map[o][p]==1)
+										surface.fillText(DungeonTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+								else if(this.map[o][p]==5)
 									surface.fillText(DungeonTile.Stone,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 							}
+				}
+				else 
+				{
+									if(this.map[o][p]==1)
+										surface.fillText(DungeonTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 				}
 				if(this.map[o][p]==2)
 								surface.fillText(DungeonTile.Wall,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
@@ -719,8 +731,8 @@ Stair.prototype.walkable=function(xTemp,yTemp)
  */
 Stair.prototype.walkableMonster=function(xTemp,yTemp)
 {
-		if(this.map[xTemp][yTemp] !=1)
-			return false;
-		else
+		if(this.map[xTemp][yTemp] ==1 || this.map[xTemp][yTemp] ==4)
 			return true;
+		else
+			return false;
 }
