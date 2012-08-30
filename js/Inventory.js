@@ -8,7 +8,6 @@ function Inventory(owner)
 	this.pointer_x=0;
 	this.pointer_y=1;
 	this.examination=0;
-	this.add(9);
 }
 
 /**
@@ -23,7 +22,8 @@ Inventory.prototype.add=function(id)
 			if(typeof this.contains[i]=="undefined")
 			{
 				this.contains[i]=ItemList[id];
-				Motor.messages.add("Vous placez l'objet "+ItemList[id].getName()+" dans votre sac.");
+				if(this.owner instanceof Player)
+					Motor.messages.add("Vous placez l'objet "+ItemList[id].getName()+" dans votre sac.");
 				this.size+=ItemList[id].getPod();
 				return true;
 			}
@@ -31,7 +31,8 @@ Inventory.prototype.add=function(id)
 	}
 	else
 	{
-		Motor.messages.add("Vous ne pouvez plus rien porter, vous laissez donc l'objet sur le sol.");
+		if(this.owner instanceof Player)
+			Motor.messages.add("Vous ne pouvez plus rien porter, vous laissez donc l'objet sur le sol.");
 		return false;
 	}
 }

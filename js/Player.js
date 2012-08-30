@@ -41,7 +41,8 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.fireInterval=5;
 	this.fireFrame=0;
 	this.previousTile=1;
-
+	this.inventory.add(this.class.Weapon.getId());
+	this.inventory.use();
 
 	this.hi=this.class.Hi;
 	this.si=20;
@@ -285,42 +286,52 @@ Player.prototype.setLife=function(nb)
  */
 Player.prototype.turn=function(ennemy)
 {
-	//détermination des degats de base de l'arme
-	total=0;
-	for(i=0;i<this.launch;i++)
-	{
-		lancer=Math.random()*6+1;
-		lancer=Math.floor(lancer);
-		total=total+lancer;
-	}
-	dmg=this.atk*this.force+total*this.lrm+Math.floor(this.dexterite/10);
+	fighter1=this;
+	fighter2=ennemy;
+	//Degats basiques des coups porté
+		//Degats statiques
+		total=fighter1.atk;
+		//ajout des degats du nombre de coups portés avec l'arme
+		for(i=0;i<fighter1.launch;i++)
+		{
+			lancer=Math.random()*6+1;
+			lancer=Math.floor(lancer);
+			total=total+Math.round(fighter1.atk/lancer);
+		}
+		dmg=total;
 	//bonus de zone
-	zone=Math.floor((Math.random()*3)+1);
-	switch(zone)
-	{
-		//coup à la tete
-		case 1 :
-		dmg=dmg+Math.floor((Math.random()*6)+1);
-		break;
-		//coup au torse
-		case 2:
-		dmg=dmg+Math.floor((Math.random()*4)+1);
-		break;
-		//coup au membres
-		case 3:
-		dmg=dmg+Math.floor((Math.random()*2)+1);
-		break;
-	}
+	if(fighter1.dexterite>100)
+		fighter1.dexterite=100;
+		
+	zone=Math.floor(Math.random()*(100-fighter1.dexterite))+1;
+	
+	if(zone>=0 && zone<=10)
+		dmg=dmg+Math.round(fighter1.force*30/100);
+	else if(zone>=11 && zone<=50)
+		dmg=dmg+Math.round(fighter1.force*20/100);
+	else
+		dmg=dmg+Math.round(fighter1.force*10/100);
+		
+	
+	
+
 	//parade de l'ennemi
-	test=Math.floor((Math.random()*3)+1);
-	//parade réussi 
-	if(test==2)
+	if(fighter2.dexterite>fighter1.dexterite)
 	{
-		parade=Math.floor((Math.random()*30)+1);
-		parade=dmg*parade/100;
-		dmg=dmg-Math.floor(parade);
+		if(fighter2.dexterite>100)
+			fighter2.dexterite=100;
+			
+		zone=Math.floor(Math.random()*(100-fighter2.dexterite))+1;
+		
+		if(zone>=0 && zone<=30)
+		{
+			parade=Math.floor((Math.random()*fighter2.constitution)+1);
+			parade=dmg*parade/100;
+			dmg=dmg-Math.floor(parade);
+		}
 	}
-	ennemy.setLife(ennemy.life-dmg)
+	fighter2.setLife(fighter2.life-dmg)
+	
 	return dmg;
 }
 

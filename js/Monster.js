@@ -16,12 +16,31 @@ function Monster(x,y,race)
 	}
 	this.life=this.life+total*this.race.Lrm;
 	this.life_max=this.life;
-	this.weapon=this.race.weapon;
+	this.atk=1;
+	this.force=this.race.For;
+	this.constitution=this.race.Con;
+	this.dexterite=this.race.Dex;
+	this.taille=this.race.Tai;
+	this.pound=100;
+	this.inventory=new Inventory(this);
+	this.equipement=new Equipement(this);
+	this.inventory.add(this.race.Weapon.getId());
+	this.inventory.use();
+
+
 	this.onFire=false;
 	this.fireFrame=0;
 	this.fireInterval=5;
 	this.previousTile=1;
 	this.death=false;
+}
+
+/**
+ * Returns the monster's weight capacity
+ */
+Monster.prototype.getPound=function()
+{
+		return this.pound;
 }
 
 /**
@@ -61,44 +80,51 @@ Monster.prototype.draw=function(intancity)
  */
 Monster.prototype.turn=function(ennemy)
 {
-	//détermination des degats de base de l'arme
-	total=0;
-	for(i=0;i<this.weapon.Launch;i++)
-	{
-		lancer=Math.random()*6+1;
-		lancer=Math.floor(lancer);
-		total=total+lancer;
-	}
-	dmg=this.weapon.Atk+total*this.weapon.Lrm;
+	fighter1=this;
+	fighter2=ennemy;
+	//Degats basiques des coups porté
+		//Degats statiques
+		total=fighter1.atk;
+		//ajout des degats du nombre de coups portés avec l'arme
+		for(i=0;i<fighter1.launch;i++)
+		{
+			lancer=Math.random()*6+1;
+			lancer=Math.floor(lancer);
+			total=total+Math.round(fighter1.atk/lancer);
+		}
+		dmg=total;
 	//bonus de zone
-	zone=Math.floor((Math.random()*3)+1);
-	switch(zone)
-	{
-		//coup à la tete
-		case 1 :
-		dmg=dmg+Math.floor((Math.random()*6)+1);
-		break;
-		//coup au torse
-		case 2:
-		dmg=dmg+Math.floor((Math.random()*4)+1);
-		break;
-		//coup au membres
-		case 3:
-		dmg=dmg+Math.floor((Math.random()*2)+1);
-		break;
-	}
-	//parade de l'ennemi
-	test=Math.floor((Math.random()*3)+1);
-	//parade réussi 
-	if(test==2)
-	{
-	parade=Math.floor((Math.random()*30)+1);
-	parade=dmg*parade/100;
-	dmg=dmg-Math.floor(parade);
-	}
-	ennemy.setLife(ennemy.life-dmg)
-	return dmg;
+	if(fighter1.dexterite>100)
+		fighter1.dexterite=100;
+		
+	zone=Math.floor(Math.random()*(100-fighter1.dexterite))+1;
+	
+	if(zone>=0 && zone<=10)
+		dmg=dmg+Math.round(fighter1.force*30/100);
+	else if(zone>=11 && zone<=50)
+		dmg=dmg+Math.round(fighter1.force*20/100);
+	else
+		dmg=dmg+Math.round(fighter1.force*10/100);
+		
+	
 
+	//parade de l'ennemi
+	if(fighter2.dexterite>fighter1.dexterite)
+	{
+		if(fighter2.dexterite>100)
+			fighter2.dexterite=100;
+			
+		zone=Math.floor(Math.random()*(100-fighter2.dexterite))+1;
+		
+		if(zone>=0 && zone<=30)
+		{
+			parade=Math.floor((Math.random()*fighter2.constitution)+1);
+			parade=dmg*parade/100;
+			dmg=dmg-Math.floor(parade);
+		}
+	}
+	fighter2.setLife(fighter2.life-dmg)
+	return dmg;
 }
 
 /**
@@ -247,5 +273,82 @@ Monster.prototype.kill=function(reason)
 	else
 		Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=this.previousTile;
 	this.death=true;
+}
+
+/**
+ * Returns the monster's attack amount
+ */
+Monster.prototype.getAtk=function()
+{
+	return this.atk;
+}
+
+/**
+ * Returns the monster's lrm amount
+ */
+Monster.prototype.getLrm=function()
+{
+	return this.lrm;
+}
+
+/**
+ * Returns the monster's launch number
+ */
+Monster.prototype.getLaunch=function()
+{
+	return this.launch;
+}
+
+/**
+ * Returns the monster's consititution amount
+ */
+Monster.prototype.getConst=function()
+{
+	return this.constitution;
+}
+
+/**
+ * Returns the monster's dexterity amount
+ */
+Monster.prototype.getDex=function()
+{
+	return this.dexterite;
+}
+
+/**
+ * Sets the monster's attack amount
+ */
+Monster.prototype.setAtk=function(value)
+{
+	this.atk=value;
+}
+
+/**
+ * Sets the monster's lrm amount
+ */
+Monster.prototype.setLrm=function(value)
+{
+	this.lrm=value;
+}
+/**
+ * Sets the monster's launch number
+ */
+Monster.prototype.setLaunch=function(value)
+{
+	this.launch=value;
+}
+/**
+ * Sets the monster's consitution amount
+ */
+Monster.prototype.setConst=function(value)
+{
+	this.constitution=value;
+}
+/**
+ * Sets the monster's dexerity amount
+ */
+Monster.prototype.setDex=function(value)
+{
+	this.dexterite=value;
 }
 
