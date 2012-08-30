@@ -1,5 +1,3 @@
-
-
 function Stair()
 {
 	this.map=new Array();
@@ -39,8 +37,9 @@ function Stair()
 				continue;
 		}
 	}
-	this.generateWater();
+	this.generateLiquid();
 	this.generateObstacles();
+	this.generateChest();
 	this.placeStairAndPlayer();
 }
 
@@ -201,9 +200,39 @@ Stair.prototype.generateObstacles=function()
 }
 
 /**
- * This method adds water tiles on the map using a layer algorythm.
+ * This method places near one chest per stair.
  */
-Stair.prototype.generateWater=function()
+Stair.prototype.generateChest=function()
+{
+	for(i=0;i<88;i++)
+	{
+		for(u=0;u<48;u++)
+		{
+				roomTemp=this.getRoomAt(i,u);
+				if(roomTemp != false)
+				{
+					if(roomTemp.getBiome()=="dungeon")
+					{
+						rand=Math.floor(Math.random()*100)+1;
+						if(rand==1 && this.map[i][u]==1)
+						{
+							if(this.map[i-1][u]==2 || this.map[i+1][u]==2 || this.map[i][u-1]==2 || this.map[i][u+1]==2)
+							{
+								this.map[i][u]=new Chest();
+							}
+							
+						}
+						
+					}
+				}
+		}
+	}	
+}
+
+/**
+ * This method adds water or lava tiles on the map using a layer algorythm.
+ */
+Stair.prototype.generateLiquid=function()
 {
 	for(i=0;i<88;i++)
 	{
@@ -481,6 +510,8 @@ Stair.prototype.draw=function()
 									surface.fillStyle = DungeonTile.WallColor;
 								else if(this.map[o][p]==5)
 									surface.fillStyle = DungeonTile.StoneColor;
+								else if(this.map[o][p] instanceof Chest)
+									surface.fillStyle = DungeonTile.ChestColor;
 							}
 				}
 				else
@@ -558,6 +589,8 @@ Stair.prototype.draw=function()
 										surface.fillText(DungeonTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 								else if(this.map[o][p]==5)
 									surface.fillText(DungeonTile.Stone,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+								else if(this.map[o][p] instanceof Chest)
+									surface.fillText(DungeonTile.Chest,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 							}
 				}
 				else 

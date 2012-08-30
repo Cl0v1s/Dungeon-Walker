@@ -53,7 +53,11 @@ Inventory.prototype.update=function()
 	surface.font = "24px pixel";
 	surface.fillStyle = "rgb(150,150,150)";
 	surface.fillText("(e) examiner     (enter) utiliser",5,24);
-	surface.fillText("(c) cuire        (d) lacher",5,48);
+	//if(!(this.owner.previousTile instanceof Chest)) 
+		surface.fillText("(c) cuire        (d) lacher",5,48);
+	//else
+	//	surface.fillText("(c) cuire        (d) placer dans le coffre",5,48);		
+		
 	surface.font = "20px pixel";
 	x=0;
 	y=0;
@@ -214,6 +218,9 @@ Inventory.prototype.cook=function()
 Inventory.prototype.remove=function(id)
 {
 	this.size-=this.contains[id].Pound;
+	if(this.owner.previousTile instanceof Chest)
+		this.owner.previousTile.inventory.add(this.contains[id].getId());
+	
 	this.contains[id]=undefined;
 }
 

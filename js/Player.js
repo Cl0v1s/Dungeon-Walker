@@ -43,16 +43,9 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.previousTile=1;
 	this.inventory.add(this.class.Weapon.getId());
 	this.inventory.use();
-
 	this.hi=this.class.Hi;
 	this.si=20;
-	
-
-	
-
 	surface.fillStyle="rgb(50,150,50)";
-
-
 }
 
 /**
@@ -208,7 +201,7 @@ Player.prototype.changeStat=function()
  */
 Player.prototype.lap=function()
 {
-	grill=Motor.dungeon.getCurrentStair().map[this.x][this.y];
+	grill=this.previousTile;
 	if(grill==3)
 	{
 		if(this.soif<100)
@@ -219,19 +212,6 @@ Player.prototype.lap=function()
 		else
 		{
 			Motor.messages.add("Vous n'avez pas soif.");		
-		}
-	}
-	if(grill==4)
-	{
-		if(this.soif<100)
-		{
-			this.isSick=true;
-			this.soif+=1;
-			Motor.messages.add("Lorsque vous approchez le liquide de votre bouche, la puanteur assaille votre nez mais vous buvez tout de meme.");
-		}
-		else
-		{
-			Motor.messages.add("Vous n'avez pas soif.");	
 		}
 	}
 	if(grill !=3 && grill !=4)
@@ -520,4 +500,17 @@ Player.prototype.setConst=function(value)
 Player.prototype.setDex=function(value)
 {
 	this.dexterite=value;
+}
+
+/**
+ * Checks if the player is on a chest and, open the chest
+ */
+Player.prototype.interact=function()
+{
+	if(this.previousTile instanceof Chest)
+	{
+		Motor.messages.add("Vous ouvrez le coffre doucement, de peur d'abimer son contenu.");
+		Scene=this.previousTile;
+	}
+	
 }

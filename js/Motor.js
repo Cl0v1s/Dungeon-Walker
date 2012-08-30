@@ -1,17 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////////////
-//class Motor
-//////////////////////////////////////////////////////////////////////////////////////
-//par chaipokoi
-//crée le : 11/08/2012
-//modifié le : 12/08/2012
-/////////////////////////////////////////////////////////////////////////////////////
-//Le moteur de jeu.
-//-gère la génération de la première salle.
-//-gère le début du jeu.
-//-gère les tours à chaque déplacement du joueur.
-//-gère le GameOver.
-////////////////////////////////////////////////////////////////////////////////////
-
 function Motor()
 {
 	this.player=undefined;
@@ -29,6 +15,9 @@ function Motor()
 
 }
 
+/**
+ * Searchs the stair's spawnpoint and places the player at it's coordiantes
+ */
 Motor.prototype.start=function(par1)
 {
 		this.player=par1;
@@ -38,26 +27,41 @@ Motor.prototype.start=function(par1)
 		this.player.setY(y);
 }
 
+/**
+ * Returns the canvas's x pos
+ */
 Motor.prototype.getXPos=function()
 {
 		return this.xPos;
 }
 
+/**
+ * Returns the canva's y pos
+ */
 Motor.prototype.getYPos=function()
 {
 		return this.yPos;
 }
 
+/**
+ * Sets the canvas's x pos
+ */
 Motor.prototype.setXPos=function(value)
 {
 	this.xPos=value;
 }
 
+/**
+ * Sets the canvas's y pos
+ */
 Motor.prototype.setYPos=function(value)
 {
 	this.yPos=value;
 }
 
+/**
+ * Replaces the canvas to it's origin
+ */
 Motor.prototype.resetCanvas=function()
 {
 		this.xPos=0;
@@ -65,7 +69,10 @@ Motor.prototype.resetCanvas=function()
 		this.canvasPlaced=false;
 }
 
-Motor.prototype.generateStair=function(top,left,down,right)
+/**
+ * Creates a new dungeon.
+ */
+Motor.prototype.generateStair=function()
 {
 	this.dungeon=new Dungeon();
 	this.dungeon.getCurrentStair().generateMonsters();
@@ -91,9 +98,6 @@ Motor.prototype.inputUpdate=function()
 	{
 		this.newTurn();
 	}
-		
-	if(Input.equals(13))
-		alert(Motor.dungeon.getCurrentStair().getMap()[this.player.getX()][this.player.getY()]);
 		
 	if(Input.equals(39))
 	{
@@ -123,6 +127,9 @@ Motor.prototype.inputUpdate=function()
 		
 	if(Input.equals(69))
 		this.player.openEquipement();
+		
+	if(Input.equals(13))
+		this.player.interact();
 		
 
 }

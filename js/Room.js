@@ -1,20 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////////////
-//class Room
-//////////////////////////////////////////////////////////////////////////////////////
-//par chaipokoi
-//crée le : 7/05/2012
-/////////////////////////////////////////////////////////////////////////////////////
-//permet de gérer les différentes salles,
-//Fonctionnalités:
-//-génération aléatoire=Room(top,left,down,right)
-//-affichage à l'écran=draw(xD,yD)
-//-test de collision=blocked(x,y)
-//-recherche de la position d'un bloc de la salle=research(bloc)
-//-récupération des différentes caractéristiques de la salle
-//-réglage des différentes caractéristiques de la salle
-////////////////////////////////////////////////////////////////////////////////////
-
-
 var DungeonTile={
 "Ground" : ".",
 "Stone" : "@",
@@ -31,7 +14,9 @@ var DungeonTile={
 "Fire_2Color" : "rgb(250,50,50)",
 "Unknow" : "/",
 "UnknowColor" :  "rgb(255,255,255)",
-"Stair" : ">"
+"Stair" : ">",
+"Chest" : "=",
+"ChestColor" : "rgb(140,97,30)"
 }
 
 var PlainTile={
@@ -262,7 +247,8 @@ Room.prototype.generateMonsters=function()
 				yM=this.y+yM;
 			}
 			race=Math.floor(Math.random()*Motor.dungeon.getCurrentStairId());
-			this.monsters[n]=new Monster(xM,yM,Bestiaire[race]);
+			if(Bestiaire[race] != undefined)
+				this.monsters[n]=new Monster(xM,yM,Bestiaire[race]);
 		}
 }
 
