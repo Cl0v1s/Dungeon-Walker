@@ -193,6 +193,34 @@ Stair.prototype.generateObstacles=function()
 									this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp]=5;
 							}
 						}
+						else if(roomTemp.getBiome()=="cave")
+						{
+							rand=Math.floor(Math.random()*40);
+							if(rand==1)
+							{
+									xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+									yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;
+									tentatives=0;
+									while(this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp] != 1 && tentatives < 50)
+									{
+										tentatives+=1;
+										xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+										yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;									
+									}
+									if(tentatives>=50)
+										continue;
+									tentative=0;
+									while((this.map[roomTemp.getX()+xTemp-1][roomTemp.getY()+yTemp] == 2 || this.map[roomTemp.getX()+xTemp+1][roomTemp.getY()+yTemp] == 2 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp+1] == 2 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp-1] == 2) && tentative<50)
+									{
+										tentatives+=1;
+										xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+										yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;
+									}
+									if(tentatives>=50)
+										continue;
+									this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp]=5;
+							}
+						}
 					}
 				}
 		}
@@ -234,16 +262,22 @@ Stair.prototype.generateChest=function()
  */
 Stair.prototype.generateLiquid=function()
 {
+	value=3;
 	for(i=0;i<88;i++)
 	{
 		for(u=0;u<48;u++)
 		{
 			if(this.map[i][u]==1 && this.getRoomAt(i,u) != false)
 			{
+					if(this.getRoomAt(i,u).getBiome()=="cave")
+						value=6
+					else
+						value=3
+						
 					flag=Math.floor(Math.random()*this.rooms.length*10)+1;
 					if(flag==1)
 					{
-						this.map[i][u]=3;
+						this.map[i][u]=value;
 					}
 			}
 		}
@@ -254,26 +288,36 @@ Stair.prototype.generateLiquid=function()
 		{
 			for(u=0;u<48;u++)
 			{
-				if(this.map[i][u]==3)
+				if(this.getRoomAt(i,u) != false)
+				{
+					if(this.getRoomAt(i,u).getBiome()=="cave")
+						value=6
+					else
+						value=3
+				}
+				else
+					value=3
+					
+				if(this.map[i][u]==value)
 				{
 						flag=Math.floor(Math.random()*5)+1;
 						switch(flag)
 						{
 							case 1:
 								if(this.map[i][u+1]==1)
-									this.map[i][u+1]=3
+									this.map[i][u+1]=value
 								break;
 							case 2:
 								if(this.map[i][u-1]==1)
-									this.map[i][u-1]=3
+									this.map[i][u-1]=value
 								break;
 							case 3:
 								if(this.map[i+1][u]==1)
-									this.map[i+1][u]=3
+									this.map[i+1][u]=value
 								break;
 							case 4:
 								if(this.map[i-1][u]==1)
-									this.map[i-1][u]=3
+									this.map[i-1][u]=value
 								break;
 						}
 				}
@@ -284,11 +328,21 @@ Stair.prototype.generateLiquid=function()
 		{
 			for(u=0;u<47;u++)
 			{
+				if(this.getRoomAt(i,u) != false)
+				{
+					if(this.getRoomAt(i,u).getBiome()=="cave")
+						value=6
+					else
+						value=3
+				}
+				else
+					value=3
+					
 				//BUG A CORRIGER (RARE) 
-				if((this.map[i][u+1]==3 && this.map[i][u-1]==3) || (this.map[i+1][u]==3 && this.map[i-1][u]==3))
+				if((this.map[i][u+1]==value && this.map[i][u-1]==value) || (this.map[i+1][u]==value && this.map[i-1][u]==value))
 				{
 					if(this.map[i][u]==1)
-						this.map[i][u]==3
+						this.map[i][u]==value
 				}
 			}
 		}	
@@ -480,7 +534,7 @@ Stair.prototype.generateCorridor=function(room1,room2)
 
 
 /**
- * This method reads the entire stair grid and draws the tiles
+ * This method reads the entire stair grid call the correct method to draw
  */ 
 Stair.prototype.draw=function()
 {
@@ -490,6 +544,26 @@ Stair.prototype.draw=function()
 	originX=Math.floor(Motor.player.getX()-side/2);
 	originY=Math.floor(Motor.player.getY()-side/2);
 	this.animationFrame+=1;
+	if(!(Parameters.isTiled()))
+		this.drawNoTiles(side,originX,originY);
+	else
+		this.drawTiles(side,originX,originY);
+	
+}
+
+/**
+ * Draws the map with Graphics tiles (better)
+ */
+Stair.prototype.drawTiles=function(side,originX,originY)
+{
+	
+}
+
+/**
+ * Draws the map without Graphics tiles (faster)
+ */
+Stair.prototype.drawNoTiles=function(side,originX,originY)
+{
 	for(o=0;o<88;o++)
 	{
 		for(p=0;p<48;p++)
@@ -512,6 +586,13 @@ Stair.prototype.draw=function()
 									surface.fillStyle = DungeonTile.StoneColor;
 								else if(this.map[o][p] instanceof Chest)
 									surface.fillStyle = DungeonTile.ChestColor;
+							}
+							else if(this.getRoomAt(o,p).getBiome()=="cave")
+							{
+								if(this.map[o][p]==1)
+									surface.fillStyle = CaveTile.GroundColor;
+								else if(this.map[o][p]==5)
+									surface.fillStyle = CaveTile.StoneColor;
 							}
 				}
 				else
@@ -592,6 +673,15 @@ Stair.prototype.draw=function()
 								else if(this.map[o][p] instanceof Chest)
 									surface.fillText(DungeonTile.Chest,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
 							}
+							else if(this.getRoomAt(o,p).getBiome()=="cave")
+							{
+								if(this.map[o][p]==1)
+									surface.fillText(CaveTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+								else if(this.map[o][p]==5)
+									surface.fillText(CaveTile.Stone,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+								else if(this.map[o][p]==6)
+									this.drawLava(o,p);
+							}
 				}
 				else 
 				{
@@ -630,7 +720,6 @@ Stair.prototype.draw=function()
 				}
 		}
 	}
-	
 }
 
 /**
@@ -653,6 +742,29 @@ Stair.prototype.drawWater=function(xTemp,yTemp)
 			this.animationFrame=0;
 			surface.fillStyle = DungeonTile.Water_1Color;
 			surface.fillText(DungeonTile.Water_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+	}	
+}
+
+/**
+ * This method draw draws and animates the lava on the screen
+ */
+Stair.prototype.drawLava=function(xTemp,yTemp)
+{
+	if(this.animationFrame<=70)
+	{
+		surface.fillStyle = CaveTile.Lava_1Color;
+		surface.fillText(CaveTile.Lava_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+	}
+	else if(this.animationFrame>70 && this.animationFrame<=120)
+	{
+		surface.fillStyle = CaveTile.Lava_2Color;
+		surface.fillText(CaveTile.Lava_2,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+	}
+	else
+	{
+			this.animationFrame=0;
+			surface.fillStyle = CaveTile.Lava_1Color;
+			surface.fillText(CaveTile.Lava_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
 	}	
 }
 

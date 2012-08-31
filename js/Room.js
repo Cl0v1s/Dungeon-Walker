@@ -16,7 +16,19 @@ var DungeonTile={
 "UnknowColor" :  "rgb(255,255,255)",
 "Stair" : ">",
 "Chest" : "=",
-"ChestColor" : "rgb(140,97,30)"
+"ChestColor" : "rgb(140,97,30)",
+
+}
+
+var CaveTile={
+"Lava_1" : "-",
+"Lava_1Color" : "rgb(150,50,50)",
+"Lava_2" : "_",
+"Lava_2Color" : "rgb(250,50,50)",
+"Ground" : ":",
+"GroundColor" : "rgb(100,100,100)",
+"Stone" : "@",
+"StoneColor" : "rgb(120,100,120)"
 }
 
 var PlainTile={
@@ -36,18 +48,22 @@ var PlainTile={
 "Fire_2Color" : "rgb(250,50,50)",
 "Unknow" : "/",
 "UnknowColor" :  "rgb(255,255,255)",
-"Stair" : ">"
+"Stair" : ">",
 }
 
 
 
 function Room(x,y)
 {
-	biomeTemp=Math.floor(Math.random()*10)+1;
+	biomeTemp=Math.floor(Math.random()*13)+1;
 	if(biomeTemp>=1 && biomeTemp<=3)
 	{
 		this.biome="plain";
 		this.tile=PlainTile;
+	}
+	else if(biomeTemp>=10 && biomeTemp<=13)
+	{
+		this.biome="cave";
 	}
 	else
 	{

@@ -44,7 +44,8 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.inventory.add(this.class.Weapon.getId());
 	this.inventory.use();
 	this.hi=this.class.Hi;
-	this.si=20;
+	this.sickInterval=10;
+	this.sickFrame=0;
 	surface.fillStyle="rgb(50,150,50)";
 }
 
@@ -95,6 +96,7 @@ Player.prototype.move=function(dir)
 {
 	stair=Motor.dungeon.getCurrentStair();
 	this.fire();
+	this.sick();
 	stair.map[this.x][this.y]=this.previousTile;
 	switch(dir)
 	{				
@@ -141,14 +143,19 @@ Player.prototype.sick=function()
 {
 	if(this.isSick==true)
 	{
-		this.life-=(this.life*5/100);
-		if(this.life>=10)
+		this.sickFrame+=1;
+		if(this.sickFrame>=this.sickInterval)
 		{
-			Motor.messages.add("La maladie vous affaiblie.");
-		}
-		else
-		{
-			Motor.messages.add("Vous toussez dans votre main et essuyez le sang qui s'y trouve sur votre pantalon.");
+			this.life-=Math.round(this.life*5/100);
+			if(this.life>=10)
+			{
+				Motor.messages.add("La maladie vous affaiblie.");
+			}
+			else
+			{
+				Motor.messages.add("Vous toussez dans votre main et essuyez le sang qui s'y trouve sur vos vetements.");
+			}
+			this.sickFrame=0;
 		}
 	}
 }
@@ -206,8 +213,15 @@ Player.prototype.lap=function()
 	{
 		if(this.soif<100)
 		{
-			this.soif+=1;
+			this.soif=this.soif+Math.round(10*this.soif/100);
 			Motor.messages.add("Vous buvez goulument l'eau limpide qui se trouve a vos pieds.");
+			rand=Math.floor(Math.random()*100)+1;
+			if(rand==1)
+			{
+					this.isSick=true;
+					Motor.messages.add("L'eau que vous venez d'avaler avait un drole de gout...");
+					Motor.messages.add("Priez pour qu'elle n'ai pas stagne ici trop longtemps....");
+			}
 		}
 		else
 		{
@@ -421,6 +435,12 @@ Player.prototype.contextMessage=function()
 		else if(this.previousTile==4)
 		{
 			Motor.messages.add("Vous marchez dans des flammes, idiot !");
+			this.onFire=true;
+		}
+		else if(this.previousTile==6)
+		{
+			Motor.messages.add("Une odeur de brule atteint vos narines... Et vous vous rendez compte que vous marchez dans de la lave !");
+			this.life=this.life-10;
 			this.onFire=true;
 		}
 }

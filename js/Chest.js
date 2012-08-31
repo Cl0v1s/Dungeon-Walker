@@ -12,7 +12,6 @@ function Chest()
 			this.inventory.add(ItemList[rand].getId());
 		}
 	}
-	alert(this.inventory.contains);
 }
 
 /**
