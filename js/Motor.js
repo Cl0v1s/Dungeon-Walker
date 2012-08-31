@@ -118,6 +118,9 @@ Motor.prototype.inputUpdate=function()
 	{
 		this.player.move("up");
 	}
+	
+	if(Input.equals(80))
+		Scene=RecipeGUI;
 		
 	if(Input.equals(76))
 		this.player.lap();

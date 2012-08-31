@@ -1,6 +1,6 @@
 function ItemEquipement(nameTemp,poundTemp,placeTemp,atkTemp,constTemp,dexTemp,lrmTemp,launchTemp,descTemp,priceTemp)
 {
-	Item.call(this,nameTemp,poundTemp,descTemp,priceTemp);
+	Item.call(this,nameTemp,poundTemp,descTemp,priceTemp,"equipment");
 	this.place=placeTemp;
 	this.atk=atkTemp;
 	this.cons=constTemp;

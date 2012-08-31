@@ -46,7 +46,10 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.hi=this.class.Hi;
 	this.sickInterval=10;
 	this.sickFrame=0;
-	surface.fillStyle="rgb(50,150,50)";
+
+	this.inventory.add(5);
+	this.inventory.add(5);
+	this.inventory.add(7);
 }
 
 /**
@@ -527,10 +530,75 @@ Player.prototype.setDex=function(value)
  */
 Player.prototype.interact=function()
 {
+	//open chest
 	if(this.previousTile instanceof Chest)
 	{
 		Motor.messages.add("Vous ouvrez le coffre doucement, de peur d'abimer son contenu.");
 		Scene=this.previousTile;
+	}
+	else
+	{
+		this.searchForGrass();
+	}
+	
+}
+
+/**
+ * Checks if the player is near a bush and, generate adds a new grass type item to his inventory
+ */
+Player.prototype.searchForGrass=function()
+{
+	if(Motor.dungeon.getCurrentStair().getMap()[this.x-1][this.y]==5 || Motor.dungeon.getCurrentStair().getMap()[this.x+1][this.y]==5 || Motor.dungeon.getCurrentStair().getMap()[this.x][this.y-1]==5 || Motor.dungeon.getCurrentStair().getMap()[this.x][this.y+1]==5)
+	{
+		if(Motor.dungeon.getCurrentStair().getMap()[this.x-1][this.y]==5)
+		{
+			xTemp=this.x-1;
+			yTemp=this.y;
+		}
+		else if(Motor.dungeon.getCurrentStair().getMap()[this.x+1][this.y]==5)
+		{
+			xTemp=this.x+1;
+			yTemp=this.y;
+		}
+		else if(Motor.dungeon.getCurrentStair().getMap()[this.x][this.y-1]==5)
+		{
+			xTemp=this.x;
+			yTemp=this.y-1;
+		}
+		else
+		{
+			xTemp=this.x;
+			yTemp=this.y+1;
+		}
+		
+		room=Motor.dungeon.getCurrentStair().getRoomAt(this.x,this.y);
+		if(room != false)
+		{
+			if(room.getBiome()=="plain")
+			{
+				rand=Math.floor(Math.random()*10)+1;
+				if(rand==1)
+				{
+					list=new Array();
+					for(i=0;i<ItemList.length;i++)
+					{
+						if(ItemList[i] != undefined)
+						{
+							type=ItemList[i].getType();
+							if(type=="grass")
+								list.push(ItemList[i]);
+						}
+					}
+					rand=Math.floor(Math.random()*list.length);
+					object=list[rand];
+					Motor.messages.add("Apres un rapide exament, vous decouvrez l'objet "+object.getName()+".");
+					this.inventory.add(object.getId());
+				}
+				else
+					Motor.messages.add("Vous n'avez rien trouve d'interessant...");
+				Motor.dungeon.getCurrentStair().map[xTemp][yTemp]=1;
+			}
+		}
 	}
 	
 }

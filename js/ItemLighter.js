@@ -1,6 +1,6 @@
 function ItemLighter(nameTemp,poundTemp,descTemp,priceTemp)
 {
-	Item.call(this, nameTemp,poundTemp,descTemp,priceTemp);
+	Item.call(this, nameTemp,poundTemp,descTemp,priceTemp,"special");
 }
 
 /**

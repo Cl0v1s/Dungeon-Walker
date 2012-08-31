@@ -755,7 +755,7 @@ Stair.prototype.drawLava=function(xTemp,yTemp)
 		surface.fillStyle = CaveTile.Lava_1Color;
 		surface.fillText(CaveTile.Lava_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
 	}
-	else if(this.animationFrame>70 && this.animationFrame<=120)
+	else if(this.animationFrame>70 && this.animationFrame<=140)
 	{
 		surface.fillStyle = CaveTile.Lava_2Color;
 		surface.fillText(CaveTile.Lava_2,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);

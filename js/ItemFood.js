@@ -1,6 +1,6 @@
 function ItemFood(nameTemp,poundTemp,valueTemp,cookResultTemp,descTemp,priceTemp)
 {
-	Item.call(this, nameTemp,poundTemp,descTemp,priceTemp);
+	Item.call(this, nameTemp,poundTemp,descTemp,priceTemp,"food");
 	this.value=valueTemp;
 	this.cookResult=cookResultTemp;	
 }

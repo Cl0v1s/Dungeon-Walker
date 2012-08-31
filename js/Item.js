@@ -1,15 +1,25 @@
 var ItemList=new Array();
 
-function Item(nameTemp,poundTemp,descTemp,priceTemp)
+function Item(nameTemp,poundTemp,descTemp,priceTemp,typeTemp)
 {
 		this.name=nameTemp;
 		this.pod=poundTemp;
 		this.desc=descTemp;
 		this.price=priceTemp;
 		this.id=ItemList.length;
-		ItemList.push(this);
+		this.type=typeTemp;
+		ItemList[ItemList.length]=this;;
 		//alert(this.name+":"+this.id);
 }
+
+/**
+ * Returns the item's type
+ */
+Item.prototype.getType=function()
+{
+	return this.type;
+}
+
 
 /**
  * Returns the item's name

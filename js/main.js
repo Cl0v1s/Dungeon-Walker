@@ -6,6 +6,7 @@ var Input=new Input();
 var RoomList=new Array();
 var Motor=new Motor();
 var Parameters=new GameParameter();
+var RecipeGUI=new RecipeGUI();
 
 
 

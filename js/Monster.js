@@ -264,7 +264,7 @@ Monster.prototype.kill=function(reason)
 						{
 							rand=Math.floor(Math.random()*this.race.Drop.length);
 							drop=this.race.Drop[rand];
-							drop=drop+11;
+							drop=drop+10;
 							Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=drop;
 						}
 						else

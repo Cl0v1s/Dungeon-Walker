@@ -128,6 +128,14 @@ Inventory.prototype.inputUpdate=function()
 		
 	if(Input.equals(27))
 	{
+		this.size=0;
+		for(i=0;i<this.contains.length;i++)
+		{
+			if(this.contains[i]!=undefined)
+			{
+				this.size+=this.contains[i].getPod();
+			}
+		}
 		Motor.messages.add("Vous fermez votre sac et vous vous redressez pret a repartir.");
 		Scene=Motor;
 	}	
@@ -217,7 +225,7 @@ Inventory.prototype.cook=function()
  */
 Inventory.prototype.remove=function(id)
 {
-	this.size-=this.contains[id].Pound;
+	this.size-=this.contains[id].getPod();
 	if(this.owner.previousTile instanceof Chest)
 		this.owner.previousTile.inventory.add(this.contains[id].getId());
 	
