@@ -10,6 +10,9 @@
  * 	For Eatble Items (ItemFood):
  * 		name,weight,effect amount,cooking result object 
  * 		(for example RawSteak to Steak, type undefined if you won't add a cooking result),description,price and type.
+ * 	For Potions (ItemPotion):
+ * 		name,weight,effect time(in turns),ligth bonus,strength bonus,constitution bonus,size bonus,dexterity bonus,
+ * 		life bonus,attack number bonus,lrm bonus,description,price
  */
 
 /**
@@ -28,6 +31,13 @@ var RottenFlesh=new ItemFood("chair infame",2,5,undefined,"Un bout de chair a l'
 var Steak=new ItemFood("steak",2,20,undefined,"Un bon morceau de muscle cuit a point.",15);
 var RawSteak=new ItemFood("steak cru",2,10,Steak,"Un morceau de muscle juteux preleve sur un cadavre.",5);
 var Skewer=new ItemFood("brochette",4,30,undefined,"De bons morceaux de steak embroches sur une pique.",20);
+
+
+/**
+ * The potions
+ */
+var LifePotion=new ItemPotion("potion de vie",5,30,0,0,0,0,0,50,0,0,"Une potion a l'etrange couleur verte.",50);
+
 
 /**
  * The specials items.

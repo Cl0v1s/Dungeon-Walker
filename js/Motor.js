@@ -146,16 +146,6 @@ Motor.prototype.newTurn=function()
 		this.player.heal();	
 		this.messages.add("Vos blessures cicatrisent peu a peu...");
 	}
-	if (this.turn>=this.player.fi)
-	{
-		this.player.fi+=this.turn;
-		this.player.fire();	
-	}
-	if (this.turn>=this.player.si)
-	{
-		this.player.si+=this.turn;
-		this.player.sick();	
-	}
 
 
 	if(this.turn>=this.dayInterval)

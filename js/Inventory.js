@@ -187,7 +187,6 @@ Inventory.prototype.use=function()
 		if(this.contains[this.index] instanceof ItemEquipement)
 		{
 			this.contains[this.index]=this.owner.equipement.wear(this.contains[this.index]);
-			
 		}
 		else
 		{

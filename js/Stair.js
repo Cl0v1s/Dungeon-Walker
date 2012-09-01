@@ -602,6 +602,8 @@ Stair.prototype.drawNoTiles=function(side,originX,originY)
 				}
 				if(this.map[o][p]==2 || this.map[o][p]=="stair")
 							surface.fillStyle = DungeonTile.WallColor;
+				else if(this.map[o][p]==3)
+							surface.fillStyle = DungeonTile.Water_1Color;
 				else if(this.map[o][p]>=10)
 							surface.fillStyle="rgb(248,214,0)";
 							
@@ -729,18 +731,15 @@ Stair.prototype.drawWater=function(xTemp,yTemp)
 {
 	if(this.animationFrame<=50)
 	{
-		surface.fillStyle = DungeonTile.Water_1Color;
 		surface.fillText(DungeonTile.Water_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
 	}
 	else if(this.animationFrame>50 && this.animationFrame<=100)
 	{
-		surface.fillStyle = DungeonTile.Water_2Color;
 		surface.fillText(DungeonTile.Water_2,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
 	}
 	else
 	{
 			this.animationFrame=0;
-			surface.fillStyle = DungeonTile.Water_1Color;
 			surface.fillText(DungeonTile.Water_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
 	}	
 }

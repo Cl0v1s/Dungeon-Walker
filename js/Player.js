@@ -35,6 +35,7 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.soif=100;
 	this.isSick=false;
 	this.onFire=false;
+	this.effectList=new Array();
 	//autre
 	this.score=0;
 	this.inventory=new Inventory(this);
@@ -46,10 +47,6 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.hi=this.class.Hi;
 	this.sickInterval=10;
 	this.sickFrame=0;
-
-	this.inventory.add(5);
-	this.inventory.add(5);
-	this.inventory.add(7);
 }
 
 /**
@@ -98,6 +95,11 @@ Player.prototype.draw=function()
 Player.prototype.move=function(dir)
 {
 	stair=Motor.dungeon.getCurrentStair();
+	for(c=0;c<this.effectList.length;c++)
+	{
+		if(this.effectList[c] instanceof StatEffect)
+			this.effectList[c]=this.effectList[c].update();
+	}
 	this.fire();
 	this.sick();
 	stair.map[this.x][this.y]=this.previousTile;
@@ -601,4 +603,12 @@ Player.prototype.searchForGrass=function()
 		}
 	}
 	
+}
+
+/**
+ * add an effect to the effects list
+ */
+Player.prototype.addEffect=function(effect)
+{
+		this.effectList.push(effect);
 }
