@@ -25,6 +25,7 @@ Motor.prototype.start=function(par1)
 		y=this.dungeon.getCurrentStair().getSpawnPoint()[1]+this.dungeon.getCurrentStair().getSpawnPoint()[2].getY();
 		this.player.setX(x);
 		this.player.setY(y);
+		this.dungeon.getCurrentStair().addEntityToList(this.player);
 }
 
 /**

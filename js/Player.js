@@ -2,7 +2,7 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 {
 	this.x=x;
 	this.y=y;
-	this.nam="Conan";
+	this.name="Conan";
 	this.class=race;
 	this.light=this.class.Light;
 	//calcul des caractéristiques
@@ -47,6 +47,49 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.hi=this.class.Hi;
 	this.sickInterval=10;
 	this.sickFrame=0;
+	this.sympathy=0;
+	this.antipathy=0;
+}
+
+/**
+ * Sets the sympathy temp amount
+ */
+Player.prototype.setSympathy=function(value)
+{
+	this.sympathy=value;
+}
+
+/**
+ * Returns the sympathy temp amout
+ */
+Player.prototype.getSympathy=function()
+{
+	return this.sympathy;
+}
+
+/**
+ * Sets the antipathy temp amount
+ */
+Player.prototype.setAntipathy=function(value)
+{
+	this.antipathy=value;
+}
+
+/**
+ * Returns the antipathy temp amout
+ */
+Player.prototype.getAntipathy=function()
+{
+	return this.antipathy;
+}
+
+
+/**
+ * Returns the player's name
+ */
+Player.prototype.getName=function()
+{
+	return this.name;
 }
 
 /**
@@ -371,6 +414,7 @@ Player.prototype.getUp=function()
 {
 		if(Motor.dungeon.getCurrentStair().getMap()[this.x][this.y]=="stair")
 		{
+			this.previousTile=1;
 			Motor.dungeon.upStair();
 			x=Motor.dungeon.getCurrentStair().getSpawnPoint()[0]+Motor.dungeon.getCurrentStair().getSpawnPoint()[2].getX();
 			y=Motor.dungeon.getCurrentStair().getSpawnPoint()[1]+Motor.dungeon.getCurrentStair().getSpawnPoint()[2].getY();
@@ -531,7 +575,7 @@ Player.prototype.setDex=function(value)
  * Checks if the player is on a chest and, open the chest
  */
 Player.prototype.interact=function()
-{
+{	
 	//open chest
 	if(this.previousTile instanceof Chest)
 	{

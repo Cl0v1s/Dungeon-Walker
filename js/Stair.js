@@ -14,6 +14,7 @@ function Stair()
 	this.fireNumber=1;
 	this.spawnPoint=null;
 	this.rooms=new Array();
+	this.monsters=new Array();
 	this.roomsNumber=0;
 	while(this.roomsNumber<3)
 		this.roomsNumber=Math.round(Math.random()*8+1);
@@ -48,21 +49,130 @@ function Stair()
  */
 Stair.prototype.generateMonsters=function()
 {
-	for(i=0;i<this.rooms.length;i++)
+	nb=this.rooms.length*Math.floor(Math.random()*Motor.dungeon.getCurrentStairId())+20;
+	for(n=0;n<nb;n++)
 	{
-		this.rooms[i].generateMonsters();
+		xTemp=0;
+		yTemp=0;
+		while(this.getRoomAt(xTemp,yTemp)==false || this.map[xTemp][yTemp] !=1)
+		{
+			xTemp=Math.floor(Math.random()*88)+1;
+			yTemp=Math.floor(Math.random()*48)+1;
+		}
+		id=-1;
+		attempt=0;
+		while(id==-1 || MonsterList[id].biome != this.getRoomAt(xTemp,yTemp).getBiome())
+		{
+			attempt+=1;
+			
+			id=Math.floor(Math.random()*Motor.dungeon.getCurrentStairId());
+			if(attempt>=50)
+				break;
+		}
+		if(attempt>=50)
+		{
+			this.monsters[n]=undefined;
+			continue;
+		}
+		this.monsters[n]=new Monster(this,xTemp,yTemp,MonsterList[id]);
 	}
 }
 
 /**
- * This method moves the monstrers of the room
+ * Adds a new entity to the monsters list
+ */
+Stair.prototype.addEntityToList=function(entity)
+{
+	this.monsters.push(entity);
+}
+
+/**
+ * This method move the geneated Monsters of the room.
+ * If the player is on collid with the Monster, the game begin a fight.
  */
 Stair.prototype.moveMonsters=function()
 {
-	for(i=0;i<this.rooms.length;i++)
+	for(n=0;n<this.monsters.length;n++)
 	{
-		this.rooms[i].moveMonsters();
+			if(this.monsters[n] !=undefined && this.monsters[n] instanceof Monster)
+			{
+				if(this.monsters[n].isDead())
+				{
+					this.monsters[n]=undefined;
+					continue;
+				}
+				this.monsters[n].think();
+			}
 	}
+}
+
+/**
+ * This method manages the fights
+ */
+Stair.prototype.fight=function(fighter1,fighter2)
+{
+	fighter1_total=0;
+	fighter2_total=0;
+	for(i=0;i<6;i++)
+	{
+		lancer=Math.random()*6+1;
+		lancer=Math.floor(lancer);
+		fighter1_total=fighter1_total+lancer;
+		lancer=Math.random()*6+1;
+		lancer=Math.floor(lancer);
+		fighter2_total=fighter2_total+lancer;
+	}
+	if(fighter1_total>=fighter2_total)
+	{
+		prio=fighter1;
+		dmg1=fighter1.turn(fighter2);
+		sec=fighter2;
+		dmg2=fighter2.turn(fighter1);
+	}
+	else
+	{
+		prio=fighter2;
+		dmg1=fighter2.turn(fighter2);
+		sec=fighter1;
+		dmg2=fighter1.turn(fighter1);
+	}
+
+
+	rand=Math.floor((Math.random()*2)+1);
+	Motor.messages.changeMode("battle");
+	switch(rand)
+	{
+		case 1:
+		sentence=prio.name+" tente un engagement contre "+sec.name+" et lui inflige "+dmg1+" degats,";
+		sentence2= sec.name+" contre-attaque en infligeant "+dmg2+" degats a son adversaire.";
+		break;
+		case 2:
+		sentence=prio.name+" s'elance sur "+sec.name+" et le blesse en lui infligeant "+dmg1+" degats.";
+		sentence2="Malheureusement pour son adversaire, "+sec.name+" pare et "+prio.name+" perd "+dmg2+" points de vie.";
+		break;
+
+
+
+	}
+
+	Motor.messages.add(sentence);
+	Motor.messages.add(sentence2);
+
+
+	if(fighter1.life<=0)
+	{
+		Motor.messages.add(fighter2.name+" a vaincu "+fighter1.name+".");
+		Motor.messages.changeMode("normal");
+		return true;
+	}
+
+	if(fighter2.life<=0)
+	{
+		Motor.dungeon.getCurrentStair().map[fighter2.x][fighter2.y]=1;
+		Motor.messages.add(fighter1.name+" a vaincu "+fighter2.name+".");
+		Motor.messages.changeMode("normal");
+		return false;
+	}	
 }
 
 
@@ -703,25 +813,22 @@ Stair.prototype.drawNoTiles=function(side,originX,originY)
 				
 		}
 	}
-	for(o=0;o<this.rooms.length;o++)
-	{
-		for(p=0;p<this.rooms[o].monsters.length;p++)
+		for(p=0;p<this.monsters.length;p++)
 		{
 				intancity=1;
-				if(this.rooms[o].monsters[p] != undefined)
+				if(this.monsters[p] != undefined)
 				{
-					if(this.rooms[o].monsters[p].getX()<originX || this.rooms[o].monsters[p].getX()>originX+side || this.rooms[o].monsters[p].getY()<originY || this.rooms[o].monsters[p].getY()>originY+side)
+					if(this.monsters[p].getX()<originX || this.monsters[p].getX()>originX+side || this.monsters[p].getY()<originY || this.monsters[p].getY()>originY+side)
 					{
-						xDistance=Math.abs(this.rooms[o].monsters[p].getX()-originX);
-						yDistance=Math.abs(this.rooms[o].monsters[p].getY()-originY);
+						xDistance=Math.abs(this.monsters[p].getX()-originX);
+						yDistance=Math.abs(this.monsters[p].getY()-originY);
 						distance=xDistance*xDistance+yDistance*yDistance;
 						distance=Math.sqrt(distance);
 						intancity=1/distance;
 					}
-					this.rooms[o].monsters[p].draw(intancity);
+					this.monsters[p].draw(intancity);
 				}
 		}
-	}
 }
 
 /**
@@ -879,4 +986,13 @@ Stair.prototype.walkableMonster=function(xTemp,yTemp)
 			return true;
 		else
 			return false;
+}
+
+
+/**
+ * Return the stair's light
+ */
+Stair.prototype.getLight=function()
+{
+	return this.light;
 }
