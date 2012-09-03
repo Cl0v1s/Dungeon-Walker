@@ -486,7 +486,6 @@ Monster.prototype.think=function()
 					else
 						this.kill;
 						
-					return;
 				}
 			} 
 			

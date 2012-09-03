@@ -207,16 +207,6 @@ Motor.prototype.moveCanvas=function()
 
 
 
-Motor.prototype.gameOver=function()
-{
-	clean();
-	surface.font = "100px pixel";
-	surface.fillStyle="rgb(50,50,50)";
-	surface.fillText("GAME OVER", document.getElementById('canvas').width/2-400/2,document.getElementById('canvas').height/2-100/2);
-	exit();
-
-}
-
 
 
 

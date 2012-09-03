@@ -488,7 +488,7 @@ Player.prototype.getPound=function()
  */
 Player.prototype.kill=function()
 {
-	Motor.gameOver();
+	Scene=new GameOver();
 }
 
 /**

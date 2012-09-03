@@ -41,8 +41,130 @@ function Stair()
 	this.generateLiquid();
 	this.generateObstacles();
 	this.generateChest();
+	this.checkWalls();
 	this.placeStairAndPlayer();
 }
+
+
+/**
+ * Checks if all the rooms have one door or more.
+ * If not, then generate a new door.
+ */
+Stair.prototype.checkWalls=function()
+{
+	for(i=0;i<this.rooms.length;i++)
+	{
+			room=this.rooms[i];
+			doors=0;
+			tile=0;
+			for(j=0;j<room.getWidth();j++)
+			{
+				tile=this.map[room.getX()+j][room.getY()];
+				if(tile==1)
+					doors+=1;
+			}
+			for(j=0;j<room.getWidth();j++)
+			{
+				tile=this.map[room.getX()+j][room.getY()+room.getHeight()];
+				if(tile==1)
+					doors+=1;
+			}
+			for(j=0;j<room.getHeight();j++)
+			{
+				tile=this.map[room.getX()][room.getY()+j];
+				if(tile==0)
+					doors+=1;
+			}
+			for(j=0;j<room.getHeight();j++)
+			{
+				tile=this.map[room.getX()+room.getWidth()][room.getY()+j];
+				if(tile==0)
+					doors+=1;
+			}
+			if(doors<=0)
+			{
+				ground=0;
+				side=undefined;
+				for(j=0;j<room.getWidth();j++)
+				{
+					tile=this.map[room.getX()+j][room.getY()-1];
+					if(tile==1)
+						ground+=1;
+				}
+				if(ground>=Math.round(room.getWidth()*40/100))
+					side="up";
+					
+				ground=0;
+				for(j=0;j<room.getWidth();j++)
+				{
+					tile=this.map[room.getX()+j][room.getY()+room.getHeight()+1];
+					if(tile==1)
+						ground+=1;
+				}
+				if(ground>=Math.round(room.getWidth()*40/100))
+					side="down";
+					
+				ground=0;
+				for(j=0;j<room.getHeight();j++)
+				{
+					tile=this.map[room.getX()-1][room.getY()+j];
+					if(tile==0)
+						ground+=1;
+				}
+				if(ground>=Math.round(room.getHeight()*40/100))
+					side="left";
+					
+				ground=0;
+				for(j=0;j<room.getHeight();j++)
+				{
+					tile=this.map[room.getX()+room.getWidth()+1][room.getY()+j];
+					if(tile==0)
+						ground+=1;
+				}				
+				if(ground>=Math.round(room.getWidth()*40/100))
+					side="right";
+					
+				if(side=="up")
+				{
+					for(j=0;j<room.getWidth();j++)
+					{
+						tile=this.map[room.getX()+j][room.getY()-1];
+						if(tile==1)
+							this.map[room.getX()+j][room.getY()]=1;
+					}					
+				}
+				else if(side=="down")
+				{
+					for(j=0;j<room.getWidth();j++)
+					{
+						tile=this.map[room.getX()+j][room.getY()+room.getHeight()+1];
+						if(tile==1)
+							this.map[room.getX()+j][room.getY()+room.getHeight()]=1;
+					}					
+				}
+				else if(side=="left")
+				{
+					for(j=0;j<room.getHeight();j++)
+					{
+						tile=this.map[room.getX()-1][room.getY()+j];
+						if(tile==1)
+							this.map[room.getX()][room.getY()+j]=1;
+					}					
+				}
+				else if(side=="right")
+				{
+					for(j=0;j<room.getHeight();j++)
+					{
+						tile=this.map[room.getX()+room.getWidth()+1][room.getY()+j];
+						if(tile==1)
+							this.map[room.getX()+room.getWidth()][room.getY()+j]=1;
+					}					
+				}
+				
+			}
+	}
+}
+
 
 /**
  * this method puts monsters into the rooms
@@ -139,7 +261,8 @@ Stair.prototype.fight=function(fighter1,fighter2)
 
 
 	rand=Math.floor((Math.random()*2)+1);
-	Motor.messages.changeMode("battle");
+	if(fighter1 instanceof Player || fighter2 instanceof Player)
+		Motor.messages.changeMode("battle");
 	switch(rand)
 	{
 		case 1:
@@ -448,7 +571,7 @@ Stair.prototype.generateLiquid=function()
 				else
 					value=3
 					
-				if((this.map[i+1] != undefined || this.map[i-1] != undefined) && (this.map[i][u+1] != undefined || this.map[i][u-1] != undefined))
+				if(this.map[i+1] != undefined && this.map[i-1] != undefined && this.map[i][u+1] != undefined && this.map[i][u-1] != undefined)
 				{
 					if((this.map[i][u+1]==value && this.map[i][u-1]==value) || (this.map[i+1][u]==value && this.map[i-1][u]==value))
 					{
