@@ -46,6 +46,7 @@ ItemWaterBucket.prototype.use=function(owner)
 	else
 	{
 		Motor.messages.add("Vous videz l'eau contenue dans votre "+this.name+" sur votre tete.");
+		owner.hygiene+=Math.round((50*owner.hygiene)/100);
 		owner.onFire=false;
 	}
 	

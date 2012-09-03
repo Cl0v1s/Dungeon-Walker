@@ -137,6 +137,9 @@ Player.prototype.draw=function()
  */
 Player.prototype.move=function(dir)
 {
+	if(this.life<=0 || this.soif<=0 || this.faim<=0)
+		this.kill();
+		
 	stair=Motor.dungeon.getCurrentStair();
 	for(c=0;c<this.effectList.length;c++)
 	{
@@ -194,18 +197,33 @@ Player.prototype.sick=function()
 		this.sickFrame+=1;
 		if(this.sickFrame>=this.sickInterval)
 		{
-			this.life-=Math.round(this.life*5/100);
+			if(Math.floor(Math.random()*20)+1==1)
+			{
+				Motor.messages.add("Vous sentez une amelioration de votre etat de sante, vous pouvez enfin respirer normalement.");
+				this.isSick=false;
+				return;
+			}
+			
 			if(this.life>=10)
 			{
 				Motor.messages.add("La maladie vous affaiblie.");
+				this.addEffect(new StatEffect(this,-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
 			}
 			else
 			{
 				Motor.messages.add("Vous toussez dans votre main et essuyez le sang qui s'y trouve sur vos vetements.");
+				this.addEffect(new StatEffect(this,-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
 			}
 			this.sickFrame=0;
 		}
 	}
+			if(!this.isSick && this.hygiene<=20 && Math.floor(Math.random()*10)+1==1)
+			{
+				Motor.messages.add("Vous etes soudainement pris de nausee...");
+				Motor.messages.add("Vous etes certainement tombe malade.");
+				this.isSick=true;
+				return;
+			}
 }
 
 /**
@@ -221,6 +239,11 @@ Player.prototype.fire=function()
 				this.fireFrame=0;
 				this.life-=10;
 				Motor.messages.add("Vous brulez a petit feu.");
+			}
+			rand=Math.floor(Math.random()*100)+1;
+			if(rand==1)
+			{
+				this.onFire=false;
 			}
 	}
 }
@@ -583,7 +606,8 @@ Player.prototype.interact=function()
 	{
 		if(!this.previousTile.isLocked() || this.class.Name=="rodeur")
 		{
-		Motor.messages.add("Vous ouvrez le coffre doucement, de peur d'abimer son contenu.");
+		Motor.messages.add("Alors que vous ouvrez le coffre, un nuage de poussiere vous saute au visage.");
+		this.hygiene-=Math.round((20*this.hygiene)/100);
 		Scene=this.previousTile;
 		}
 		else
@@ -653,6 +677,7 @@ Player.prototype.searchForGrass=function()
 				Motor.dungeon.getCurrentStair().map[xTemp][yTemp]=1;
 			}
 		}
+		this.hygiene-=Math.round((30*this.hygiene)/100);
 	}
 	
 }

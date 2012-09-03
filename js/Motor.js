@@ -135,6 +135,9 @@ Motor.prototype.inputUpdate=function()
 	if(Input.equals(13))
 		this.player.interact();
 		
+	if(Input.equals(17))
+		this.resetCanvas();
+		
 
 }
 

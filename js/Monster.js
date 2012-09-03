@@ -30,10 +30,9 @@ function Monster(stair,x,y,raceTemp)
 	this.agressivity=this.race.agressivity;
 	this.sympathy=0;
 	this.antipathy=0;
-	this.grouped=false;
 	this.score=this.race.score;
 	this.drop=this.race.drop;	
-
+	this.effectList=new Array();
 	this.pound=100;
 	this.inventory=new Inventory(this);
 	this.equipement=new Equipement(this);
@@ -435,18 +434,35 @@ Monster.prototype.isNearEntity=function(other)
 		return false;
 }
 
-Monster.prototype.isGrouped=function()
+
+/**
+ * Adds an effect to the effectList
+ */
+Monster.prototype.addEffect=function(effect)
 {
-	if(this.grouped)
-		
+	this.effectList.push(effect);
 }
+
+
+/**
+ * If the monster is near his bestfriend, adds an grouped effect to the monster and his bestfriend
+ */
+Monster.prototype.isGrouped=function(other)
+{
+	this.addEffect(new StatEffect(this,0,0,0,0,5,0,5,0,1));
+	if(other != undefined)
+	{
+		other.addEffect(new StatEffect(this,0,0,0,0,5,0,5,0,1));
+	}
+}
+
 
 /**
  * Run the monster's ia
  */
 Monster.prototype.think=function()
 {
-	
+
 	
 	friendList=new Array();
 	enemyList=new Array();
@@ -518,7 +534,11 @@ Monster.prototype.think=function()
 				worstEnemy=target;
 	}
 	
-
+	for(c=0;c<this.effectList.length;c++)
+	{
+		if(this.effectList[c] instanceof StatEffect)
+			this.effectList[c]=this.effectList[c].update();
+	}	
 	
 	if(bestFriend != undefined && worstEnemy != undefined)
 	{
@@ -542,6 +562,10 @@ Monster.prototype.think=function()
 	}
 	else if(bestFriend != undefined)
 	{
+		if(this.isNearEntity(bestFriend))
+		{
+			this.isGrouped(bestFriend);
+		}
 		if(this.agressivity<2)
 		{
 			if(this.isNearEntity(bestFriend))

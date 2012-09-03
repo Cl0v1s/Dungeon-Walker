@@ -61,7 +61,7 @@ Stair.prototype.generateMonsters=function()
 		}
 		id=-1;
 		attempt=0;
-		while(id==-1 || MonsterList[id].biome != this.getRoomAt(xTemp,yTemp).getBiome())
+		while(id==-1 || MonsterList[id]==undefined || MonsterList[id].biome != this.getRoomAt(xTemp,yTemp).getBiome())
 		{
 			attempt+=1;
 			
@@ -448,11 +448,13 @@ Stair.prototype.generateLiquid=function()
 				else
 					value=3
 					
-				//BUG A CORRIGER (RARE) 
-				if((this.map[i][u+1]==value && this.map[i][u-1]==value) || (this.map[i+1][u]==value && this.map[i-1][u]==value))
+				if((this.map[i+1] != undefined || this.map[i-1] != undefined) && (this.map[i][u+1] != undefined || this.map[i][u-1] != undefined))
 				{
-					if(this.map[i][u]==1)
-						this.map[i][u]==value
+					if((this.map[i][u+1]==value && this.map[i][u-1]==value) || (this.map[i+1][u]==value && this.map[i-1][u]==value))
+					{
+						if(this.map[i][u]==1)
+							this.map[i][u]==value
+					}
 				}
 			}
 		}	
