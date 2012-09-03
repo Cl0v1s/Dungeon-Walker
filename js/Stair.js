@@ -49,7 +49,7 @@ function Stair()
  */
 Stair.prototype.generateMonsters=function()
 {
-	nb=this.rooms.length*Math.floor(Math.random()*Motor.dungeon.getCurrentStairId())+20;
+	nb=Math.floor(Math.random()*Motor.dungeon.getCurrentStairId()*this.rooms.length)+20;
 	for(n=0;n<nb;n++)
 	{
 		xTemp=0;

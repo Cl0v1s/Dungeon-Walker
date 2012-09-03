@@ -420,6 +420,8 @@ Player.prototype.getUp=function()
 			y=Motor.dungeon.getCurrentStair().getSpawnPoint()[1]+Motor.dungeon.getCurrentStair().getSpawnPoint()[2].getY();
 			this.setX(x);
 			this.setY(y);
+			Motor.dungeon.getCurrentStair().generateMonsters();
+			Motor.dungeon.getCurrentStair().addEntityToList(this);
 			Motor.resetCanvas();
 		}
 }
@@ -579,8 +581,14 @@ Player.prototype.interact=function()
 	//open chest
 	if(this.previousTile instanceof Chest)
 	{
+		if(!this.previousTile.isLocked() || this.class.Name=="rodeur")
+		{
 		Motor.messages.add("Vous ouvrez le coffre doucement, de peur d'abimer son contenu.");
 		Scene=this.previousTile;
+		}
+		else
+			Motor.messages.add("Vous essayez d'ouvrir le coffre, mais celui-ci resiste, apparament verrouille.");		
+		
 	}
 	else
 	{
@@ -655,4 +663,15 @@ Player.prototype.searchForGrass=function()
 Player.prototype.addEffect=function(effect)
 {
 		this.effectList.push(effect);
+}
+
+/**
+ * Checks if the player is near the specified tile
+ */
+Player.prototype.isNear=function(value)
+{
+	if(Motor.dungeon.getCurrentStair().getMap()[this.x+1][this.y]==value || Motor.dungeon.getCurrentStair().getMap()[this.x-1][this.y]==value || Motor.dungeon.getCurrentStair().getMap()[this.x][this.y+1]==value || Motor.dungeon.getCurrentStair().getMap()[this.x][this.y-1]==value)
+		return true;
+	else
+		return false;
 }

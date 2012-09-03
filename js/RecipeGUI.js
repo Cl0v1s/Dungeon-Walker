@@ -1,7 +1,7 @@
 function RecipeGUI()
 {
 	this.width=350;
-	this.height=RecipeList.length*44;
+	this.height=RecipeList.length*50;
 	this.x=Math.round(608/2-this.width/2);
 	this.y=Math.round(520/2-this.height/2);
 	this.index=0;
@@ -24,7 +24,7 @@ RecipeGUI.prototype.update=function()
 	for(a=0;a<RecipeList.length;a++)
 	{
 		surface.font = "22px pixel";
-		surface.fillText(RecipeList[a].getName(),this.x+10,this.y+a*22);
+		surface.fillText(RecipeList[a].getName(),this.x+10,this.y+a*42);
 		surface.font = "18px pixel";
 		txt="";
 		for(b=0;b<RecipeList[a].getElements().length;b++)
@@ -33,9 +33,9 @@ RecipeGUI.prototype.update=function()
 			if(b != RecipeList[a].getElements().length-1)
 			txt=txt+",";
 		}
-		surface.fillText(txt,this.x+20,this.y+a*22+20);
+		surface.fillText(txt,this.x+20,this.y+a*42+20);
 	}
-	surface.fillText(">",this.x,this.y+this.index*33);
+	surface.fillText(">",this.x,this.y+this.index*42);
 }
 
 RecipeGUI.prototype.updateInput=function()

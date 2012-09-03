@@ -2,6 +2,11 @@ function Chest()
 {
 	this.pound=20;
 	this.examination=0;
+	rand=Math.floor(Math.random()*10)+1;
+	if(rand==1)
+		this.locked=true;
+	else
+		this.locked=false;
 	this.inventory=new Inventory(this);
 	nb=Math.floor(Math.random()*10);
 	for(n=0;n<nb;n++)
@@ -13,6 +18,16 @@ function Chest()
 		}
 	}
 }
+
+
+/**
+ * Returns if the chest is locked or not
+ */
+Chest.prototype.isLocked=function()
+{
+	return this.locked;
+}
+
 
 /**
  * Returns the chest's weight capacity

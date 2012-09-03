@@ -30,6 +30,7 @@ function Monster(stair,x,y,raceTemp)
 	this.agressivity=this.race.agressivity;
 	this.sympathy=0;
 	this.antipathy=0;
+	this.grouped=false;
 	this.score=this.race.score;
 	this.drop=this.race.drop;	
 
@@ -215,6 +216,7 @@ Monster.prototype.move=function(dir)
 				break;
 	}
 	this.previousTile=this.stair.map[this.x][this.y];
+	this.isGrouped();
 	if(this.previousTile==4)
 		this.setFire();
 	Motor.dungeon.getCurrentStair().map[this.x][this.y]=0;
@@ -298,10 +300,10 @@ Monster.prototype.kill=function(reason,by)
 							Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=drop;
 						}
 						else
-							Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=this.previousTile;
+							Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=1;
 	}
 	else
-		Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=this.previousTile;
+		Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=1;
 	this.death=true;
 }
 
@@ -423,6 +425,23 @@ Monster.prototype.getAntipathy=function()
 }
 
 /**
+ * Checks if the monster is near the specified entity
+ */
+Monster.prototype.isNearEntity=function(other)
+{
+	if((other.getX()==this.x-1 && other.getY()==this.y) || (other.getX()==this.x+1 && other.getY()==this.y) || (other.getY()==this.y-1 && other.getX()==this.x) || (other.getY()==this.y+1 && other.getX()==this.x))
+		return true;
+	else 
+		return false;
+}
+
+Monster.prototype.isGrouped=function()
+{
+	if(this.grouped)
+		
+}
+
+/**
  * Run the monster's ia
  */
 Monster.prototype.think=function()
@@ -513,7 +532,10 @@ Monster.prototype.think=function()
 		}
 		else if(this.agressivity==0)
 		{
-			this.moveTo(bestFriend.getX(),bestFriend.getY());			
+			if(this.isNearEntity(bestFriend))
+				this.selectDir();
+			else
+				this.moveTo(bestFriend.getX(),bestFriend.getY());			
 		}
 		
 			return;
@@ -521,7 +543,13 @@ Monster.prototype.think=function()
 	else if(bestFriend != undefined)
 	{
 		if(this.agressivity<2)
-			this.moveTo(bestFriend.getX(),bestFriend.getY());
+		{
+			if(this.isNearEntity(bestFriend))
+				this.selectDir();
+			else
+				this.moveTo(bestFriend.getX(),bestFriend.getY());
+			
+		}
 		else
 			this.selectDir();
 	

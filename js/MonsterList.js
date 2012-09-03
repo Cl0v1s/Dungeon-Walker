@@ -9,4 +9,5 @@
  *  where the monster can be found,agressivity amount,score bonus,an array who contains the list of the items can be droped by the monster.
  */
 
-var HairySpider=new MonsterRace("araignee velue","dungeon","X",0,3,5,2,2,5,1,8,Claw,0,0,5,new Array(SpiderLeg.getId(),SpiderEye.getId(),RottenFlesh.getId()));
+var HairySpider=new MonsterRace("araignee velue","dungeon","X",0,3,5,2,1,5,1,8,Claw,0,0,5,new Array(SpiderLeg.getId(),SpiderEye.getId(),RottenFlesh.getId()));
+var AggressiveRat=new MonsterRace("rat agressif","dungeon","%",5,6,7,2,3,6,1,5,Claw,1,2,7,new Array());
