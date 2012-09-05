@@ -33,8 +33,6 @@ MsgZone.prototype.draw=function()
 		if(player.life<=50)
 			surface.fillStyle="rgb("+(200+player.life)+",50,50)";
 		
-		if(player.isSick==true)
-			surface.fillStyle="rgb(200,150,50)";
 
 		surface.fillText("Vie:"+player.life, this.x*32, this.y*32+6*17+20);
 		surface.fillStyle="rgb(95,54,14)";		
@@ -47,6 +45,15 @@ MsgZone.prototype.draw=function()
 		surface.fillText("Sommeil:"+Math.floor((-1*player.sommeil+100)), this.x*32, this.y*32+6*17+20+32);
 		surface.fillStyle="rgb(255,181,33)";		
 		surface.fillText("Score:"+player.score, this.x*32+7*32, this.y*32+6*17+20+32);
+		
+		if(Scene == Motor)
+		{
+			surface.font = "24px pixel";
+			surface.fillStyle="rgb(0,0,0)";
+			surface.fillRect (0, 0,document.getElementById('canvas').width,34);
+			surface.fillStyle="rgb(50,50,50)";
+			surface.fillText("[i] Inventory   [e] Equipement   [p] Prepare   [l] Lap   [enter] Interact", 10, 32);	
+		}
 
 
 }

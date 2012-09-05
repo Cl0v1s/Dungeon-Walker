@@ -44,6 +44,12 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.previousTile=1;
 	this.inventory.add(this.class.Weapon.getId());
 	this.inventory.use();
+	this.inventory.add(LeatherHood.getId());
+	this.inventory.use();
+	this.inventory.add(LinenShirt.getId());
+	this.inventory.use();
+	this.inventory.add(LinenTrousers.getId());
+	this.inventory.use();
 	this.hi=this.class.Hi;
 	this.sickInterval=10;
 	this.sickFrame=0;
@@ -443,6 +449,17 @@ Player.prototype.getUp=function()
 			y=Motor.dungeon.getCurrentStair().getSpawnPoint()[1]+Motor.dungeon.getCurrentStair().getSpawnPoint()[2].getY();
 			this.setX(x);
 			this.setY(y);
+			if(Motor.dungeon.getCurrentStair().map[x+1][y]!=2)
+				Motor.dungeon.getCurrentStair().map[x+1][y]=1;
+			if(Motor.dungeon.getCurrentStair().map[x-1][y]!=2)
+				Motor.dungeon.getCurrentStair().map[x-1][y]=1;
+			if(Motor.dungeon.getCurrentStair().map[x][y+1]!=2)
+				Motor.dungeon.getCurrentStair().map[x][y+1]=1;
+			if(Motor.dungeon.getCurrentStair().map[x][y-1]!=2)
+				Motor.dungeon.getCurrentStair().map[x][y-1]=1;
+
+			this.previousTile=1;
+			this.move("right");
 			Motor.dungeon.getCurrentStair().generateMonsters();
 			Motor.dungeon.getCurrentStair().addEntityToList(this);
 			Motor.resetCanvas();

@@ -157,12 +157,12 @@ Motor.prototype.newTurn=function()
 		if(this.time=="Day")
 		{
 			this.player.changeStat();
-			this.messages.add("La luminositee diminue peu a peu...");
+			this.messages.add("La temperature diminue peu a peu, il semblerait que le soleil se couche...");
 			this.time="Night";
 		}
 		else
 		{
-			this.messages.add("La lumiere du jour revient suivie par son compagnon le soleil.");
+			this.messages.add("La temperature monte legerement, il fait probablement jour dehors...");
 			this.time="Day";
 		}
 		this.dayInterval+=this.turn;
