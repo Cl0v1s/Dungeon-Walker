@@ -1,11 +1,11 @@
-function Player(x,y,FOR,CON,TAI,DEX,race)
+function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 {
 	this.x=x;
 	this.y=y;
+	this.stair=stairTemp;
 	this.name="Conan";
 	this.class=race;
 	this.light=this.class.Light;
-	//calcul des caractéristiques
 	this.force=FOR*this.class.For;
 	this.constitution=CON*this.class.Con;
 	this.taille=TAI*this.class.Tai;
@@ -20,6 +20,7 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	}
 	total=total*this.class.Lrm;
 	this.life+=total;
+	this.lifeMax=this.life;
 
 	this.atk=1;
 	this.lrm=this.class.Lrm;
@@ -28,7 +29,7 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.img=this.class.Img;
 	this.equipement=new Equipement(this);
 	this.pound=Math.floor(((this.taille*2+this.constitution)/3)/4);
-	//statistiques de survie
+
 	this.hygiene=100;
 	this.faim=100;
 	this.sommeil=100;
@@ -36,12 +37,14 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.isSick=false;
 	this.onFire=false;
 	this.effectList=new Array();
-	//autre
+
+	this.messages=new MsgZone(1,11);
 	this.score=0;
 	this.inventory=new Inventory(this);
 	this.fireInterval=5;
 	this.fireFrame=0;
 	this.previousTile=1;
+	this.lastTile=1;
 	this.inventory.add(this.class.Weapon.getId());
 	this.inventory.use();
 	this.inventory.add(LeatherHood.getId());
@@ -50,11 +53,38 @@ function Player(x,y,FOR,CON,TAI,DEX,race)
 	this.inventory.use();
 	this.inventory.add(LinenTrousers.getId());
 	this.inventory.use();
-	this.hi=this.class.Hi;
 	this.sickInterval=10;
 	this.sickFrame=0;
+	this.healInterval=20;
+	this.healFrame=0;
 	this.sympathy=0;
 	this.antipathy=0;
+}
+
+/**
+ * Show a message in the player's msgZone
+ */
+Player.prototype.sendMessage=function(msg)
+{
+		this.messages.add(msg);
+}
+
+
+/**
+ * Sets the player's current stair
+ */
+Player.prototype.setStair=function(stairTemp)
+{
+	this.stair=stairTemp;
+}
+
+
+/**
+ * Returns the player's current stair
+ */
+Player.prototype.getStair=function()
+{
+	return this.stair;
 }
 
 /**
@@ -103,6 +133,8 @@ Player.prototype.getName=function()
  */
 Player.prototype.draw=function()
 {
+
+	
 	if(this.faim>100)
 		this.faim=100;
 
@@ -127,6 +159,10 @@ Player.prototype.draw=function()
 	if(this.hygiene<0)
 		this.hygiene=0;
 
+	if(this.life<=0 || this.soif<=0 || this.faim<=0)
+		this.kill();
+
+	this.messages.draw();
 
 	surface.font = "30px pixel";
 	surface.fillStyle="rgb(50,150,50)";
@@ -142,18 +178,29 @@ Player.prototype.draw=function()
  * Manages the player's movements 
  */
 Player.prototype.move=function(dir)
-{
-	if(this.life<=0 || this.soif<=0 || this.faim<=0)
-		this.kill();
+{		
+	if(this.stair.getMap()[this.x+1][this.y]==0)
+			this.stair.getMap()[this.x+1][this.y]=1;
+			
+	if(this.stair.getMap()[this.x-1][this.y]==0)
+			this.stair.getMap()[this.x-1][this.y]=1;
+			
+	if(this.stair.getMap()[this.x][this.y+1]==0)
+			this.stair.getMap()[this.x][this.y+1]=1;
+			
+	if(this.stair.getMap()[this.x][this.y-1]==0)
+			this.stair.getMap()[this.x-1][this.y]=1;
 		
-	stair=Motor.dungeon.getCurrentStair();
+	stair=this.stair;
 	for(c=0;c<this.effectList.length;c++)
 	{
 		if(this.effectList[c] instanceof StatEffect)
 			this.effectList[c]=this.effectList[c].update();
 	}
+	this.heal();
 	this.fire();
 	this.sick();
+	this.lastTile=this.previousTile;
 	stair.map[this.x][this.y]=this.previousTile;
 	switch(dir)
 	{				
@@ -187,7 +234,6 @@ Player.prototype.move=function(dir)
 			break;
 	}
 	this.getObject();
-	this.getUp();
 	this.previousTile=stair.getMap()[this.x][this.y];
 	this.contextMessage();
 	stair.map[this.x][this.y]=0;
@@ -205,28 +251,28 @@ Player.prototype.sick=function()
 		{
 			if(Math.floor(Math.random()*20)+1==1)
 			{
-				Motor.messages.add("Vous sentez une amelioration de votre etat de sante, vous pouvez enfin respirer normalement.");
+				this.sendMessage("Vous sentez une amelioration de votre etat de sante, vous pouvez enfin respirer normalement.");
 				this.isSick=false;
 				return;
 			}
 			
 			if(this.life>=10)
 			{
-				Motor.messages.add("La maladie vous affaiblie.");
-				this.addEffect(new StatEffect(this,-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
+				this.sendMessage("La maladie vous affaiblie.");
+				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
 			}
 			else
 			{
-				Motor.messages.add("Vous toussez dans votre main et essuyez le sang qui s'y trouve sur vos vetements.");
-				this.addEffect(new StatEffect(this,-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
+				this.sendMessage("Vous toussez dans votre main et essuyez le sang qui s'y trouve sur vos vetements.");
+				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
 			}
 			this.sickFrame=0;
 		}
 	}
 			if(!this.isSick && this.hygiene<=20 && Math.floor(Math.random()*10)+1==1)
 			{
-				Motor.messages.add("Vous etes soudainement pris de nausee...");
-				Motor.messages.add("Vous etes certainement tombe malade.");
+				this.sendMessage("Vous etes soudainement pris de nausee...");
+				this.sendMessage("Vous etes certainement tombe malade.");
 				this.isSick=true;
 				return;
 			}
@@ -244,7 +290,7 @@ Player.prototype.fire=function()
 			{
 				this.fireFrame=0;
 				this.life-=10;
-				Motor.messages.add("Vous brulez a petit feu.");
+				this.sendMessage("Vous brulez a petit feu.");
 			}
 			rand=Math.floor(Math.random()*100)+1;
 			if(rand==1)
@@ -260,10 +306,14 @@ Player.prototype.fire=function()
  */
 Player.prototype.heal=function()
 {
-	if(this.isSick==false && this.faim>50)
+	this.healFrame+=1;
+	if(this.healFrame>=this.healInterval && this.isSick==false && this.faim>50)
 	{
-	heal=Math.floor(this.life*this.class.Hr/100);
-	this.life+=heal;
+		heal=Math.floor(this.life*this.class.Hr/100);
+		this.life+=heal;
+		if(this.life>this.lifeMax)
+			this.life=this.lifeMax;
+		this.healFrame=0;
 	}
 
 }
@@ -291,23 +341,23 @@ Player.prototype.lap=function()
 		if(this.soif<100)
 		{
 			this.soif=this.soif+Math.round(10*this.soif/100);
-			Motor.messages.add("Vous buvez goulument l'eau limpide qui se trouve a vos pieds.");
+			this.sendMessage("Vous buvez goulument l'eau limpide qui se trouve a vos pieds.");
 			rand=Math.floor(Math.random()*100)+1;
 			if(rand==1)
 			{
 					this.isSick=true;
-					Motor.messages.add("L'eau que vous venez d'avaler avait un drole de gout...");
-					Motor.messages.add("Priez pour qu'elle n'ai pas stagne ici trop longtemps....");
+					this.sendMessage("L'eau que vous venez d'avaler avait un drole de gout...");
+					this.sendMessage("Priez pour qu'elle n'ai pas stagne ici trop longtemps....");
 			}
 		}
 		else
 		{
-			Motor.messages.add("Vous n'avez pas soif.");		
+			this.sendMessage("Vous n'avez pas soif.");		
 		}
 	}
 	if(grill !=3 && grill !=4)
 	{
-		Motor.messages.add("Il n'y a pas d'eau a vos pieds.");
+		this.sendMessage("Il n'y a pas d'eau a vos pieds.");
 	}
 }
 
@@ -411,7 +461,7 @@ Player.prototype.turn=function(ennemy)
  */
 Player.prototype.openInventory=function()
 {
-		Motor.messages.add("Vous vous asseyez sur le sol et vous ouvrez votre sac.");
+		this.sendMessage("Vous vous asseyez sur le sol et vous ouvrez votre sac.");
 		Scene=this.inventory;
 }
 
@@ -420,7 +470,7 @@ Player.prototype.openInventory=function()
  */
 Player.prototype.openEquipement=function()
 {
-		Motor.messages.add("Vous vous asseyez sur le sol et vous otez votre equipement.");
+		this.sendMessage("Vous vous asseyez sur le sol et vous otez votre equipement.");
 		Scene=this.equipement;
 }
 
@@ -429,42 +479,13 @@ Player.prototype.openEquipement=function()
  */
 Player.prototype.getObject=function()
 {
-		if(Motor.dungeon.getCurrentStair().getMap()[this.x][this.y]>=10)
+		if(this.stair.getMap()[this.x][this.y]>=10)
 		{
-			this.inventory.add(Motor.dungeon.getCurrentStair().getMap()[this.x][this.y]-10);
-			Motor.dungeon.getCurrentStair().map[this.x][this.y]=1;
+			this.inventory.add(this.stair.getMap()[this.x][this.y]-10);
+			this.stair.map[this.x][this.y]=1;
 		}
 }
 
-/**
- * if the player is on a stair then generate a new stair.
- */
-Player.prototype.getUp=function()
-{
-		if(Motor.dungeon.getCurrentStair().getMap()[this.x][this.y]=="stair")
-		{
-			this.previousTile=1;
-			Motor.dungeon.upStair();
-			x=Motor.dungeon.getCurrentStair().getSpawnPoint()[0]+Motor.dungeon.getCurrentStair().getSpawnPoint()[2].getX();
-			y=Motor.dungeon.getCurrentStair().getSpawnPoint()[1]+Motor.dungeon.getCurrentStair().getSpawnPoint()[2].getY();
-			this.setX(x);
-			this.setY(y);
-			if(Motor.dungeon.getCurrentStair().map[x+1][y]!=2)
-				Motor.dungeon.getCurrentStair().map[x+1][y]=1;
-			if(Motor.dungeon.getCurrentStair().map[x-1][y]!=2)
-				Motor.dungeon.getCurrentStair().map[x-1][y]=1;
-			if(Motor.dungeon.getCurrentStair().map[x][y+1]!=2)
-				Motor.dungeon.getCurrentStair().map[x][y+1]=1;
-			if(Motor.dungeon.getCurrentStair().map[x][y-1]!=2)
-				Motor.dungeon.getCurrentStair().map[x][y-1]=1;
-
-			this.previousTile=1;
-			this.move("right");
-			Motor.dungeon.getCurrentStair().generateMonsters();
-			Motor.dungeon.getCurrentStair().addEntityToList(this);
-			Motor.resetCanvas();
-		}
-}
 
 /**
  * Returns the light of the player
@@ -514,25 +535,52 @@ Player.prototype.kill=function()
  */
 Player.prototype.contextMessage=function()
 {
+	if(this.previousTile != this.lastTile)
+	{
 		if(this.previousTile==3)
 		{
-			Motor.messages.add("Vous marchez dans une flaque d'eau, formee annee apres annee par l'infiltration.");
+			this.sendMessage("Vous marchez dans une flaque d'eau, formee annee apres annee par l'infiltration.");
 			if(this.onFire==true)
 			{
-				Motor.messages.add("Vous laisser l'eau fraiche recouvrir vos brulure...");
+				this.sendMessage("Vous laisser l'eau fraiche recouvrir vos brulure...");
 				this.onFire=false;
 			}
 		}
 		else if(this.previousTile==4)
 		{
-			Motor.messages.add("Vous marchez dans des flammes, idiot !");
+			this.sendMessage("Vous marchez dans des flammes, idiot !");
 			this.onFire=true;
 		}
 		else if(this.previousTile==6)
 		{
-			Motor.messages.add("Une odeur de brule atteint vos narines... Et vous vous rendez compte que vous marchez dans de la lave !");
+			this.sendMessage("Une odeur de brule atteint vos narines... Et vous vous rendez compte que vous marchez dans de la lave !");
 			this.life=this.life-10;
 			this.onFire=true;
+		}
+	}
+		
+		if(this.stair.getMap()[this.x][this.y]=="stair")
+		{
+			this.previousTile=1;
+			this.stair=Motor.dungeon.upStair(this);
+			x=this.stair.getSpawnPoint()[0]+this.stair.getSpawnPoint()[2].getX();
+			y=this.stair.getSpawnPoint()[1]+this.stair.getSpawnPoint()[2].getY();
+			this.setX(x);
+			this.setY(y);
+			if(this.stair.map[x+1][y]!=2)
+				this.stair.map[x+1][y]=1;
+			if(this.stair.map[x-1][y]!=2)
+				this.stair.map[x-1][y]=1;
+			if(this.stair.map[x][y+1]!=2)
+				this.stair.map[x][y+1]=1;
+			if(this.stair.map[x][y-1]!=2)
+				this.stair.map[x][y-1]=1;
+
+			this.previousTile=1;
+			this.move("right");
+			this.stair.generateMonsters();
+			this.stair.addEntityToList(this);
+			Motor.resetCanvas();
 		}
 }
 
@@ -623,12 +671,12 @@ Player.prototype.interact=function()
 	{
 		if(!this.previousTile.isLocked() || this.class.Name=="rodeur")
 		{
-		Motor.messages.add("Alors que vous ouvrez le coffre, un nuage de poussiere vous saute au visage.");
+		this.sendMessage("Alors que vous ouvrez le coffre, un nuage de poussiere vous saute au visage.");
 		this.hygiene-=Math.round((20*this.hygiene)/100);
-		Scene=this.previousTile;
+		this.previousTile.open(this);
 		}
 		else
-			Motor.messages.add("Vous essayez d'ouvrir le coffre, mais celui-ci resiste, apparament verrouille.");		
+			this.sendMessage("Vous essayez d'ouvrir le coffre, mais celui-ci resiste, apparament verrouille.");		
 		
 	}
 	else
@@ -643,19 +691,19 @@ Player.prototype.interact=function()
  */
 Player.prototype.searchForGrass=function()
 {
-	if(Motor.dungeon.getCurrentStair().getMap()[this.x-1][this.y]==5 || Motor.dungeon.getCurrentStair().getMap()[this.x+1][this.y]==5 || Motor.dungeon.getCurrentStair().getMap()[this.x][this.y-1]==5 || Motor.dungeon.getCurrentStair().getMap()[this.x][this.y+1]==5)
+	if(this.stair.getMap()[this.x-1][this.y]==5 || this.stair.getMap()[this.x+1][this.y]==5 || this.stair.getMap()[this.x][this.y-1]==5 || this.stair.getMap()[this.x][this.y+1]==5)
 	{
-		if(Motor.dungeon.getCurrentStair().getMap()[this.x-1][this.y]==5)
+		if(this.stair.getMap()[this.x-1][this.y]==5)
 		{
 			xTemp=this.x-1;
 			yTemp=this.y;
 		}
-		else if(Motor.dungeon.getCurrentStair().getMap()[this.x+1][this.y]==5)
+		else if(this.stair.getMap()[this.x+1][this.y]==5)
 		{
 			xTemp=this.x+1;
 			yTemp=this.y;
 		}
-		else if(Motor.dungeon.getCurrentStair().getMap()[this.x][this.y-1]==5)
+		else if(this.stair.getMap()[this.x][this.y-1]==5)
 		{
 			xTemp=this.x;
 			yTemp=this.y-1;
@@ -666,7 +714,7 @@ Player.prototype.searchForGrass=function()
 			yTemp=this.y+1;
 		}
 		
-		room=Motor.dungeon.getCurrentStair().getRoomAt(this.x,this.y);
+		room=this.stair.getRoomAt(this.x,this.y);
 		if(room != false)
 		{
 			if(room.getBiome()=="plain")
@@ -686,12 +734,12 @@ Player.prototype.searchForGrass=function()
 					}
 					rand=Math.floor(Math.random()*list.length);
 					object=list[rand];
-					Motor.messages.add("Apres un rapide exament, vous decouvrez l'objet "+object.getName()+".");
+					this.sendMessage("Apres un rapide exament, vous decouvrez l'objet "+object.getName()+".");
 					this.inventory.add(object.getId());
 				}
 				else
-					Motor.messages.add("Vous n'avez rien trouve d'interessant...");
-				Motor.dungeon.getCurrentStair().map[xTemp][yTemp]=1;
+					this.sendMessage("Vous n'avez rien trouve d'interessant...");
+				this.stair.map[xTemp][yTemp]=1;
 			}
 		}
 		this.hygiene-=Math.round((30*this.hygiene)/100);
@@ -712,7 +760,7 @@ Player.prototype.addEffect=function(effect)
  */
 Player.prototype.isNear=function(value)
 {
-	if(Motor.dungeon.getCurrentStair().getMap()[this.x+1][this.y]==value || Motor.dungeon.getCurrentStair().getMap()[this.x-1][this.y]==value || Motor.dungeon.getCurrentStair().getMap()[this.x][this.y+1]==value || Motor.dungeon.getCurrentStair().getMap()[this.x][this.y-1]==value)
+	if(this.stair.getMap()[this.x+1][this.y]==value || this.stair.getMap()[this.x-1][this.y]==value || this.stair.getMap()[this.x][this.y+1]==value || this.stair.getMap()[this.x][this.y-1]==value)
 		return true;
 	else
 		return false;

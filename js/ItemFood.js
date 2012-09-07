@@ -18,16 +18,16 @@ ItemFood.prototype.use=function(owner)
 	faim=owner.getHungry();
 	faim=faim+this.value;
 	owner.setHungry(faim);
-	Motor.messages.add("Vous manger attivement le "+this.name+".");
+	owner.sendMessage("Vous manger attivement le "+this.name+".");
 	return undefined;
 }
 
 /**
  * Allow to cook the item.
  */
-ItemFood.prototype.cook=function()
+ItemFood.prototype.cook=function(owner)
 {
-		Motor.messages.add("Quelques minutes plus tard vous retirez un delicieux morceau de "+this.cookResult.getName()+" des flammes.");
+		owner.sendMessage("Quelques minutes plus tard vous retirez un delicieux morceau de "+this.cookResult.getName()+" des flammes.");
 		return this.cookResult;
 }
 

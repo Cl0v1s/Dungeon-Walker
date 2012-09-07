@@ -99,11 +99,13 @@ PlayerEditor.prototype.update=function()
 	}
 }
 
-
+/**
+ * Generates a new dungeon and spawn the player in this last
+ */
 PlayerEditor.prototype.validate=function()
 {
-	Motor.generateStair();
-	player=new Player(0,0,1,50,180,1,Class[this.index]);
+	stair=Motor.generateDungeon();
+	player=new Player(stair,0,0,1,50,180,1,Class[this.index]);
 	Motor.start(player);
 	Scene=Motor;
 }

@@ -20,41 +20,46 @@ Dungeon.prototype.stairExists=function(index)
 /**
  * This method create a new Stair in the dungeon
  */
-Dungeon.prototype.generateStair=function()
+Dungeon.prototype.generateStair=function(ownerTemp)
 {
 	
 	if(!this.stairExists(this.stairIndex))
 	{
 			this.stairs[this.stairIndex]=new Stair();
 			if(this.stairIndex==0)
-				Motor.messages.add("Vous penetrez dans un donjon sombre et sale");
+				if(ownerTemp != undefined)
+					ownerTemp.sendMessage("Vous penetrez dans un donjon sombre et sale");
 			else
 			{
 					flag=Math.floor(Math.random()*2)+1;
 					if(flag==1)
-						Motor.messages.add("Vous montez difficilement les marches millenaires et decouvrez une nouvelle salle.");
+						if(ownerTemp != undefined)
+							ownerTemp.sendMessage("Vous montez difficilement les marches millenaires et decouvrez une nouvelle salle.");
 					else
-						Motor.messages.add("Encore un nouvel etage ?!");
+						if(ownerTemp != undefined)
+							ownerTemp.sendMessage("Encore un nouvel etage ?!");
 			}
 	}
+	
+	return this.stairs[this.stairIndex];
 }
 
 /**
  * This method allow the player to go up in the dungeon
  */
-Dungeon.prototype.upStair=function()
+Dungeon.prototype.upStair=function(ownerTemp)
 {
 	this.stairIndex=this.stairIndex+1;
-	this.generateStair();
+	return this.generateStair(ownerTemp);
 }
 
 /**
  * This method allow the player to go down in the dungeon
  */
-Dungeon.prototype.downStair=function()
+Dungeon.prototype.downStair=function(ownerTemp)
 {
 	this.stairIndex=this.stairIndex-1;
-	this.generateStair();
+	return this.generateStair(ownerTemp);
 }
 
 /**

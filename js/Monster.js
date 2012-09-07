@@ -49,6 +49,12 @@ function Monster(stair,x,y,raceTemp)
 }
 
 /**
+ * Show a message in the monster's msgZone
+ */
+Monster.prototype.sendMessage=function(msg)
+{}
+
+/**
  * Returns the monster's weight capacity
  */
 Monster.prototype.getPound=function()
@@ -198,19 +204,19 @@ Monster.prototype.move=function(dir)
 	switch(dir)
 	{
 		case "right":
-			if(Motor.dungeon.getCurrentStair().walkableMonster(this.x+1,this.y))
+			if(this.stair.walkableMonster(this.x+1,this.y))
 				this.x+=1;
 				break;
 		case "left":
-			if(Motor.dungeon.getCurrentStair().walkableMonster(this.x-1,this.y))
+			if(this.stair.walkableMonster(this.x-1,this.y))
 				this.x-=1;
 				break;
 		case "down":
-			if(Motor.dungeon.getCurrentStair().walkableMonster(this.x,this.y+1))
+			if(this.stair.walkableMonster(this.x,this.y+1))
 				this.y+=1;
 				break;
 		case "up" :		
-			if(Motor.dungeon.getCurrentStair().walkableMonster(this.x,this.y-1))
+			if(this.stair.walkableMonster(this.x,this.y-1))
 				this.y-=1;
 				break;
 	}
@@ -218,7 +224,7 @@ Monster.prototype.move=function(dir)
 	this.isGrouped();
 	if(this.previousTile==4)
 		this.setFire();
-	Motor.dungeon.getCurrentStair().map[this.x][this.y]=0;
+	this.stair.map[this.x][this.y]=0;
 	
 }
 
@@ -236,11 +242,8 @@ Monster.prototype.fire=function()
 				this.fireFrame=0;
 				this.life-=(20*this.life_max/100);
 				this.life=Math.floor(this.life);
-				if(this.life>0)
-					Motor.messages.add(this.nam+" brule en criant.");
-				else
+				if(this.life<=0)
 				{
-					Motor.messages.add(this.nam+" disparait dans un petit nuage de poussieres.");
 					this.kill("burnt");
 				}
 			}
@@ -296,13 +299,13 @@ Monster.prototype.kill=function(reason,by)
 							rand=Math.floor(Math.random()*this.drop.length);
 							drop=this.drop[rand];
 							drop=drop+10;
-							Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=drop;
+							this.stair.map[this.getX()][this.getY()]=drop;
 						}
 						else
-							Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=1;
+							this.stair.map[this.getX()][this.getY()]=1;
 	}
 	else
-		Motor.dungeon.getCurrentStair().map[this.getX()][this.getY()]=1;
+		this.stair.map[this.getX()][this.getY()]=1;
 	this.death=true;
 }
 
@@ -449,10 +452,10 @@ Monster.prototype.addEffect=function(effect)
  */
 Monster.prototype.isGrouped=function(other)
 {
-	this.addEffect(new StatEffect(this,0,0,0,0,5,0,5,0,1));
+	this.addEffect(new StatEffect(this,"grouped",0,0,0,0,5,0,5,0,1));
 	if(other != undefined)
 	{
-		other.addEffect(new StatEffect(this,0,0,0,0,5,0,5,0,1));
+		other.addEffect(new StatEffect(this,"leader",0,0,0,0,5,0,5,0,1));
 	}
 }
 
@@ -481,10 +484,6 @@ Monster.prototype.think=function()
 				{
 					this.agressivity+=1;
 					result=this.stair.fight(target,this);
-					if(result)
-						target.kill("slain",this);
-					else
-						this.kill;
 						
 				}
 			} 

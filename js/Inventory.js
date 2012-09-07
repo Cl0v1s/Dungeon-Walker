@@ -22,8 +22,7 @@ Inventory.prototype.add=function(id)
 			if(typeof this.contains[i]=="undefined")
 			{
 				this.contains[i]=ItemList[id];
-				if(this.owner instanceof Player)
-					Motor.messages.add("Vous placez l'objet "+ItemList[id].getName()+" dans votre sac.");
+				this.owner.sendMessage("Vous placez l'objet "+ItemList[id].getName()+" dans votre sac.");
 				this.size+=ItemList[id].getPod();
 				return true;
 			}
@@ -31,8 +30,7 @@ Inventory.prototype.add=function(id)
 	}
 	else
 	{
-		if(this.owner instanceof Player)
-			Motor.messages.add("Vous ne pouvez plus rien porter, vous laissez donc l'objet sur le sol.");
+		this.owner.sendMessage("Vous ne pouvez plus rien porter, vous laissez donc l'objet sur le sol.");
 		return false;
 	}
 }
@@ -48,8 +46,11 @@ Inventory.prototype.update=function()
 	Motor.dungeon.getCurrentStair().draw();
 	surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (0, 0,320,320);
-	surface.fillRect (Motor.messages.x*32-100, (Motor.messages.y-1)*32,600,500);
-	Motor.messages.draw();
+	if(this.owner.messages != undefined)
+	{
+		surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
+		this.owner.messages.draw();
+	}
 	surface.font = "24px pixel";
 	surface.fillStyle = "rgb(150,150,150)";
 	surface.fillText("(e) examiner     (enter) utiliser",5,24);
@@ -96,14 +97,14 @@ Inventory.prototype.inputUpdate=function()
 {
 	if(Input.equals(68))
 	{
-		Motor.messages.add("Vous abandonnez l'objet "+this.contains[this.index].getName()+".");
+		this.owner.sendMessage("Vous abandonnez l'objet "+this.contains[this.index].getName()+".");
 		this.remove(this.index);
 	}
 	if(Input.equals(69))
 	{
 			if(this.examination==0)
 			{
-				Motor.messages.add("Vous regardez l'objet "+this.contains[this.index].getName()+" de plus pres.");
+				this.owner.sendMessage("Vous regardez l'objet "+this.contains[this.index].getName()+" de plus pres.");
 				this.examination+=1;
 				return;
 			}
@@ -136,7 +137,7 @@ Inventory.prototype.inputUpdate=function()
 				this.size+=this.contains[i].getPod();
 			}
 		}
-		Motor.messages.add("Vous fermez votre sac et vous vous redressez pret a repartir.");
+		this.owner.sendMessage("Vous fermez votre sac et vous vous redressez pret a repartir.");
 		Scene=Motor;
 	}	
 }
@@ -208,13 +209,13 @@ Inventory.prototype.cook=function()
 		y=this.owner.getY();
 		if(Motor.dungeon.getCurrentStair().getMap()[x-1][y]==4 || Motor.dungeon.getCurrentStair().getMap()[x+1][y]==4 || Motor.dungeon.getCurrentStair().getMap()[x][y+1]==4 || Motor.dungeon.getCurrentStair().getMap()[x][y-1]==4)
 		{
-			Motor.messages.add("Vous placez l'objet "+this.contains[this.index].getName()+" au dessus du feu et patientez...");
+			this.owner.sendMessage("Vous placez l'objet "+this.contains[this.index].getName()+" au dessus du feu et patientez...");
 			this.contains[this.index]=this.contains[this.index].cook();
 			this.examination=0;
 		}
 		else
 		{
-			Motor.messages.add("Faire cuir un truc ? Mais sur quoi ?");			
+			this.owner.sendMessage("Faire cuir un truc ? Mais sur quoi ?");			
 		}
 	}	
 }
@@ -244,8 +245,11 @@ Inventory.prototype.examine=function(id)
 
 		surface.fillStyle="rgb(0,0,0)";
 		surface.fillRect (0, 0,320,320);
-		surface.fillRect (Motor.messages.x*32-100, Motor.messages.y*32,600,500);
-		Motor.messages.draw();
+		if(this.owner.messages != undefined)
+		{
+			surface.fillRect (this.owner.messages.x*32-100, this.owner.messages.y*32,600,500);
+			this.owner.messages.draw();
+		}
 	surface.font = "24px pixel";
 	surface.fillStyle = "rgb(150,150,150)";
 	surface.fillText("(e) fermer     (enter) utiliser",5,24);

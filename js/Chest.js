@@ -1,5 +1,6 @@
 function Chest()
 {
+	this.owner=undefined;
 	this.pound=20;
 	this.examination=0;
 	rand=Math.floor(Math.random()*10)+1;
@@ -17,6 +18,31 @@ function Chest()
 			this.inventory.add(ItemList[rand].getId());
 		}
 	}
+}
+
+/**
+ * Show a message in the chest's msgZone
+ * Useless
+ */
+Chest.prototype.sendMessage=function(msg)
+{}
+
+/**
+ * Opens the chest
+ */
+Chest.prototype.open=function(owner)
+{
+	this.owner=owner;
+	Scene=this;
+}
+
+/**
+ * Opens the chest
+ */
+Chest.prototype.close=function(owner)
+{
+	this.owner=undefined;
+	Scene=Motor;
 }
 
 
@@ -44,12 +70,16 @@ Chest.prototype.update=function()
 {
 	this.updateInput();
 	clean();
-	Motor.player.draw();
-	Motor.dungeon.getCurrentStair().draw();
-	surface.fillStyle="rgb(0,0,0)";
+	if(this.owner != undefined)
+	{
+		this.owner.stair.draw();
+		this.owner.draw();
+		surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (0, 0,320,320);
-	surface.fillRect (Motor.messages.x*32-100, (Motor.messages.y-1)*32,600,500);
-	Motor.messages.draw();
+	surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
+	this.owner.messages.draw();
+	}
+
 	surface.font = "24px pixel";
 	surface.fillStyle = "rgb(150,150,150)";
 	surface.fillText("(e) examiner     (enter) recuperer",5,24);
@@ -99,7 +129,7 @@ Chest.prototype.updateInput=function()
 	{
 			if(this.examination==0)
 			{
-				Motor.messages.add("Vous regardez l'objet "+this.inventory.contains[this.inventory.index].getName()+" de plus pres.");
+				this.owner.sendMessage("Vous regardez l'objet "+this.inventory.contains[this.inventory.index].getName()+" de plus pres.");
 				this.examination+=1;
 				return;
 			}
@@ -121,8 +151,8 @@ Chest.prototype.updateInput=function()
 		
 	if(Input.equals(27))
 	{
-		Motor.messages.add("Vous refermez precausioneusement le coffre.");
-		Scene=Motor;
+		this.owner.sendMessage("Vous refermez precausioneusement le coffre.");
+		this.close(this.owner);
 	}		
 }
 
@@ -210,7 +240,7 @@ Chest.prototype.upList=function()
  */
 Chest.prototype.getObject=function()
 {
-	Motor.player.inventory.add(this.inventory.contains[this.inventory.index].getId());
-	Motor.messages.add("Vous sortez l'objet du coffre et le glissez dans votre sac.");
+	this.owner.inventory.add(this.inventory.contains[this.inventory.index].getId());
+	this.owner.sendMessage("Vous sortez l'objet du coffre et le glissez dans votre sac.");
 	this.inventory.remove(this.inventory.index);
 }

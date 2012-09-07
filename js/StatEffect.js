@@ -1,6 +1,7 @@
-function StatEffect(ownerTemp,ligthTemp,forceTemp,constTemp,tailleTemp,dexTemp,lifeTemp,launchTemp,lrmTemp,turnLengthTemp)
+function StatEffect(ownerTemp,nameTemp,ligthTemp,forceTemp,constTemp,tailleTemp,dexTemp,lifeTemp,launchTemp,lrmTemp,turnLengthTemp)
 {
 	this.owner=ownerTemp;
+	this.name=nameTemp;
 	this.light=ligthTemp;
 	this.force=forceTemp;
 	this.constitution=constTemp;

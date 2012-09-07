@@ -5,9 +5,6 @@ function Motor()
 	this.turn=0;
 	this.dayInterval=144;
 	this.time="Day";
-	
-	this.messages=new MsgZone(1,11);
-	
 	this.xPos=0;
 	this.yPos=0;
 	this.canvasPlaced=false;
@@ -73,27 +70,63 @@ Motor.prototype.resetCanvas=function()
 /**
  * Creates a new dungeon.
  */
-Motor.prototype.generateStair=function()
+Motor.prototype.generateDungeon=function()
 {
 	this.dungeon=new Dungeon();
 	this.dungeon.getCurrentStair().generateMonsters();
+	return this.dungeon.getCurrentStair();
+}
+
+Motor.prototype.loading=function()
+{
+		if(typeof r=="undefined")
+		{
+
+			r=50;
+			v=50;
+			b=50;
+			ratio=5;
+		}
+		surface.font = "100px pixel";
+		surface.fillStyle = "rgb("+r+","+v+","+b+")";
+		surface.fillText("Loading...",document.getElementById('canvas').width/2-300/2,document.getElementById('canvas').height/2-100/2);
+		r+=ratio;
+		v+=ratio;
+		b+=ratio;
+
+		if(r>255)
+		{
+			ratio=-5;
+		}
+		if(r<50)
+		{
+			ratio=5;
+		}
 }
 
 Motor.prototype.update=function()
 {
 	
 	clean();
-	this.dungeon.getCurrentStair().draw();
 	this.inputUpdate();
-	this.player.draw();
-	this.messages.draw();
+	if(!this.canvasPlaced)
+		this.loading();
+	else
+	{
+		Motor.dungeon.getCurrentStair().draw();
+		this.player.draw();
+	}
+
 }
 
 
 Motor.prototype.inputUpdate=function()
 {
 	if(!this.canvasPlaced)
+	{
 		this.moveCanvas();
+		return;
+	}
 	
 	if(!Input.equals(0))
 	{
@@ -144,25 +177,18 @@ Motor.prototype.inputUpdate=function()
 Motor.prototype.newTurn=function()
 {	
 	this.turn+=1;
-	if (this.turn>=this.player.hi)
-	{
-		this.player.hi+=this.turn;
-		this.player.heal();	
-		this.messages.add("Vos blessures cicatrisent peu a peu...");
-	}
-
 
 	if(this.turn>=this.dayInterval)
 	{
 		if(this.time=="Day")
 		{
 			this.player.changeStat();
-			this.messages.add("La temperature diminue peu a peu, il semblerait que le soleil se couche...");
+			player.sendMessage("La temperature diminue peu a peu, il semblerait que le soleil se couche...");
 			this.time="Night";
 		}
 		else
 		{
-			this.messages.add("La temperature monte legerement, il fait probablement jour dehors...");
+			player.sendMessage("La temperature monte legerement, il fait probablement jour dehors...");
 			this.time="Day";
 		}
 		this.dayInterval+=this.turn;

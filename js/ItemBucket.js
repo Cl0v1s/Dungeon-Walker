@@ -15,11 +15,11 @@ ItemBucket.prototype.use=function(owner)
 {
 	if(owner.isNear(3))
 	{
-		Motor.messages.add("Vous remplissez votre "+this.name+" d'eau.")
+		owner.sendMessage("Vous remplissez votre "+this.name+" d'eau.")
 		return WaterBucket;
 	}
 	else
-		Motor.messages.add("Vous remplissez votre "+this.name+" d'air.");
+		owner.sendMessage("Vous remplissez votre "+this.name+" d'air.");
 	
 	return this; 
 }

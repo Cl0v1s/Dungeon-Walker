@@ -66,8 +66,11 @@ Equipement.prototype.update=function()
 	this.inputUpdate();
 	surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (document.getElementById('canvas').width-321, 0,320,320);
-	surface.fillRect (Motor.messages.x*32-100, (Motor.messages.y-1)*32,600,500);
-	Motor.messages.draw();
+	if(this.owner.messages != undefined)
+	{
+		surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
+		this.owner.messages.draw();
+	}
 	surface.font = "24px pixel";
 	surface.fillStyle = "rgb(150,150,150)";
 	surface.fillText("(e) examiner     (r) retirer",document.getElementById('canvas').width-310,24);
@@ -123,7 +126,7 @@ Equipement.prototype.inputUpdate=function()
 			
 			if(Input.equals(27))
 			{
-				Motor.messages.add("Vous remettez votre equipement en place et vous vous redressez, pret a repartir.");
+				this.owner.sendMessage("Vous remettez votre equipement en place et vous vous redressez, pret a repartir.");
 				Scene=Motor;
 			}
 			
@@ -135,7 +138,7 @@ Equipement.prototype.inputUpdate=function()
 			{
 					if(this.examination==0)
 					{
-						Motor.messages.add("Vous regardez l'objet "+this.contains[this.index].getName()+" de plus pres.");
+						this.owner.sendMessage("Vous regardez l'objet "+this.contains[this.index].getName()+" de plus pres.");
 						this.examination+=1;
 						return;
 					}
@@ -181,8 +184,11 @@ Equipement.prototype.examine=function(id)
 
 		surface.fillStyle="rgb(0,0,0)";
 		surface.fillRect (document.getElementById('canvas').width-321, 0,320,320);
-		surface.fillRect (Motor.messages.x*32-100, Motor.messages.y*32,600,500);
-		Motor.messages.draw();
+		if(this.owner.messages != undefined)
+		{
+			surface.fillRect (this.owner.messages.x*32-100, this.owner.messages.y*32,600,500);
+			this.owner.messages.draw();
+		}
 		surface.font = "24px pixel";
 		surface.fillStyle = "rgb(150,150,150)";
 		surface.fillText("(e) fermer     (r) retirer",document.getElementById('canvas').width-315,24);

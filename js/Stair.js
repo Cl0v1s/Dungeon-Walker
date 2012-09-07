@@ -261,8 +261,6 @@ Stair.prototype.fight=function(fighter1,fighter2)
 
 
 	rand=Math.floor((Math.random()*2)+1);
-	if(fighter1 instanceof Player || fighter2 instanceof Player)
-		Motor.messages.changeMode("battle");
 	switch(rand)
 	{
 		case 1:
@@ -278,22 +276,24 @@ Stair.prototype.fight=function(fighter1,fighter2)
 
 	}
 
-	Motor.messages.add(sentence);
-	Motor.messages.add(sentence2);
+	fighter1.sendMessage(sentence);
+	fighter1.sendMessage(sentence2);
+	fighter2.sendMessage(sentence);
+	fighter2.sendMessage(sentence2);
 
 
 	if(fighter1.life<=0)
 	{
-		Motor.messages.add(fighter2.name+" a vaincu "+fighter1.name+".");
-		Motor.messages.changeMode("normal");
-		return true;
+		fighter1.sendMessage(fighter2.name+" a vaincu "+fighter1.name+".");
+		fighter2.sendMessage(fighter2.name+" a vaincu "+fighter1.name+".");
+		fighter1.kill("slain",fighter2);
 	}
 
 	if(fighter2.life<=0)
 	{
-		Motor.dungeon.getCurrentStair().map[fighter2.x][fighter2.y]=1;
-		Motor.messages.add(fighter1.name+" a vaincu "+fighter2.name+".");
-		Motor.messages.changeMode("normal");
+		fighter1.sendMessage(fighter1.name+" a vaincu "+fighter2.name+".");
+		fighter2.sendMessage(fighter1.name+" a vaincu "+fighter2.name+".");
+		fighter2.kill("slain",fighter1);
 		return false;
 	}	
 }
@@ -775,7 +775,11 @@ Stair.prototype.draw=function()
 {
 	surface.font = "32px pixel";
 	tile="";	
-	side=Motor.player.getLight()*this.light;
+	if(this.getRoomAt(Motor.player.getX(),Motor.player.getY()) != false && this.getRoomAt(Motor.player.getX(),Motor.player.getY()).getBiome()=="plain")
+		side=Math.round(Motor.player.getLight()*1.35)*this.light;
+	else 
+		side=Motor.player.getLight()*this.light;
+				
 	originX=Math.floor(Motor.player.getX()-side/2);
 	originY=Math.floor(Motor.player.getY()-side/2);
 	this.animationFrame+=1;
@@ -842,10 +846,6 @@ Stair.prototype.drawNoTiles=function(side,originX,originY)
 				else if(this.map[o][p]>=10)
 							surface.fillStyle="rgb(248,214,0)";
 							
-				if(this.getRoomAt(o,p) != false)
-				{
-						if(this.getRoomAt(o,p).getBiome() !="plain" || (this.getRoomAt(o,p).getBiome() =="plain" && this.map[o][p]==2))
-						{
 							if(o<originX)
 							{
 										value=10-Math.abs(originX-o);
@@ -866,31 +866,7 @@ Stair.prototype.drawNoTiles=function(side,originX,originY)
 										value=10-Math.abs(originY-p);
 										surface.fillStyle="rgb("+value+","+value+","+value+")";
 							}
-						}					
-				}
-				else
-				{
-						if(o<originX)
-						{
-									value=10-Math.abs(originX-o);
-									surface.fillStyle="rgb("+value+","+value+","+value+")";
-						}
-						if(o>originX+side)
-						{
-									value=10-Math.abs((originX+side)-o);
-									surface.fillStyle="rgb("+value+","+value+","+value+")";
-						}
-						if(p<originY)
-						{
-									value=10-Math.abs(originY-p);
-									surface.fillStyle="rgb("+value+","+value+","+value+")";
-						}
-						if(p>originY+side)
-						{
-									value=10-Math.abs(originY-p);
-									surface.fillStyle="rgb("+value+","+value+","+value+")";
-						}
-				}	
+		
 						
 				if(this.getRoomAt(o,p)!=false)
 				{
