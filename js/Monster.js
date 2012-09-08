@@ -3,9 +3,7 @@ function Monster(stair,x,y,raceTemp)
 	this.x=x;
 	this.y=y;
 	this.race=raceTemp;
-
 	this.stair=stair;
-	
 	this.name=this.race.name;;
 	this.light=this.race.light;
 	this.biome=this.race.biome;
@@ -30,6 +28,12 @@ function Monster(stair,x,y,raceTemp)
 	this.agressivity=this.race.agressivity;
 	this.sympathy=0;
 	this.antipathy=0;
+	
+	this.isSleeping=false;
+	this.isSick=false;
+	this.sickInterval=10;
+	this.sickFrame=0;
+	
 	this.score=this.race.score;
 	this.drop=this.race.drop;	
 	this.effectList=new Array();
@@ -38,7 +42,8 @@ function Monster(stair,x,y,raceTemp)
 	this.equipement=new Equipement(this);
 	this.inventory.add(this.race.weapon.getId());
 	this.inventory.use();
-
+	
+	this.sommeil=100;
 
 	this.onFire=false;
 	this.fireFrame=0;
@@ -46,6 +51,75 @@ function Monster(stair,x,y,raceTemp)
 	this.previousTile=1;
 	this.stair.map[this.x][this.y]=0;
 	this.death=false;
+}
+
+/**
+ * if the isSick trigger is on true, then inflict some damages to the monster
+ */
+Monster.prototype.sick=function()
+{
+	if(this.isSick==true)
+	{
+		this.sickFrame+=1;
+		if(this.sickFrame>=this.sickInterval)
+		{
+			if(Math.floor(Math.random()*20)+1==1)
+			{
+				this.sendMessage("Vous sentez une amelioration de votre etat de sante, vous pouvez enfin respirer normalement.");
+				this.isSick=false;
+				return;
+			}
+			
+			if(this.life>=10)
+			{
+				this.sendMessage("La maladie vous affaiblie.");
+				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
+			}
+			else
+			{
+				this.sendMessage("Vous toussez dans votre main et essuyez le sang qui s'y trouve sur vos vetements.");
+				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
+			}
+			this.sickFrame=0;
+		}
+	}
+}
+
+/**
+ * Allow the monster to rest
+ */
+Monster.prototype.sleep=function()
+{
+	if(this.isSleeping)
+	{
+		this.light=0;
+		this.sleepFrame+=1;
+		if(this.sleepFrame>=20)
+		{
+			this.sommeil+=1;
+			Motor.newTurn();
+			this.sleepFrame=0;
+		}
+		if(this.sommeil>=100)
+		{
+				this.isSleeping=false;
+				this.light=this.class.Light;
+				this.sendMessage("Vous vous reveillez enfin, apres avoir passe une mauvaise nuit.");
+				if(this.previousTile==3)
+				{
+					this.isSick=true;
+					this.sendMessage("Malheureusement, vous etes tombe malade: vous vous etes endormis dans une mare...");
+				}
+		}
+	}
+}
+
+/**
+ * This method manages the player's stats
+ */
+Monster.prototype.changeStat=function()
+{
+	this.sommeil-=(50/3);
 }
 
 /**
@@ -98,6 +172,10 @@ Monster.prototype.draw=function(intancity)
 		g=0;
 		b=0;
 	}
+	
+	this.sleep();
+	if(this.isSleeping)
+		intancity-=10;
 
 	surface.fillStyle="rgb("+Math.floor(r*intancity)+","+Math.floor(g*intancity)+","+Math.floor(b*intancity)+")";
 
@@ -115,51 +193,63 @@ Monster.prototype.draw=function(intancity)
  */
 Monster.prototype.turn=function(ennemy)
 {
-	fighter1=this;
-	fighter2=ennemy;
-	//Degats basiques des coups porté
-		//Degats statiques
-		total=fighter1.atk;
-		//ajout des degats du nombre de coups portés avec l'arme
-		for(i=0;i<fighter1.launch;i++)
-		{
-			lancer=Math.random()*6+1;
-			lancer=Math.floor(lancer);
-			total=total+Math.round(fighter1.atk/lancer);
-		}
-		dmg=total;
-	//bonus de zone
-	if(fighter1.dexterite>100)
-		fighter1.dexterite=100;
-		
-	zone=Math.floor(Math.random()*(100-fighter1.dexterite))+1;
-	
-	if(zone>=0 && zone<=10)
-		dmg=dmg+Math.round(fighter1.force*30/100);
-	else if(zone>=11 && zone<=50)
-		dmg=dmg+Math.round(fighter1.force*20/100);
-	else
-		dmg=dmg+Math.round(fighter1.force*10/100);
-		
-	
-
-	//parade de l'ennemi
-	if(fighter2.dexterite>fighter1.dexterite)
+	if(!this.isSleeping)
 	{
-		if(fighter2.dexterite>100)
-			fighter2.dexterite=100;
+		fighter1=this;
+		fighter2=ennemy;
+		//Degats basiques des coups porté
+			//Degats statiques
+			total=fighter1.atk;
+			//ajout des degats du nombre de coups portés avec l'arme
+			for(i=0;i<fighter1.launch;i++)
+			{
+				lancer=Math.random()*6+1;
+				lancer=Math.floor(lancer);
+				total=total+Math.round(fighter1.atk/lancer);
+			}
+			dmg=total;
+		//bonus de zone
+		if(fighter1.dexterite>100)
+			fighter1.dexterite=100;
 			
-		zone=Math.floor(Math.random()*(100-fighter2.dexterite))+1;
+		zone=Math.floor(Math.random()*(100-fighter1.dexterite))+1;
 		
-		if(zone>=0 && zone<=30)
+		if(zone>=0 && zone<=10)
+			dmg=dmg+Math.round(fighter1.force*30/100);
+		else if(zone>=11 && zone<=50)
+			dmg=dmg+Math.round(fighter1.force*20/100);
+		else
+			dmg=dmg+Math.round(fighter1.force*10/100);
+			
+		
+
+		//parade de l'ennemi
+		if(fighter2.dexterite>fighter1.dexterite)
 		{
-			parade=Math.floor((Math.random()*fighter2.constitution)+1);
-			parade=dmg*parade/100;
-			dmg=dmg-Math.floor(parade);
+			if(fighter2.dexterite>100)
+				fighter2.dexterite=100;
+				
+			zone=Math.floor(Math.random()*(100-fighter2.dexterite))+1;
+			
+			if(zone>=0 && zone<=30)
+			{
+				parade=Math.floor((Math.random()*fighter2.constitution)+1);
+				parade=dmg*parade/100;
+				dmg=dmg-Math.floor(parade);
+			}
+		}
+		fighter2.setLife(fighter2.life-dmg)
+		return dmg;
+	}
+	else
+	{
+		if(Math.floor(Math.random()*2)+1==1)
+		{
+			this.isSleeping=false;
+			this.sendMessage("Vous vous reveillez en sursautant !");
+			ennemy.sendMessage("Votre adversaire se reveille en sursaut !");
 		}
 	}
-	fighter2.setLife(fighter2.life-dmg)
-	return dmg;
 }
 
 /**
@@ -197,34 +287,42 @@ Monster.prototype.selectDir=function()
  */
 Monster.prototype.move=function(dir)
 {
-	if(this.life<=0)
-		return;
-	this.fire();
-	this.stair.map[this.x][this.y]=this.previousTile;
-	switch(dir)
+	if(this.sommeil<=10)
 	{
-		case "right":
-			if(this.stair.walkableMonster(this.x+1,this.y))
-				this.x+=1;
-				break;
-		case "left":
-			if(this.stair.walkableMonster(this.x-1,this.y))
-				this.x-=1;
-				break;
-		case "down":
-			if(this.stair.walkableMonster(this.x,this.y+1))
-				this.y+=1;
-				break;
-		case "up" :		
-			if(this.stair.walkableMonster(this.x,this.y-1))
-				this.y-=1;
-				break;
+		if(Math.floor(Math.random()*10)+1==1)
+			this.isSleeping=true;
 	}
-	this.previousTile=this.stair.map[this.x][this.y];
-	this.isGrouped();
-	if(this.previousTile==4)
-		this.setFire();
-	this.stair.map[this.x][this.y]=0;
+	if(!this.isSleeping)
+	{
+		if(this.life<=0)
+			return;
+		this.fire();
+		this.stair.map[this.x][this.y]=this.previousTile;
+		switch(dir)
+		{
+			case "right":
+				if(this.stair.walkableMonster(this.x+1,this.y))
+					this.x+=1;
+					break;
+			case "left":
+				if(this.stair.walkableMonster(this.x-1,this.y))
+					this.x-=1;
+					break;
+			case "down":
+				if(this.stair.walkableMonster(this.x,this.y+1))
+					this.y+=1;
+					break;
+			case "up" :		
+				if(this.stair.walkableMonster(this.x,this.y-1))
+					this.y-=1;
+					break;
+		}
+		this.previousTile=this.stair.map[this.x][this.y];
+		this.isGrouped();
+		if(this.previousTile==4)
+			this.setFire();
+		this.stair.map[this.x][this.y]=0;
+	}
 	
 }
 

@@ -82,4 +82,7 @@ StatEffect.prototype.end=function()
 		value=owner.getDex();
 		value=value-this.dexterite;
 		owner.setDex(value);	
+		
+		if(this.name != "sick" && this.name !="grouped" && this.name !="leader")
+			owner.sendMessage("Les effets de "+this.name+" s'estompent...");
 }

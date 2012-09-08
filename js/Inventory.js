@@ -210,7 +210,7 @@ Inventory.prototype.cook=function()
 		if(Motor.dungeon.getCurrentStair().getMap()[x-1][y]==4 || Motor.dungeon.getCurrentStair().getMap()[x+1][y]==4 || Motor.dungeon.getCurrentStair().getMap()[x][y+1]==4 || Motor.dungeon.getCurrentStair().getMap()[x][y-1]==4)
 		{
 			this.owner.sendMessage("Vous placez l'objet "+this.contains[this.index].getName()+" au dessus du feu et patientez...");
-			this.contains[this.index]=this.contains[this.index].cook();
+			this.contains[this.index]=this.contains[this.index].cook(this.owner);
 			this.examination=0;
 		}
 		else

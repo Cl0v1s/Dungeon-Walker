@@ -48,11 +48,11 @@ MsgZone.prototype.draw=function()
 		
 		if(Scene == Motor)
 		{
-			surface.font = "24px pixel";
+			surface.font = "21px pixel";
 			surface.fillStyle="rgb(0,0,0)";
 			surface.fillRect (0, 0,document.getElementById('canvas').width,34);
 			surface.fillStyle="rgb(50,50,50)";
-			surface.fillText("[i] Inventory   [e] Equipement   [p] Prepare   [l] Lap   [enter] Interact", 10, 32);	
+			surface.fillText("[i] Inventory   [e] Equipement   [p] Prepare   [l] Lap   [s]Sleep   [enter] Interact", 10, 32);	
 		}
 
 

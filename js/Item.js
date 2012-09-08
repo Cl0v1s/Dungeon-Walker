@@ -73,8 +73,8 @@ Item.prototype.use=function()
 /**
  * Allow to cook the item.
  */
-Item.prototype.cook=function()
+Item.prototype.cook=function(ownerTemp)
 {
-		Motor.messages.add("Soudain l'objet "+this.name+" part en cendres...");
+		ownerTemp.sendMessage("Soudain l'objet "+this.name+" part en cendres...");
 		return undefined;
 }

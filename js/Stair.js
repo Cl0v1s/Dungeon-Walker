@@ -264,12 +264,12 @@ Stair.prototype.fight=function(fighter1,fighter2)
 	switch(rand)
 	{
 		case 1:
-		sentence=prio.name+" tente un engagement contre "+sec.name+" et lui inflige "+dmg1+" degats,";
-		sentence2= sec.name+" contre-attaque en infligeant "+dmg2+" degats a son adversaire.";
+			sentence=prio.name+" tente un engagement contre "+sec.name+" et lui inflige "+dmg1+" degats,";
+			sentence2= sec.name+" contre-attaque en infligeant "+dmg2+" degats a son adversaire.";
 		break;
 		case 2:
-		sentence=prio.name+" s'elance sur "+sec.name+" et le blesse en lui infligeant "+dmg1+" degats.";
-		sentence2="Malheureusement pour son adversaire, "+sec.name+" pare et "+prio.name+" perd "+dmg2+" points de vie.";
+			sentence=prio.name+" s'elance sur "+sec.name+" et le blesse en lui infligeant "+dmg1+" degats.";
+			sentence2="Malheureusement pour son adversaire, "+sec.name+" pare et "+prio.name+" perd "+dmg2+" points de vie.";
 		break;
 
 

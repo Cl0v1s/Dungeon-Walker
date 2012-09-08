@@ -2,6 +2,7 @@ window.onkeydown = function(event) {
 	var e = event || window.event;
 	var key = e.which || e.keyCode;
 	LastKey=key;
+	//alert(key);
 }
 
 window.onkeyup = function(event) {

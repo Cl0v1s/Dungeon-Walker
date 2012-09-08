@@ -15,7 +15,7 @@ RecipeGUI.prototype.update=function()
 	clean();
 	Motor.dungeon.getCurrentStair().draw();
 	Motor.player.draw();
-	Motor.messages.draw();
+	Motor.player.messages.draw();
 	this.updateInput();
 	surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (this.x, this.y,this.width,this.height);

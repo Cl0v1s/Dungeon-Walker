@@ -168,6 +168,9 @@ Motor.prototype.inputUpdate=function()
 	if(Input.equals(13))
 		this.player.interact();
 		
+	if(Input.equals(83))
+		this.player.rest();
+		
 	if(Input.equals(17))
 		this.resetCanvas();
 		
@@ -182,7 +185,11 @@ Motor.prototype.newTurn=function()
 	{
 		if(this.time=="Day")
 		{
-			this.player.changeStat();
+			for(i=0;i<this.dungeon.getCurrentStair().monsters.length;i++)
+			{
+				if(this.dungeon.getCurrentStair().monsters[i] != undefined)
+					this.dungeon.getCurrentStair().monsters[i].changeStat();
+			}
 			player.sendMessage("La temperature diminue peu a peu, il semblerait que le soleil se couche...");
 			this.time="Night";
 		}

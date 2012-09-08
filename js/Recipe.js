@@ -72,5 +72,5 @@ Recipe.prototype.craft=function(caller)
 	{
 		caller.inventory.add(previous[n]);
 	}
-	Motor.messages.add("Vous n'avez pas tout les objets necessaires pour realiser cette recette.");
+	caller.sendMessage("Vous n'avez pas tout les objets necessaires pour realiser cette recette.");
 }
