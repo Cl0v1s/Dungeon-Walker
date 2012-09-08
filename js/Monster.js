@@ -44,6 +44,7 @@ function Monster(stair,x,y,raceTemp)
 	this.inventory.use();
 	
 	this.sommeil=100;
+	this.soif=100;
 
 	this.onFire=false;
 	this.fireFrame=0;
@@ -51,6 +52,30 @@ function Monster(stair,x,y,raceTemp)
 	this.previousTile=1;
 	this.stair.map[this.x][this.y]=0;
 	this.death=false;
+}
+
+
+/**
+ * Allow the monster to drink
+ */
+Monster.prototype.lap=function()
+{
+		if(this.soif<100)
+		{
+			this.soif=this.soif+Math.round(10*this.soif/100);
+			this.sendMessage("Vous buvez goulument l'eau limpide qui se trouve a vos pieds.");
+			rand=Math.floor(Math.random()*50)+1;
+			if(rand==1)
+			{
+					this.isSick=true;
+					this.sendMessage("L'eau que vous venez d'avaler avait un drole de gout...");
+					this.sendMessage("Priez pour qu'elle n'ai pas stagne ici trop longtemps....");
+			}
+		}
+		else
+		{
+			this.sendMessage("Vous n'avez pas soif.");		
+		}
 }
 
 /**
@@ -120,6 +145,7 @@ Monster.prototype.sleep=function()
 Monster.prototype.changeStat=function()
 {
 	this.sommeil-=(50/3);
+	this.soif-=(100/5);
 }
 
 /**
@@ -322,6 +348,11 @@ Monster.prototype.move=function(dir)
 		if(this.previousTile==4)
 			this.setFire();
 		this.stair.map[this.x][this.y]=0;
+		
+		if(this.isNear(3))
+		{
+			this.lap();
+		}
 	}
 	
 }
@@ -535,6 +566,54 @@ Monster.prototype.isNearEntity=function(other)
 		return false;
 }
 
+/**
+ * Checks if the monster is near the specified tile
+ */
+Monster.prototype.isNear=function(value)
+{
+	if(this.stair.getMap()[this.x+1][this.y]==value || this.stair.getMap()[this.x-1][this.y]==value || this.stair.getMap()[this.x][this.y+1]==value || this.stair.getMap()[this.x][this.y-1]==value)
+		return true;
+	else
+		return false;	
+}
+
+/**
+ * Checks if the monster can see the specified tile
+ */
+Monster.prototype.searchFor=function(tile)
+{
+	side=this.light;
+	originX=Math.round(this.x-side/2);
+	originY=Math.round(this.y-side/2);
+	listTemp=new Array();
+	for(f=originX;f<=originX+side;f++)
+	{
+			for(g=originY;g<=originY+side;g++)
+			{
+					if(this.stair.getMap()[f][g]==tile)
+					{
+						listTemp.push(new Array());
+						listTemp[listTemp.length-1][0]=f;
+						listTemp[listTemp.length-1][1]=g;
+						
+					}
+			}
+	}
+	nearest=undefined;
+	for(i=0;i<listTemp.length;i++)
+	{
+		if(nearest==undefined || (Math.abs(listTemp[i][0]-this.x)<Math.abs(nearest[0]-this.x) && Math.abs(listTemp[i][1]-this.y)<Math.abs(nearest[1]-this.y)))
+		{
+			nearest=new Array();
+			nearest[0]=listTemp[i][0];
+			nearest[1]=listTemp[i][1];			
+		}
+	}
+	
+	return nearest;
+	
+}
+
 
 /**
  * Adds an effect to the effectList
@@ -608,7 +687,7 @@ Monster.prototype.think=function()
 			lancer=Math.floor(lancer);
 			total=total+Math.round(target.atk/lancer);
 		}
-		sympathy=total*(6-Math.abs(this.x-target.getX()))-2*this.agressivity;
+		sympathy=total*(6-Math.sqrt(Math.pow(target.getX()-this.x,2)+Math.pow(target.getY()-this.y,2)))-2*this.agressivity;
 		target.setSympathy(sympathy);
 		if(bestFriend==undefined || sympathy>bestFriend.getSympathy())
 				bestFriend=target;
@@ -624,20 +703,36 @@ Monster.prototype.think=function()
 			lancer=Math.floor(lancer);
 			total=total+Math.round(this.atk/lancer);
 		}
-		antipathy=total*(6-Math.abs(this.x-target.getX()))-2*this.agressivity;
+		antipathy=total*(6-Math.sqrt(Math.pow(target.getX()-this.x,2)+Math.pow(target.getY()-this.y,2)))-2*this.agressivity;
 		target.setAntipathy(antipathy);
 		if(worstEnemy==undefined || antipathy>worstEnemy.getAntipathy())
 				worstEnemy=target;
 	}
+	water=this.searchFor(3);
+	drinkDesire=0;
+	if(water != undefined)	
+	{
+		drinkDesire=(this.soif*-1+100)/2*(6-Math.sqrt(Math.pow((water[0]-this.x),2)+Math.pow((water[1]-this.y),2)));
+	}
+	
 	
 	for(c=0;c<this.effectList.length;c++)
 	{
 		if(this.effectList[c] instanceof StatEffect)
 			this.effectList[c]=this.effectList[c].update();
 	}	
-	
+
 	if(bestFriend != undefined && worstEnemy != undefined)
 	{
+		if(drinkDesire>worstEnemy.getAntipathy() && drinkDesire>bestFriend.getSympathy())
+			this.moveTo(water[0],water[1]);
+			
+			
+		if(this.isNearEntity(bestFriend))
+		{
+			this.isGrouped(bestFriend);
+		}
+		
 		if(this.agressivity>=2)
 		{
 			this.moveTo(worstEnemy.getX(),worstEnemy.getY());
@@ -658,10 +753,15 @@ Monster.prototype.think=function()
 	}
 	else if(bestFriend != undefined)
 	{
+		
+		if(drinkDesire>bestFriend.getSympathy())
+			this.moveTo(water[0],water[1]);
+			
 		if(this.isNearEntity(bestFriend))
 		{
 			this.isGrouped(bestFriend);
 		}
+
 		if(this.agressivity<2)
 		{
 			if(this.isNearEntity(bestFriend))
@@ -677,6 +777,9 @@ Monster.prototype.think=function()
 	}
 	else if(worstEnemy != undefined)
 	{
+		if(drinkDesire>worstEnemy.getAntipathy())
+			this.moveTo(water[0],water[1]);
+			
 		if(this.agressivity>=1)
 			this.moveTo(worstEnemy.getX(),worstEnemy.getY());
 		else
