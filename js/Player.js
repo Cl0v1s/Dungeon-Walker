@@ -40,6 +40,8 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.sleepInterval=0;
 	this.sleepFrame=0;
 	this.effectList=new Array();
+	
+	this.spell=false;
 
 	this.messages=new MsgZone(1,11);
 	this.score=0;
@@ -64,6 +66,35 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.antipathy=0;
 }
 
+
+/**
+ * Returns the player's current stair
+ */
+Player.prototype.getStair=function()
+{
+		return this.stair;
+}
+
+
+/**
+ * Exits the spell
+ */
+Player.prototype.reset=function()
+{
+	this.spell=false;
+}
+
+
+/**
+ * Sets the spell and call it
+ */
+Player.prototype.callSpell=function(spellTemp)
+{
+	this.spell=spellTemp;
+	this.spell.launch(this);
+}
+
+
 /**
  * Allow the player to rest
  */
@@ -85,7 +116,7 @@ Player.prototype.sleep=function()
 		if(this.sleepFrame>=20)
 		{
 			this.sommeil+=1;
-			Motor.newTurn();
+			Client.newTurn();
 			this.sleepFrame=0;
 		}
 		if(this.sommeil>=100)
@@ -203,17 +234,20 @@ Player.prototype.draw=function()
 	if(this.life<=0 || this.soif<=0 || this.faim<=0)
 		this.kill();
 		
+	if(this.spell != false)
+		this.spell.update();
+		
 	this.sleep();
 
 	this.messages.draw();
 
 	surface.font = "30px pixel";
 	surface.fillStyle="rgb(50,150,50)";
-	surface.fillText(this.img, Motor.getXPos()+this.x*32, Motor.getYPos()+this.y*32);
+	surface.fillText(this.img, Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
 	if(this.onFire==true)
 	{
 		surface.fillStyle="rgb(250,50,50)";
-		surface.fillText("W", Motor.getXPos()+this.x*32, Motor.getYPos()+this.y*32);
+		surface.fillText("W", Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
 	}
 }
 
@@ -221,68 +255,73 @@ Player.prototype.draw=function()
  * Manages the player's movements 
  */
 Player.prototype.move=function(dir)
-{		
-	if(!this.isSleeping)
-	{
-		if(this.stair.getMap()[this.x+1][this.y]==0)
-				this.stair.getMap()[this.x+1][this.y]=1;
-				
-		if(this.stair.getMap()[this.x-1][this.y]==0)
-				this.stair.getMap()[this.x-1][this.y]=1;
-				
-		if(this.stair.getMap()[this.x][this.y+1]==0)
-				this.stair.getMap()[this.x][this.y+1]=1;
-				
-		if(this.stair.getMap()[this.x][this.y-1]==0)
-				this.stair.getMap()[this.x-1][this.y]=1;
-			
-		stair=this.stair;
-		for(c=0;c<this.effectList.length;c++)
+{	
+	if(this.spell==false)
+	{	
+		if(!this.isSleeping)
 		{
-			if(this.effectList[c] instanceof StatEffect)
-				this.effectList[c]=this.effectList[c].update();
+			if(this.stair.getMap()[this.x+1][this.y]==0)
+					this.stair.getMap()[this.x+1][this.y]=1;
+					
+			if(this.stair.getMap()[this.x-1][this.y]==0)
+					this.stair.getMap()[this.x-1][this.y]=1;
+					
+			if(this.stair.getMap()[this.x][this.y+1]==0)
+					this.stair.getMap()[this.x][this.y+1]=1;
+					
+			if(this.stair.getMap()[this.x][this.y-1]==0)
+					this.stair.getMap()[this.x-1][this.y]=1;
+				
+			stair=this.stair;
+			for(c=0;c<this.effectList.length;c++)
+			{
+				if(this.effectList[c] instanceof StatEffect)
+					this.effectList[c]=this.effectList[c].update();
+			}
+			this.heal();
+			this.fire();
+			this.sick();
+			this.lastTile=this.previousTile;
+			stair.map[this.x][this.y]=this.previousTile;
+			switch(dir)
+			{				
+				case "right":
+					if(stair.walkable(this.x+1,this.y))
+					{
+						this.x+=1;
+						Client.setXPos(Client.getXPos()-32);
+					}
+					break;
+				case "left":
+					if(stair.walkable(this.x-1,this.y))
+					{
+						this.x-=1;
+						Client.setXPos(Client.getXPos()+32);
+					}
+					break;
+				case "down":
+					if(stair.walkable(this.x,this.y+1))
+					{
+						this.y+=1;
+						Client.setYPos(Client.getYPos()-32);
+					}
+					break;
+				case "up" :		
+					if(stair.walkable(this.x,this.y-1))
+					{
+						this.y-=1;
+						Client.setYPos(Client.getYPos()+32);
+					}
+					break;
+			}
+			this.getObject();
+			this.previousTile=stair.getMap()[this.x][this.y];
+			this.contextMessage();
+			stair.map[this.x][this.y]=0;
 		}
-		this.heal();
-		this.fire();
-		this.sick();
-		this.lastTile=this.previousTile;
-		stair.map[this.x][this.y]=this.previousTile;
-		switch(dir)
-		{				
-			case "right":
-				if(stair.walkable(this.x+1,this.y))
-				{
-					this.x+=1;
-					Motor.setXPos(Motor.getXPos()-32);
-				}
-				break;
-			case "left":
-				if(stair.walkable(this.x-1,this.y))
-				{
-					this.x-=1;
-					Motor.setXPos(Motor.getXPos()+32);
-				}
-				break;
-			case "down":
-				if(stair.walkable(this.x,this.y+1))
-				{
-					this.y+=1;
-					Motor.setYPos(Motor.getYPos()-32);
-				}
-				break;
-			case "up" :		
-				if(stair.walkable(this.x,this.y-1))
-				{
-					this.y-=1;
-					Motor.setYPos(Motor.getYPos()+32);
-				}
-				break;
-		}
-		this.getObject();
-		this.previousTile=stair.getMap()[this.x][this.y];
-		this.contextMessage();
-		stair.map[this.x][this.y]=0;
 	}
+	else
+		this.spell.move(dir);
 }
 
 /**
@@ -453,64 +492,67 @@ Player.prototype.setLife=function(nb)
  */
 Player.prototype.turn=function(ennemy)
 {
-	if(!this.isSleeping)
+	if(this.spell==false)
 	{
-		fighter1=this;
-		fighter2=ennemy;
-		//Degats basiques des coups porté
-			//Degats statiques
-			total=fighter1.atk;
-			//ajout des degats du nombre de coups portés avec l'arme
-			for(i=0;i<fighter1.launch;i++)
-			{
-				lancer=Math.random()*6+1;
-				lancer=Math.floor(lancer);
-				total=total+Math.round(fighter1.atk/lancer);
-			}
-			dmg=total;
-		//bonus de zone
-		if(fighter1.dexterite>100)
-			fighter1.dexterite=100;
-			
-		zone=Math.floor(Math.random()*(100-fighter1.dexterite))+1;
-		
-		if(zone>=0 && zone<=10)
-			dmg=dmg+Math.round(fighter1.force*30/100);
-		else if(zone>=11 && zone<=50)
-			dmg=dmg+Math.round(fighter1.force*20/100);
-		else
-			dmg=dmg+Math.round(fighter1.force*10/100);
-			
-		
-		
-
-		//parade de l'ennemi
-		if(fighter2.dexterite>fighter1.dexterite)
+		if(!this.isSleeping)
 		{
-			if(fighter2.dexterite>100)
-				fighter2.dexterite=100;
+			fighter1=this;
+			fighter2=ennemy;
+			//Degats basiques des coups porté
+				//Degats statiques
+				total=fighter1.atk;
+				//ajout des degats du nombre de coups portés avec l'arme
+				for(i=0;i<fighter1.launch;i++)
+				{
+					lancer=Math.random()*6+1;
+					lancer=Math.floor(lancer);
+					total=total+Math.round(fighter1.atk/lancer);
+				}
+				dmg=total;
+			//bonus de zone
+			if(fighter1.dexterite>100)
+				fighter1.dexterite=100;
 				
-			zone=Math.floor(Math.random()*(100-fighter2.dexterite))+1;
+			zone=Math.floor(Math.random()*(100-fighter1.dexterite))+1;
 			
-			if(zone>=0 && zone<=30)
+			if(zone>=0 && zone<=10)
+				dmg=dmg+Math.round(fighter1.force*30/100);
+			else if(zone>=11 && zone<=50)
+				dmg=dmg+Math.round(fighter1.force*20/100);
+			else
+				dmg=dmg+Math.round(fighter1.force*10/100);
+				
+			
+			
+
+			//parade de l'ennemi
+			if(fighter2.dexterite>fighter1.dexterite)
 			{
-				parade=Math.floor((Math.random()*fighter2.constitution)+1);
-				parade=dmg*parade/100;
-				dmg=dmg-Math.floor(parade);
+				if(fighter2.dexterite>100)
+					fighter2.dexterite=100;
+					
+				zone=Math.floor(Math.random()*(100-fighter2.dexterite))+1;
+				
+				if(zone>=0 && zone<=30)
+				{
+					parade=Math.floor((Math.random()*fighter2.constitution)+1);
+					parade=dmg*parade/100;
+					dmg=dmg-Math.floor(parade);
+				}
 			}
+			fighter2.setLife(fighter2.life-dmg)
+			
+			return dmg;
 		}
-		fighter2.setLife(fighter2.life-dmg)
-		
-		return dmg;
-	}
-	else
-	{
-		return 0;
-		if(Math.floor(Math.random()*2)+1==1)
+		else
 		{
-			this.sendMessage("Vous vous reveillez en sursautant !");
-			ennemy.sendMessage("Votre adversaire se reveille en sursaut !");
-			this.isSleeping=false;
+			return 0;
+			if(Math.floor(Math.random()*2)+1==1)
+			{
+				this.sendMessage("Vous vous reveillez en sursautant !");
+				ennemy.sendMessage("Votre adversaire se reveille en sursaut !");
+				this.isSleeping=false;
+			}
 		}
 	}
 }
@@ -621,7 +663,7 @@ Player.prototype.contextMessage=function()
 		if(this.stair.getMap()[this.x][this.y]=="stair")
 		{
 			this.previousTile=1;
-			this.stair=Motor.dungeon.upStair(this);
+			this.stair=Client.dungeon.upStair(this);
 			x=this.stair.getSpawnPoint()[0]+this.stair.getSpawnPoint()[2].getX();
 			y=this.stair.getSpawnPoint()[1]+this.stair.getSpawnPoint()[2].getY();
 			this.setX(x);
@@ -639,7 +681,7 @@ Player.prototype.contextMessage=function()
 			this.move("right");
 			this.stair.generateMonsters();
 			this.stair.addEntityToList(this);
-			Motor.resetCanvas();
+			Client.resetCanvas();
 		}
 }
 
@@ -725,14 +767,18 @@ Player.prototype.setDex=function(value)
  */
 Player.prototype.interact=function()
 {	
-	//open chest
-	if(this.previousTile instanceof Chest)
+	if(this.spell != false)
+	{
+		this.spell.use(this);
+		this.spell=false;
+	}
+	else if(this.previousTile instanceof Chest)
 	{
 		if(!this.previousTile.isLocked() || this.class.Name=="rodeur")
 		{
-		this.sendMessage("Alors que vous ouvrez le coffre, un nuage de poussiere vous saute au visage.");
-		this.hygiene-=Math.round((20*this.hygiene)/100);
-		this.previousTile.open(this);
+			this.sendMessage("Alors que vous ouvrez le coffre, un nuage de poussiere vous saute au visage.");
+			this.hygiene-=Math.round((20*this.hygiene)/100);
+			this.previousTile.open(this);
 		}
 		else
 			this.sendMessage("Vous essayez d'ouvrir le coffre, mais celui-ci resiste, apparament verrouille.");		

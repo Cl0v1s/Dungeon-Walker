@@ -42,7 +42,7 @@ Chest.prototype.open=function(owner)
 Chest.prototype.close=function(owner)
 {
 	this.owner=undefined;
-	Scene=Motor;
+	Scene=Client;
 }
 
 
@@ -170,8 +170,8 @@ Chest.prototype.examine=function(id)
 
 		surface.fillStyle="rgb(0,0,0)";
 		surface.fillRect (0, 0,320,320);
-		surface.fillRect (Motor.messages.x*32-100, Motor.messages.y*32,600,500);
-		Motor.messages.draw();
+		surface.fillRect (this.owner.messages.x*32-100, this.owner.messages.y*32,600,500);
+		this.owner.messages.draw();
 	surface.font = "24px pixel";
 	surface.fillStyle = "rgb(150,150,150)";
 	surface.fillText("(e) fermer     (enter) recuperer",5,24);

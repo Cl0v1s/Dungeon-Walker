@@ -171,7 +171,7 @@ Stair.prototype.checkWalls=function()
  */
 Stair.prototype.generateMonsters=function()
 {
-	nb=Math.floor(Math.random()*Motor.dungeon.getCurrentStairId()*this.rooms.length)+20;
+	nb=Math.floor(Math.random()*Client.dungeon.getCurrentStairId()*this.rooms.length)+20;
 	for(n=0;n<nb;n++)
 	{
 		xTemp=0;
@@ -187,7 +187,7 @@ Stair.prototype.generateMonsters=function()
 		{
 			attempt+=1;
 			
-			id=Math.floor(Math.random()*Motor.dungeon.getCurrentStairId());
+			id=Math.floor(Math.random()*Client.dungeon.getCurrentStairId());
 			if(attempt>=50)
 				break;
 		}
@@ -775,13 +775,13 @@ Stair.prototype.draw=function()
 {
 	surface.font = "32px pixel";
 	tile="";	
-	if(this.getRoomAt(Motor.player.getX(),Motor.player.getY()) != false && this.getRoomAt(Motor.player.getX(),Motor.player.getY()).getBiome()=="plain")
-		side=Math.round(Motor.player.getLight()*1.35)*this.light;
+	if(this.getRoomAt(Client.player.getX(),Client.player.getY()) != false && this.getRoomAt(Client.player.getX(),Client.player.getY()).getBiome()=="plain")
+		side=Math.round(Client.player.getLight()*1.35);
 	else 
-		side=Motor.player.getLight()*this.light;
+		side=Client.player.getLight();
 				
-	originX=Math.floor(Motor.player.getX()-side/2);
-	originY=Math.floor(Motor.player.getY()-side/2);
+	originX=Math.floor(Client.player.getX()-side/2);
+	originY=Math.floor(Client.player.getY()-side/2);
 	this.animationFrame+=1;
 	if(!(Parameters.isTiled()))
 		this.drawNoTiles(side,originX,originY);
@@ -839,6 +839,7 @@ Stair.prototype.drawNoTiles=function(side,originX,originY)
 					if(this.map[o][p]==1)
 						surface.fillStyle = DungeonTile.WallColor;	
 				}
+				
 				if(this.map[o][p]==2 || this.map[o][p]=="stair")
 							surface.fillStyle = DungeonTile.WallColor;
 				else if(this.map[o][p]==3)
@@ -873,25 +874,25 @@ Stair.prototype.drawNoTiles=function(side,originX,originY)
 							if(this.getRoomAt(o,p).getBiome()=="plain")
 							{
 								if(this.map[o][p]==1)
-									surface.fillText(PlainTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+									surface.fillText(PlainTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
 								else if(this.map[o][p]==5)
-									surface.fillText(PlainTile.Tree,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+									surface.fillText(PlainTile.Tree,Client.getXPos()+o*32, Client.getYPos()+p*32);
 							}
 							else if(this.getRoomAt(o,p).getBiome()=="dungeon")
 							{
 								if(this.map[o][p]==1)
-										surface.fillText(DungeonTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+										surface.fillText(DungeonTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
 								else if(this.map[o][p]==5)
-									surface.fillText(DungeonTile.Stone,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+									surface.fillText(DungeonTile.Stone,Client.getXPos()+o*32, Client.getYPos()+p*32);
 								else if(this.map[o][p] instanceof Chest)
-									surface.fillText(DungeonTile.Chest,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+									surface.fillText(DungeonTile.Chest,Client.getXPos()+o*32, Client.getYPos()+p*32);
 							}
 							else if(this.getRoomAt(o,p).getBiome()=="cave")
 							{
 								if(this.map[o][p]==1)
-									surface.fillText(CaveTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+									surface.fillText(CaveTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
 								else if(this.map[o][p]==5)
-									surface.fillText(CaveTile.Stone,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+									surface.fillText(CaveTile.Stone,Client.getXPos()+o*32, Client.getYPos()+p*32);
 								else if(this.map[o][p]==6)
 									this.drawLava(o,p);
 							}
@@ -899,14 +900,14 @@ Stair.prototype.drawNoTiles=function(side,originX,originY)
 				else 
 				{
 									if(this.map[o][p]==1)
-										surface.fillText(DungeonTile.Ground,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+										surface.fillText(DungeonTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
 				}
 				if(this.map[o][p]==2)
-								surface.fillText(DungeonTile.Wall,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+								surface.fillText(DungeonTile.Wall,Client.getXPos()+o*32, Client.getYPos()+p*32);
 				else if(this.map[o][p]=="stair")
-								surface.fillText(DungeonTile.Stair,Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+								surface.fillText(DungeonTile.Stair,Client.getXPos()+o*32, Client.getYPos()+p*32);
 				else if(this.map[o][p]>=10)
-								surface.fillText("$",Motor.getXPos()+o*32, Motor.getYPos()+p*32);
+								surface.fillText("$",Client.getXPos()+o*32, Client.getYPos()+p*32);
 				else if(this.map[o][p]==3)
 							this.drawWater(o,p);
 				else if(this.map[o][p]==4)
@@ -939,16 +940,16 @@ Stair.prototype.drawWater=function(xTemp,yTemp)
 {
 	if(this.animationFrame<=50)
 	{
-		surface.fillText(DungeonTile.Water_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+		surface.fillText(DungeonTile.Water_1,Client.getXPos()+xTemp*32, Client.getYPos()+yTemp*32);
 	}
 	else if(this.animationFrame>50 && this.animationFrame<=100)
 	{
-		surface.fillText(DungeonTile.Water_2,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+		surface.fillText(DungeonTile.Water_2,Client.getXPos()+xTemp*32, Client.getYPos()+yTemp*32);
 	}
 	else
 	{
 			this.animationFrame=0;
-			surface.fillText(DungeonTile.Water_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+			surface.fillText(DungeonTile.Water_1,Client.getXPos()+xTemp*32, Client.getYPos()+yTemp*32);
 	}	
 }
 
@@ -960,18 +961,18 @@ Stair.prototype.drawLava=function(xTemp,yTemp)
 	if(this.animationFrame<=70)
 	{
 		surface.fillStyle = CaveTile.Lava_1Color;
-		surface.fillText(CaveTile.Lava_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+		surface.fillText(CaveTile.Lava_1,Client.getXPos()+xTemp*32, Client.getYPos()+yTemp*32);
 	}
 	else if(this.animationFrame>70 && this.animationFrame<=140)
 	{
 		surface.fillStyle = CaveTile.Lava_2Color;
-		surface.fillText(CaveTile.Lava_2,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+		surface.fillText(CaveTile.Lava_2,Client.getXPos()+xTemp*32, Client.getYPos()+yTemp*32);
 	}
 	else
 	{
 			this.animationFrame=0;
 			surface.fillStyle = CaveTile.Lava_1Color;
-			surface.fillText(CaveTile.Lava_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+			surface.fillText(CaveTile.Lava_1,Client.getXPos()+xTemp*32, Client.getYPos()+yTemp*32);
 	}	
 }
 
@@ -1009,18 +1010,18 @@ Stair.prototype.drawFire=function(xTemp,yTemp)
 	if(this.animationFrame<=20)
 	{
 		surface.fillStyle = DungeonTile.Fire_1Color;
-		surface.fillText(DungeonTile.Fire_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+		surface.fillText(DungeonTile.Fire_1,Client.getXPos()+xTemp*32, Client.getYPos()+yTemp*32);
 	}
 	else if(this.animationFrame>20 && this.animationFrame<=40)
 	{
 		surface.fillStyle = DungeonTile.Fire_2Color;
-		surface.fillText(DungeonTile.Fire_2,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+		surface.fillText(DungeonTile.Fire_2,Client.getXPos()+xTemp*32, Client.getYPos()+yTemp*32);
 	}
 	else
 	{
 			this.animationFrame=0;
 			surface.fillStyle = DungeonTile.Fire_1Color;
-			surface.fillText(DungeonTile.Fire_1,Motor.getXPos()+xTemp*32, Motor.getYPos()+yTemp*32);
+			surface.fillText(DungeonTile.Fire_1,Client.getXPos()+xTemp*32, Client.getYPos()+yTemp*32);
 	}
 	
 }

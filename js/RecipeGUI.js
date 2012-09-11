@@ -13,9 +13,9 @@ function RecipeGUI()
 RecipeGUI.prototype.update=function()
 {
 	clean();
-	Motor.dungeon.getCurrentStair().draw();
-	Motor.player.draw();
-	Motor.player.messages.draw();
+	Client.dungeon.getCurrentStair().draw();
+	Client.player.draw();
+	Client.player.messages.draw();
 	this.updateInput();
 	surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (this.x, this.y,this.width,this.height);
@@ -50,7 +50,7 @@ RecipeGUI.prototype.updateInput=function()
 		this.craft();
 		
 	if(Input.equals(27))
-		Scene=Motor;
+		Scene=Client;
 }
 
 /**
@@ -58,7 +58,7 @@ RecipeGUI.prototype.updateInput=function()
  */
 RecipeGUI.prototype.craft=function()
 {
-	RecipeList[this.index].craft(Motor.player);
+	RecipeList[this.index].craft(Client.player);
 }
 
 

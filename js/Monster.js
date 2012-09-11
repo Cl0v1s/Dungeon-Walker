@@ -122,7 +122,7 @@ Monster.prototype.sleep=function()
 		if(this.sleepFrame>=20)
 		{
 			this.sommeil+=1;
-			Motor.newTurn();
+			Client.newTurn();
 			this.sleepFrame=0;
 		}
 		if(this.sommeil>=100)
@@ -175,8 +175,9 @@ Monster.prototype.setLife=function(nb)
  */
 Monster.prototype.draw=function(intancity)
 {
-	if(this.life<=0)
+	if(this.life<=0 || this.soif<=0)
 	{
+		this.kill();
 		return;
 	}
 	surface.font = "30px pixel";
@@ -206,11 +207,11 @@ Monster.prototype.draw=function(intancity)
 	surface.fillStyle="rgb("+Math.floor(r*intancity)+","+Math.floor(g*intancity)+","+Math.floor(b*intancity)+")";
 
 
-	surface.fillText(this.image, Motor.getXPos()+this.x*32, Motor.getYPos()+this.y*32);
+	surface.fillText(this.image, Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
 	if(this.onFire==true)
 	{
 		surface.fillStyle="rgb(250,50,50)";
-		surface.fillText("W",Motor.getXPos()+this.x*32, Motor.getYPos()+this.y*32);
+		surface.fillText("W",Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
 	}
 }
 
@@ -590,7 +591,7 @@ Monster.prototype.searchFor=function(tile)
 	{
 			for(g=originY;g<=originY+side;g++)
 			{
-					if(this.stair.getMap()[f][g]==tile)
+					if(this.stair.getMap()[f] != undefined && this.stair.getMap()[f][g]==tile)
 					{
 						listTemp.push(new Array());
 						listTemp[listTemp.length-1][0]=f;

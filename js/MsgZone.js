@@ -46,7 +46,7 @@ MsgZone.prototype.draw=function()
 		surface.fillStyle="rgb(255,181,33)";		
 		surface.fillText("Score:"+player.score, this.x*32+7*32, this.y*32+6*17+20+32);
 		
-		if(Scene == Motor)
+		if(Scene == Client)
 		{
 			surface.font = "21px pixel";
 			surface.fillStyle="rgb(0,0,0)";

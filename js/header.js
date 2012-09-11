@@ -12,7 +12,7 @@ var BARBARE={
 "Tai" : 1,
 "Dex" : 1,
 "Hr" : 10,
-"Light" : 1,
+"Light" : 4,
 "Weapon" : SingleEdgedSword,
 "Desc" : "Les barbares sont des guerriers ruses, pleins de ressources, perseverants et impitoyables.Ils sont egalement plutot solitaires, c'est pour cela qu'ils vivent a l'ecart de la civilisation,en pleine nature."
 }
@@ -28,7 +28,7 @@ var PALADIN={
 "Tai" : 1,
 "Dex" : 2,
 "Hr" : 20,
-"Light" : 1,
+"Light" : 4,
 "Weapon" : Pike,
 "Desc" : "Les paladins sont possesseurs de magie divine et exellent dans le soin ainsi que dans la protection.Tres tot, les paladins sont capables de detecter le Mal et vivent pour le combattre."
 }
@@ -44,7 +44,7 @@ var RODEUR={
 "Tai" : 1,
 "Dex" : 4,
 "Hr" : 15,
-"Light" : 2,
+"Light" : 6,
 "Weapon" : Dague,
 "Desc" : " Maitres dans l'art de traquer, les rodeurs connaissent les forets comme leurs poches et acceptent frequemment le role de protecteur de ceux qui vivent ou veulent traverser une foret.Plutot faibles ils preferent les embuscades au attaques directes."
 }

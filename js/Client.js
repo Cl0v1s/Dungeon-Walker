@@ -1,4 +1,4 @@
-function Motor()
+function Client()
 {
 	this.player=undefined;
 	this.dungeon=undefined;
@@ -8,6 +8,8 @@ function Motor()
 	this.xPos=0;
 	this.yPos=0;
 	this.canvasPlaced=false;
+	this.spellListen=false;
+	this.spellListenChar="";
 
 
 }
@@ -15,7 +17,7 @@ function Motor()
 /**
  * Searchs the stair's spawnpoint and places the player at it's coordiantes
  */
-Motor.prototype.start=function(par1)
+Client.prototype.start=function(par1)
 {
 		this.player=par1;
 		x=this.dungeon.getCurrentStair().getSpawnPoint()[0]+this.dungeon.getCurrentStair().getSpawnPoint()[2].getX();
@@ -28,7 +30,7 @@ Motor.prototype.start=function(par1)
 /**
  * Returns the canvas's x pos
  */
-Motor.prototype.getXPos=function()
+Client.prototype.getXPos=function()
 {
 		return this.xPos;
 }
@@ -36,7 +38,7 @@ Motor.prototype.getXPos=function()
 /**
  * Returns the canva's y pos
  */
-Motor.prototype.getYPos=function()
+Client.prototype.getYPos=function()
 {
 		return this.yPos;
 }
@@ -44,7 +46,7 @@ Motor.prototype.getYPos=function()
 /**
  * Sets the canvas's x pos
  */
-Motor.prototype.setXPos=function(value)
+Client.prototype.setXPos=function(value)
 {
 	this.xPos=value;
 }
@@ -52,7 +54,7 @@ Motor.prototype.setXPos=function(value)
 /**
  * Sets the canvas's y pos
  */
-Motor.prototype.setYPos=function(value)
+Client.prototype.setYPos=function(value)
 {
 	this.yPos=value;
 }
@@ -60,7 +62,7 @@ Motor.prototype.setYPos=function(value)
 /**
  * Replaces the canvas to it's origin
  */
-Motor.prototype.resetCanvas=function()
+Client.prototype.resetCanvas=function()
 {
 		this.xPos=0;
 		this.yPos=0;
@@ -70,14 +72,18 @@ Motor.prototype.resetCanvas=function()
 /**
  * Creates a new dungeon.
  */
-Motor.prototype.generateDungeon=function()
+Client.prototype.generateDungeon=function()
 {
 	this.dungeon=new Dungeon();
 	this.dungeon.getCurrentStair().generateMonsters();
 	return this.dungeon.getCurrentStair();
 }
 
-Motor.prototype.loading=function()
+
+/**
+ * Shows a loading message until the camera is not locked over the player
+ */
+Client.prototype.loading=function()
 {
 		if(typeof r=="undefined")
 		{
@@ -104,80 +110,124 @@ Motor.prototype.loading=function()
 		}
 }
 
-Motor.prototype.update=function()
+
+/**
+ * Updates the Client's stats
+ */
+Client.prototype.update=function()
 {
 	
 	clean();
-	this.inputUpdate();
+	if(!this.canvasPlaced)
+		this.moveCanvas();
+	else
+		this.inputUpdate();
+		
 	if(!this.canvasPlaced)
 		this.loading();
 	else
 	{
-		Motor.dungeon.getCurrentStair().draw();
+		Client.dungeon.getCurrentStair().draw();
 		this.player.draw();
 	}
 
 }
 
+/**
+ * Updates the Client's input
+ */
+Client.prototype.inputUpdate=function()
+{	
 
-Motor.prototype.inputUpdate=function()
-{
-	if(!this.canvasPlaced)
+	if(!this.spellListen)
 	{
-		this.moveCanvas();
-		return;
-	}
-	
-	if(!Input.equals(0))
-	{
-		this.newTurn();
-	}
-		
-	if(Input.equals(39))
-	{
-		this.player.move("right");
-	}
+		if(!Input.equals(0) && LastKey != 13)
+		{
+			this.newTurn();
+		}
+			
+		if(Input.equals(39))
+		{
+			this.player.move("right");
+		}
 
-	if(Input.equals(40))
-	{
-		this.player.move("down");		
+		if(Input.equals(40))
+		{
+			this.player.move("down");		
+		}
+			
+		if(Input.equals(37))
+		{
+			this.player.move("left");
+		}
+			
+		if(Input.equals(38))
+		{
+			this.player.move("up");
+		}
+		
+		if(Input.equals(80))
+			Scene=RecipeGUI;
+			
+		if(Input.equals(76))
+			this.player.lap();
+			
+		if(Input.equals(73))
+			this.player.openInventory();
+			
+		if(Input.equals(69))
+			this.player.openEquipement();
+			
+		if(Input.equals(13))
+			this.player.interact();
+			
+		if(Input.equals(83))
+			this.player.rest();
+			
+		if(Input.equals(27))
+			this.player.reset();
+			
+		if(Input.equals(17))
+			this.resetCanvas();
+			
+		if(Input.equals(77))
+		{
+			this.spellListen=true;
+			this.player.sendMessage("Vous penetrez au plus profond de votre conscience et parvenez a atteindre le monde des esprits.");	
+		}
 	}
-		
-	if(Input.equals(37))
+	else if(!Input.equals(0))
 	{
-		this.player.move("left");
+		if(Input.equals(27))
+		{
+				this.spellListenChar="";
+				this.spellListen=false;		
+				this.player.sendMessage("Vous reprenez vos esprits et revenez a la realite.");	
+				return;
+		}
+		if(String.fromCharCode(Input.getLastKey()).toLowerCase() != this.spellListenChar.charAt(this.spellListenChar.length-1).toLowerCase())
+			this.spellListenChar=this.spellListenChar+String.fromCharCode(Input.getLastKey()).toLowerCase();
+		else
+			return;
+			
+		for(h=0;h<SpellList.length;h++)
+		{
+			if(SpellList[h].getName()==this.spellListenChar)
+			{
+				this.player.callSpell(SpellList[h]);
+				this.spellListenChar="";
+				this.spellListen=false;
+				this.player.sendMessage("Vous appelez le sort des arcanes "+SpellList[h].getName()+".");
+			}
+		}
+		
+		
 	}
-		
-	if(Input.equals(38))
-	{
-		this.player.move("up");
-	}
-	
-	if(Input.equals(80))
-		Scene=RecipeGUI;
-		
-	if(Input.equals(76))
-		this.player.lap();
-		
-	if(Input.equals(73))
-		this.player.openInventory();
-		
-	if(Input.equals(69))
-		this.player.openEquipement();
-		
-	if(Input.equals(13))
-		this.player.interact();
-		
-	if(Input.equals(83))
-		this.player.rest();
-		
-	if(Input.equals(17))
-		this.resetCanvas();
 		
 
 }
 
-Motor.prototype.newTurn=function()
+Client.prototype.newTurn=function()
 {	
 	this.turn+=1;
 
@@ -203,7 +253,7 @@ Motor.prototype.newTurn=function()
 	this.dungeon.getCurrentStair().moveMonsters();
 }
 
-Motor.prototype.moveCanvas=function()
+Client.prototype.moveCanvas=function()
 {
 	objX=this.player.getX()*32;
 	objY=this.player.getY()*32;

@@ -14,6 +14,9 @@ function Input()
 {
 }
 
+/**
+ * Checks if the last key equals the specified value
+ */
 Input.prototype.equals=function(value)
 {
 		if(LastKey==value)
@@ -25,4 +28,12 @@ Input.prototype.equals=function(value)
 		{
 			return false;
 		}
+}
+
+/**
+ * Returns the last pressed key
+ */
+Input.prototype.getLastKey=function()
+{
+	return LastKey;
 }

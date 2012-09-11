@@ -1,4 +1,4 @@
-function StatEffect(ownerTemp,nameTemp,ligthTemp,forceTemp,constTemp,tailleTemp,dexTemp,lifeTemp,launchTemp,lrmTemp,turnLengthTemp)
+function StatEffect(ownerTemp,nameTemp,ligthTemp,forceTemp,constTemp,tailleTemp,dexTemp,lifeTemp,launchTemp,lrmTemp,turnLengthTemp,permanentLifeTemp)
 {
 	this.owner=ownerTemp;
 	this.name=nameTemp;
@@ -10,8 +10,23 @@ function StatEffect(ownerTemp,nameTemp,ligthTemp,forceTemp,constTemp,tailleTemp,
 	this.life=lifeTemp;
 	this.launch=launchTemp;
 	this.lrm=lrmTemp;
-	this.endTurn=Motor.turn+turnLengthTemp;
-	this.apply();
+	this.endTurn=Client.turn+turnLengthTemp;
+	if(permanentLifeTemp != undefined)
+		this.permanentLife=permanentLifeTemp;
+	else
+		this.permanentLife=0;
+		
+	
+	if(this.owner != undefined)
+		this.apply();
+}
+
+/**
+ * Sets the effect owner
+ */
+StatEffect.prototype.changeOwner=function(ownerTemp)
+{
+	this.owner=ownerTemp;
 }
 
 /**
@@ -40,6 +55,10 @@ StatEffect.prototype.apply=function()
 		value=owner.getDex();
 		value=value+this.dexterite;
 		owner.setDex(value);
+		
+		value=owner.life;
+		value=value+this.permanentLife;
+		owner.setLife(value);
 }
 
 /**
@@ -47,7 +66,7 @@ StatEffect.prototype.apply=function()
  */
 StatEffect.prototype.update=function()
 {
-	if(Motor.turn>=this.endTurn)
+	if(Client.turn>=this.endTurn)
 	{
 		this.end();
 		return null;

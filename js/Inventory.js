@@ -42,8 +42,8 @@ Inventory.prototype.update=function()
 {
 	this.inputUpdate();
 	clean();
-	Motor.player.draw();
-	Motor.dungeon.getCurrentStair().draw();
+	Client.player.draw();
+	Client.dungeon.getCurrentStair().draw();
 	surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (0, 0,320,320);
 	if(this.owner.messages != undefined)
@@ -138,7 +138,7 @@ Inventory.prototype.inputUpdate=function()
 			}
 		}
 		this.owner.sendMessage("Vous fermez votre sac et vous vous redressez pret a repartir.");
-		Scene=Motor;
+		Scene=Client;
 	}	
 }
 
@@ -207,7 +207,7 @@ Inventory.prototype.cook=function()
 	{
 		x=this.owner.getX();
 		y=this.owner.getY();
-		if(Motor.dungeon.getCurrentStair().getMap()[x-1][y]==4 || Motor.dungeon.getCurrentStair().getMap()[x+1][y]==4 || Motor.dungeon.getCurrentStair().getMap()[x][y+1]==4 || Motor.dungeon.getCurrentStair().getMap()[x][y-1]==4)
+		if(Client.dungeon.getCurrentStair().getMap()[x-1][y]==4 || Client.dungeon.getCurrentStair().getMap()[x+1][y]==4 || Client.dungeon.getCurrentStair().getMap()[x][y+1]==4 || Client.dungeon.getCurrentStair().getMap()[x][y-1]==4)
 		{
 			this.owner.sendMessage("Vous placez l'objet "+this.contains[this.index].getName()+" au dessus du feu et patientez...");
 			this.contains[this.index]=this.contains[this.index].cook(this.owner);

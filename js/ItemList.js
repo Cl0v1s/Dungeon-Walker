@@ -12,7 +12,7 @@
  * 		(for example RawSteak to Steak, type undefined if you won't add a cooking result),description,price and type.
  * 	For Potions (ItemPotion):
  * 		name,weight,effect time(in turns),ligth bonus,strength bonus,constitution bonus,size bonus,dexterity bonus,
- * 		life bonus,attack number bonus,lrm bonus,description,price
+ * 		life bonus,attack number bonus,lrm bonus,permanentLifeBonus,description,price
  */
 
 /**
@@ -39,7 +39,7 @@ var GreenPotion=new Item("potion verte",5,0,LifePotion,"Une etrange potion verte
 /**
  * The potions
  */
-var LifePotion=new ItemPotion("potion de vie",5,30,0,0,0,0,0,50,0,0,"Une potion a l'etrange couleur verte.",50);
+var LifePotion=new ItemPotion("potion de vie",5,30,0,0,0,0,0,0,50,"Une potion a l'etrange couleur verte.",50);
 
 
 /**

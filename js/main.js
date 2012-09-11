@@ -4,7 +4,7 @@ var Interval=undefined;
 var LastKey=0;
 var Input=new Input();
 var RoomList=new Array();
-var Motor=new Motor();
+var Client=new Client();
 var Parameters=new GameParameter();
 var RecipeGUI=new RecipeGUI();
 

@@ -50,8 +50,8 @@ Equipement.prototype.remove=function()
 Equipement.prototype.update=function()
 {
 	clean();
-	Motor.player.draw();
-	Motor.dungeon.getCurrentStair().draw();
+	Client.player.draw();
+	Client.dungeon.getCurrentStair().draw();
 	this.contains[0]=this.contains["head"];
 	this.contains[1]=this.contains["torso"];
 	this.contains[2]=this.contains["weapon"];
@@ -127,7 +127,7 @@ Equipement.prototype.inputUpdate=function()
 			if(Input.equals(27))
 			{
 				this.owner.sendMessage("Vous remettez votre equipement en place et vous vous redressez, pret a repartir.");
-				Scene=Motor;
+				Scene=Client;
 			}
 			
 			if(Input.equals(82))

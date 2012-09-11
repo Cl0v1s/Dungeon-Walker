@@ -104,8 +104,8 @@ PlayerEditor.prototype.update=function()
  */
 PlayerEditor.prototype.validate=function()
 {
-	stair=Motor.generateDungeon();
+	stair=Client.generateDungeon();
 	player=new Player(stair,0,0,1,50,180,1,Class[this.index]);
-	Motor.start(player);
-	Scene=Motor;
+	Client.start(player);
+	Scene=Client;
 }
