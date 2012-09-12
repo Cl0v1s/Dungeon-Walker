@@ -205,8 +205,8 @@ Client.prototype.inputUpdate=function()
 				this.player.sendMessage("Vous reprenez vos esprits et revenez a la realite.");	
 				return;
 		}
-		if(String.fromCharCode(Input.getLastKey()).toLowerCase() != this.spellListenChar.charAt(this.spellListenChar.length-1).toLowerCase())
-			this.spellListenChar=this.spellListenChar+String.fromCharCode(Input.getLastKey()).toLowerCase();
+		if(String.fromCharCode(Input.getLastKey()) != this.spellListenChar.charAt(this.spellListenChar.length-1))
+			this.spellListenChar=this.spellListenChar+String.fromCharCode(Input.getLastKey());
 		else
 			return;
 			
@@ -253,6 +253,10 @@ Client.prototype.newTurn=function()
 	this.dungeon.getCurrentStair().moveMonsters();
 }
 
+
+/**
+ * This method places the client's camera on the player 
+ */
 Client.prototype.moveCanvas=function()
 {
 	objX=this.player.getX()*32;

@@ -1,8 +1,14 @@
 function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 {
+	
+	this.messages=new MsgZone(1,11);
+	
+	//Position variables
 	this.x=x;
 	this.y=y;
 	this.stair=stairTemp;
+	
+	//Characteristics variable
 	this.name="Conan";
 	this.class=race;
 	this.light=this.class.Light;
@@ -21,15 +27,25 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	total=total*this.class.Lrm;
 	this.life+=total;
 	this.lifeMax=this.life;
-
 	this.atk=1;
 	this.lrm=this.class.Lrm;
 	this.launch=this.class.Launch;
 	
-	this.img=this.class.Img;
+	//Inventory,Talent and Equipement variables
+	this.talents=new Talent(this);
 	this.equipement=new Equipement(this);
 	this.pound=Math.floor(((this.taille*2+this.constitution)/3)/4);
+	this.inventory=new Inventory(this);
+	this.inventory.add(this.class.Weapon.getId());
+	this.inventory.use();
+	this.inventory.add(LeatherHood.getId());
+	this.inventory.use();
+	this.inventory.add(LinenShirt.getId());
+	this.inventory.use();
+	this.inventory.add(LinenTrousers.getId());
+	this.inventory.use();
 
+	//Stats variables
 	this.hygiene=100;
 	this.faim=100;
 	this.sommeil=100;
@@ -40,30 +56,21 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.sleepInterval=0;
 	this.sleepFrame=0;
 	this.effectList=new Array();
-	
 	this.spell=false;
-
-	this.messages=new MsgZone(1,11);
-	this.score=0;
-	this.inventory=new Inventory(this);
 	this.fireInterval=5;
 	this.fireFrame=0;
 	this.previousTile=1;
-	this.lastTile=1;
-	this.inventory.add(this.class.Weapon.getId());
-	this.inventory.use();
-	this.inventory.add(LeatherHood.getId());
-	this.inventory.use();
-	this.inventory.add(LinenShirt.getId());
-	this.inventory.use();
-	this.inventory.add(LinenTrousers.getId());
-	this.inventory.use();
 	this.sickInterval=10;
 	this.sickFrame=0;
 	this.healInterval=20;
 	this.healFrame=0;
 	this.sympathy=0;
 	this.antipathy=0;
+	
+	//Other variables
+	this.lastTile=1;
+	this.score=0;
+	this.img=this.class.Img;
 }
 
 
@@ -260,23 +267,14 @@ Player.prototype.move=function(dir)
 	{	
 		if(!this.isSleeping)
 		{
-			if(this.stair.getMap()[this.x+1][this.y]==0)
-					this.stair.getMap()[this.x+1][this.y]=1;
-					
-			if(this.stair.getMap()[this.x-1][this.y]==0)
-					this.stair.getMap()[this.x-1][this.y]=1;
-					
-			if(this.stair.getMap()[this.x][this.y+1]==0)
-					this.stair.getMap()[this.x][this.y+1]=1;
-					
-			if(this.stair.getMap()[this.x][this.y-1]==0)
-					this.stair.getMap()[this.x-1][this.y]=1;
 				
 			stair=this.stair;
 			for(c=0;c<this.effectList.length;c++)
 			{
-				if(this.effectList[c] instanceof StatEffect)
+				if(this.effectList[c] != null && this.effectList[c] instanceof StatEffect)
+				{
 					this.effectList[c]=this.effectList[c].update();
+				}
 			}
 			this.heal();
 			this.fire();
@@ -318,6 +316,18 @@ Player.prototype.move=function(dir)
 			this.previousTile=stair.getMap()[this.x][this.y];
 			this.contextMessage();
 			stair.map[this.x][this.y]=0;
+			
+			if(this.stair.getMap()[this.x+1][this.y]==0)
+					this.stair.getMap()[this.x+1][this.y]=1;
+					
+			if(this.stair.getMap()[this.x-1][this.y]==0)
+					this.stair.getMap()[this.x-1][this.y]=1;
+					
+			if(this.stair.getMap()[this.x][this.y+1]==0)
+					this.stair.getMap()[this.x][this.y+1]=1;
+					
+			if(this.stair.getMap()[this.x][this.y-1]==0)
+					this.stair.getMap()[this.x-1][this.y]=1;
 		}
 	}
 	else
@@ -824,8 +834,7 @@ Player.prototype.searchForGrass=function()
 		{
 			if(room.getBiome()=="plain")
 			{
-				rand=Math.floor(Math.random()*10)+1;
-				if(rand==1)
+				if(this.talents.canSurvive())
 				{
 					list=new Array();
 					for(i=0;i<ItemList.length;i++)

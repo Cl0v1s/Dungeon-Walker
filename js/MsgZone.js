@@ -52,7 +52,7 @@ MsgZone.prototype.draw=function()
 			surface.fillStyle="rgb(0,0,0)";
 			surface.fillRect (0, 0,document.getElementById('canvas').width,34);
 			surface.fillStyle="rgb(50,50,50)";
-			surface.fillText("[i] Inventory   [e] Equipement   [p] Prepare   [l] Lap   [s]Sleep   [enter] Interact", 10, 32);	
+			surface.fillText("[I]nventory   [E]quipement   [P]repare   [L]ap   [S]leep   [M]agic   [enter]Interact", 10, 32);	
 		}
 
 

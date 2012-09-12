@@ -10,7 +10,8 @@ function StatEffect(ownerTemp,nameTemp,ligthTemp,forceTemp,constTemp,tailleTemp,
 	this.life=lifeTemp;
 	this.launch=launchTemp;
 	this.lrm=lrmTemp;
-	this.endTurn=Client.turn+turnLengthTemp;
+	this.endTurn=-1;
+	this.turnLength=turnLengthTemp;
 	if(permanentLifeTemp != undefined)
 		this.permanentLife=permanentLifeTemp;
 	else
@@ -59,6 +60,8 @@ StatEffect.prototype.apply=function()
 		value=owner.life;
 		value=value+this.permanentLife;
 		owner.setLife(value);
+		
+		this.endTurn=Client.turn+this.turnLength;
 }
 
 /**
@@ -66,6 +69,7 @@ StatEffect.prototype.apply=function()
  */
 StatEffect.prototype.update=function()
 {
+
 	if(Client.turn>=this.endTurn)
 	{
 		this.end();
