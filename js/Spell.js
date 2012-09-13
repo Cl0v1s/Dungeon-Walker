@@ -49,16 +49,21 @@ Spell.prototype.use=function(caller)
 				break;
 			}
 		}
-		if(target instanceof Monster || target instanceof Player)
+		if(caller.getTalents().canInvoke())
 		{
-			this.effect.changeOwner(target);
-			this.effect.apply();
-			target.addEffect(this.effect);
-			caller.sendMessage("Vous lancez le sort "+this.name+" qui atteint sa cible.");
-			target.sendMessage("Vous avez ete touche par le sort "+this.name+".");					
+			if(target instanceof Monster || target instanceof Player)
+			{
+				this.effect.changeOwner(target);
+				this.effect.apply();
+				target.addEffect(this.effect);
+				caller.sendMessage("Vous lancez le sort "+this.name+" qui atteint sa cible.");
+				target.sendMessage("Vous avez ete touche par le sort "+this.name+".");					
+			}
+			else
+				caller.sendMessage("Vous lancez votre sort "+this.name+" dans le vide...");
 		}
 		else
-			caller.sendMessage("Vous lancez votre sort "+this.name+" dans le vide...");
+			caller.sendMessage("Vous revenez brutalement au monde reel, vous n'avez pas reussi a maintenir la liaison.");
 			
 		this.cursor=undefined;
 	}

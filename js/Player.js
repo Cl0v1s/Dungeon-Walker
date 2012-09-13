@@ -73,6 +73,14 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.img=this.class.Img;
 }
 
+/**
+ * Returns the player's talents instance
+ */
+Player.prototype.getTalents=function()
+{
+	return this.talents;
+}
+
 
 /**
  * Returns the player's current stair

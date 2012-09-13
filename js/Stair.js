@@ -415,7 +415,7 @@ Stair.prototype.generateObstacles=function()
 									if(tentatives>=50)
 										continue;
 									tentative=0;
-									while((this.map[roomTemp.getX()+xTemp-1][roomTemp.getY()+yTemp] == 2 || this.map[roomTemp.getX()+xTemp+1][roomTemp.getY()+yTemp] == 2 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp+1] == 2 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp-1] == 2) && tentative<50)
+									while((this.map[roomTemp.getX()+xTemp-1][roomTemp.getY()+yTemp] != 1 || this.map[roomTemp.getX()+xTemp+1][roomTemp.getY()+yTemp] != 1 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp+1] != 1 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp-1] != 1) && tentative<50)
 									{
 										tentatives+=1;
 										xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;

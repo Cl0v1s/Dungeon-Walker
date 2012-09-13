@@ -207,11 +207,23 @@ Inventory.prototype.cook=function()
 	{
 		x=this.owner.getX();
 		y=this.owner.getY();
-		if(Client.dungeon.getCurrentStair().getMap()[x-1][y]==4 || Client.dungeon.getCurrentStair().getMap()[x+1][y]==4 || Client.dungeon.getCurrentStair().getMap()[x][y+1]==4 || Client.dungeon.getCurrentStair().getMap()[x][y-1]==4)
+		if((this.owner.getStair().getMap()[x-1][y]==4 || this.owner.getStair().getMap()[x+1][y]==4 || this.owner.getStair().getMap()[x][y+1]==4 || this.owner.getStair().getMap()[x][y-1]==4))
 		{
 			this.owner.sendMessage("Vous placez l'objet "+this.contains[this.index].getName()+" au dessus du feu et patientez...");
-			this.contains[this.index]=this.contains[this.index].cook(this.owner);
-			this.examination=0;
+			if(this.owner.getTalents().canCook())
+			{
+				this.contains[this.index]=this.contains[this.index].cook(this.owner);
+				this.examination=0;
+			}
+		}
+		else if((this.owner.getStair().getMap()[x-1][y]==6 || this.owner.getStair().getMap()[x+1][y]==6 || this.owner.getStair().getMap()[x][y+1]==6 || this.owner.getStair().getMap()[x][y-1]==6))
+		{
+			this.owner.sendMessage("Vous placez l'objet "+this.contains[this.index].getName()+" au dessus de la lave et patientez...");
+			if(this.owner.getTalents().canCook())
+			{
+				this.contains[this.index]=this.contains[this.index].cook(this.owner);
+				this.examination=0;
+			}
 		}
 		else
 		{
