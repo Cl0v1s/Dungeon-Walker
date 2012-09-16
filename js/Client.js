@@ -10,6 +10,7 @@ function Client()
 	this.canvasPlaced=false;
 	this.spellListen=false;
 	this.spellListenChar="";
+	this.animationFrame=0;
 
 
 }
@@ -127,7 +128,7 @@ Client.prototype.update=function()
 		this.loading();
 	else
 	{
-		Client.dungeon.getCurrentStair().draw();
+		this.drawEnvironement();
 		this.player.draw();
 	}
 
@@ -290,6 +291,365 @@ Client.prototype.moveCanvas=function()
 			this.xPos=this.xPos*-1;
 			this.yPos=this.yPos*-1;
 	}
+}
+
+/**
+ * This method draws the player's environnement 
+ */
+Client.prototype.drawEnvironement=function()
+{
+	surface.font = "32px pixel";
+	this.animationFrame+=1;
+	if(!(Parameters.isTiled()))
+		this.drawNoTiles();
+	else
+		this.drawTiles();
+}
+
+
+/**
+ * This method draws the player's environement without tiles
+ */
+Client.prototype.drawTiles=function()
+{
+	for(o=0;o<88;o++)
+	{
+		for(p=0;p<48;p++)
+		{				
+				if(this.player.getStair().getRoomAt(o,p)!=false)
+				{
+							if(this.player.getStair().getRoomAt(o,p).getBiome()=="plain")
+							{
+								if(this.player.getStair().map[o][p]==1)
+									TileSet.draw(12,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p]==5)
+									TileSet.draw(7,Client.getXPos()+o*32, Client.getYPos()+p*32);
+							}
+							else if(this.player.getStair().getRoomAt(o,p).getBiome()=="dungeon")
+							{
+								if(this.player.getStair().map[o][p]==1)
+										TileSet.draw(0,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p]==5)
+									TileSet.draw(13,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p] instanceof Chest)
+									TileSet.draw(6,Client.getXPos()+o*32, Client.getYPos()+p*32);
+							}
+							else if(this.player.getStair().getRoomAt(o,p).getBiome()=="cave")
+							{
+								if(this.player.getStair().map[o][p]==1)
+									surface.fillText(CaveTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p]==5)
+									surface.fillText(CaveTile.Stone,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p]==6)
+									this.drawLava(o,p);
+							}
+				}
+				else 
+				{
+									if(this.player.getStair().map[o][p]==1)
+										TileSet.draw(0,Client.getXPos()+o*32, Client.getYPos()+p*32);
+				}
+				if(this.player.getStair().map[o][p]==2)
+								TileSet.draw(2,Client.getXPos()+o*32, Client.getYPos()+p*32);
+				else if(this.player.getStair().map[o][p]=="stair")
+								surface.fillText(DungeonTile.Stair,Client.getXPos()+o*32, Client.getYPos()+p*32);
+				else if(this.player.getStair().map[o][p]>=10)
+								surface.fillText("$",Client.getXPos()+o*32, Client.getYPos()+p*32);
+				else if(this.player.getStair().map[o][p]==3)
+							this.drawWater(o,p);
+				else if(this.player.getStair().map[o][p]==4)
+							this.drawFire(o,p);
+							
+				this.drawShadow(o,p);			
+							
+				
+		}
+	}
+		for(p=0;p<this.player.getStair().monsters.length;p++)
+		{
+				intancity=1;
+				if(this.player.getStair().monsters[p] != undefined)
+				{
+					this.player.getStair().monsters[p].draw(intancity);
+				}
+		}
+}
+
+
+
+/**
+ * This method draws the player's environement without tiles
+ */
+Client.prototype.drawNoTiles=function(side,originX,originY)
+{
+	if(this.player.getStair().getRoomAt(this.player.getX(),this.player.getY()) != false && this.player.getStair().getRoomAt(this.player.getX(),this.player.getY()).getBiome()=="plain")
+		side=Math.round(this.player.getLight()*1.35);
+	else 
+		side=this.player.getLight();
+				
+	originX=Math.floor(this.player.getX()-side/2);
+	originY=Math.floor(this.player.getY()-side/2);
+	for(o=0;o<88;o++)
+	{
+		for(p=0;p<48;p++)
+		{
+			
+				if(this.player.getStair().getRoomAt(o,p)!=false)
+				{
+							if(this.player.getStair().getRoomAt(o,p).getBiome()=="plain")
+							{
+								if(this.player.getStair().map[o][p]==1)
+									surface.fillStyle = PlainTile.GroundColor;
+								else if(this.player.getStair().map[o][p]==5)
+									surface.fillStyle = PlainTile.TreeColor;
+							}
+							else if(this.player.getStair().getRoomAt(o,p).getBiome()=="dungeon")
+							{
+								if(this.player.getStair().map[o][p]==1)
+									surface.fillStyle = DungeonTile.WallColor;
+								else if(this.player.getStair().map[o][p]==5)
+									surface.fillStyle = DungeonTile.StoneColor;
+								else if(this.player.getStair().map[o][p] instanceof Chest)
+									surface.fillStyle = DungeonTile.ChestColor;
+							}
+							else if(this.player.getStair().getRoomAt(o,p).getBiome()=="cave")
+							{
+								if(this.player.getStair().map[o][p]==1)
+									surface.fillStyle = CaveTile.GroundColor;
+								else if(this.player.getStair().map[o][p]==5)
+									surface.fillStyle = CaveTile.StoneColor;
+							}
+				}
+				else
+				{
+					if(this.player.getStair().map[o][p]==1)
+						surface.fillStyle = DungeonTile.WallColor;	
+				}
+				
+				if(this.player.getStair().map[o][p]==2 || this.player.getStair().map[o][p]=="stair")
+							surface.fillStyle = DungeonTile.WallColor;
+				else if(this.player.getStair().map[o][p]==3)
+							surface.fillStyle = DungeonTile.Water_1Color;
+				else if(this.player.getStair().map[o][p]>=10)
+							surface.fillStyle="rgb(248,214,0)";
+							
+							if(o<originX)
+							{
+										value=10-Math.abs(originX-o);
+										surface.fillStyle="rgb("+value+","+value+","+value+")";
+							}
+							if(o>originX+side)
+							{
+										value=10-Math.abs((originX+side)-o);
+										surface.fillStyle="rgb("+value+","+value+","+value+")";
+							}
+							if(p<originY)
+							{
+										value=10-Math.abs(originY-p);
+										surface.fillStyle="rgb("+value+","+value+","+value+")";
+							}
+							if(p>originY+side)
+							{
+										value=10-Math.abs(originY-p);
+										surface.fillStyle="rgb("+value+","+value+","+value+")";
+							}
+		
+						
+				if(this.player.getStair().getRoomAt(o,p)!=false)
+				{
+							if(this.player.getStair().getRoomAt(o,p).getBiome()=="plain")
+							{
+								if(this.player.getStair().map[o][p]==1)
+									surface.fillText(PlainTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p]==5)
+									surface.fillText(PlainTile.Tree,Client.getXPos()+o*32, Client.getYPos()+p*32);
+							}
+							else if(this.player.getStair().getRoomAt(o,p).getBiome()=="dungeon")
+							{
+								if(this.player.getStair().map[o][p]==1)
+										surface.fillText(DungeonTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p]==5)
+									surface.fillText(DungeonTile.Stone,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p] instanceof Chest)
+									surface.fillText(DungeonTile.Chest,Client.getXPos()+o*32, Client.getYPos()+p*32);
+							}
+							else if(this.player.getStair().getRoomAt(o,p).getBiome()=="cave")
+							{
+								if(this.player.getStair().map[o][p]==1)
+									surface.fillText(CaveTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p]==5)
+									surface.fillText(CaveTile.Stone,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p]==6)
+									this.drawLava(o,p);
+							}
+				}
+				else 
+				{
+									if(this.player.getStair().map[o][p]==1)
+										surface.fillText(DungeonTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
+				}
+				if(this.player.getStair().map[o][p]==2)
+								surface.fillText(DungeonTile.Wall,Client.getXPos()+o*32, Client.getYPos()+p*32);
+				else if(this.player.getStair().map[o][p]=="stair")
+								surface.fillText(DungeonTile.Stair,Client.getXPos()+o*32, Client.getYPos()+p*32);
+				else if(this.player.getStair().map[o][p]>=10)
+								surface.fillText("$",Client.getXPos()+o*32, Client.getYPos()+p*32);
+				else if(this.player.getStair().map[o][p]==3)
+							this.drawWater(o,p);
+				else if(this.player.getStair().map[o][p]==4)
+							this.drawFire(o,p);
+				
+		}
+	}
+		for(p=0;p<this.player.getStair().monsters.length;p++)
+		{
+				intancity=1;
+				if(this.player.getStair().monsters[p] != undefined)
+				{
+					if(this.player.getStair().monsters[p].getX()<originX || this.player.getStair().monsters[p].getX()>originX+side || this.player.getStair().monsters[p].getY()<originY || this.player.getStair().monsters[p].getY()>originY+side)
+					{
+						xDistance=Math.abs(this.player.getStair().monsters[p].getX()-originX);
+						yDistance=Math.abs(this.player.getStair().monsters[p].getY()-originY);
+						distance=xDistance*xDistance+yDistance*yDistance;
+						distance=Math.sqrt(distance);
+						intancity=1/distance;
+					}
+					this.player.getStair().monsters[p].draw(intancity);
+				}
+		}
+}
+
+
+/**
+ * This method draw draws and animates the water on the screen
+ */
+Client.prototype.drawWater=function(xTemp,yTemp)
+{
+	if(this.animationFrame<=50)
+	{
+		if(!(Parameters.isTiled()))
+			surface.fillText(DungeonTile.Water_1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		else
+			TileSet.draw(4,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		
+	}
+	else if(this.animationFrame>50 && this.animationFrame<=100)
+	{
+		if(!(Parameters.isTiled()))
+			surface.fillText(DungeonTile.Water_2,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		else
+			TileSet.draw(5,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+	}
+	else
+	{
+			this.animationFrame=0;
+		if(!(Parameters.isTiled()))
+			surface.fillText(DungeonTile.Water_1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		else
+			TileSet.draw(4,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+	}	
+}
+
+/**
+ * This method draw draws and animates the lava on the screen
+ */
+Client.prototype.drawLava=function(xTemp,yTemp)
+{
+	if(this.animationFrame<=70)
+	{
+		surface.fillStyle = CaveTile.Lava_1Color;
+		if(!(Parameters.isTiled()))
+			surface.fillText(CaveTile.Lava_1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		else
+			TileSet.draw(10,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+	}
+	else if(this.animationFrame>70 && this.animationFrame<=140)
+	{
+		surface.fillStyle = CaveTile.Lava_2Color;
+		if(!(Parameters.isTiled()))
+			surface.fillText(CaveTile.Lava_2,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		else
+			TileSet.draw(11,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+	}
+	else
+	{
+			this.animationFrame=0;
+			surface.fillStyle = CaveTile.Lava_1Color;
+		if(!(Parameters.isTiled()))
+			surface.fillText(CaveTile.Lava_1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		else
+			TileSet.draw(10,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+	}	
+}
+
+
+
+/**
+ * This method draws and animates the fire on the screen.
+ */
+Client.prototype.drawFire=function(xTemp,yTemp)
+{
+	rand=Math.floor(Math.random()*100)+1;
+	if(rand==1)
+	{
+		this.player.getStair().map[xTemp][yTemp]=1;
+		return;
+	}
+	if(rand==6 && this.player.getStair().getRoomAt(xTemp,yTemp)!=false)
+	{
+		if(this.player.getStair().getRoomAt(xTemp,yTemp).getBiome()=="plain")
+		{
+				rand=Math.floor(Math.random()*4)+1;
+				if(rand==1 && this.map[xTemp-1][yTemp]==1)
+					this.player.getStair().map[xTemp-1][yTemp]=4;
+				else if(rand==2 && this.map[xTemp][yTemp-1]==1)
+					this.player.getStair().map[xTemp][yTemp-1]=4;
+				else if(rand==3 && this.map[xTemp+1][yTemp]==1)
+					this.player.getStair().map[xTemp+1][yTemp]=4;
+				else if(rand==4 && this.map[xTemp][yTemp+1]==1)
+					this.player.getStair().map[xTemp][yTemp+1]=4;
+		}
+	}
+	
+
+	
+	if(this.animationFrame<=20)
+	{
+		surface.fillStyle = DungeonTile.Fire_1Color;
+		if(!(Parameters.isTiled()))
+			surface.fillText(DungeonTile.Fire_1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		else
+			TileSet.draw(8,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		
+	}
+	else if(this.animationFrame>20 && this.animationFrame<=40)
+	{
+		surface.fillStyle = DungeonTile.Fire_2Color;
+		if(!(Parameters.isTiled()))
+			surface.fillText(DungeonTile.Fire_2,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		else
+			TileSet.draw(9,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+	}
+	else
+	{
+			this.animationFrame=0;
+			surface.fillStyle = DungeonTile.Fire_1Color;
+		if(!(Parameters.isTiled()))
+			surface.fillText(DungeonTile.Fire_1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		else
+			TileSet.draw(8,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		
+	}
+	
+}
+
+/**
+ * This method draw the shadows on the screen
+ */
+Client.prototype.drawShadow=function(xTemp,yTemp)
+{	
+	if(!this.player.canSee(xTemp,yTemp))
+		TileSet.draw(1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);	
 }
 
 

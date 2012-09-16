@@ -13,7 +13,7 @@ function RecipeGUI()
 RecipeGUI.prototype.update=function()
 {
 	clean();
-	Client.dungeon.getCurrentStair().draw();
+	Client.drawEnvironement();
 	Client.player.draw();
 	Client.player.messages.draw();
 	this.updateInput();

@@ -51,7 +51,7 @@ Equipement.prototype.update=function()
 {
 	clean();
 	Client.player.draw();
-	Client.dungeon.getCurrentStair().draw();
+	Client.drawEnvironement();
 	this.contains[0]=this.contains["head"];
 	this.contains[1]=this.contains["torso"];
 	this.contains[2]=this.contains["weapon"];

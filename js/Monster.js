@@ -52,6 +52,13 @@ function Monster(stair,x,y,raceTemp)
 	this.previousTile=1;
 	this.stair.map[this.x][this.y]=0;
 	this.death=false;
+	
+	if(Math.floor(Math.random()*2)+1==1)
+		this.sexe="male";
+	else
+		this.sexe="female";
+		
+	this.maturity=Client.turn+Math.floor(Math.random()*200);
 }
 
 
@@ -556,6 +563,15 @@ Monster.prototype.getAntipathy=function()
 	return this.antipathy;
 }
 
+
+/**
+ * Returns the monster's gender
+ */
+Monster.prototype.getSexe=function()
+{
+	return this.sexe;
+}
+
 /**
  * Checks if the monster is near the specified entity
  */
@@ -639,6 +655,44 @@ Monster.prototype.isGrouped=function(other)
 
 
 /**
+ * allow the monsters to procreate
+ */
+Monster.prototype.procreate=function(male)
+{
+	alert("procreate");
+	if(this.sexe=="female")
+	{
+		posX=this.x;
+		posY=this.y;
+		if(this.stair.walkableMonster(this.x+1,this.y))
+			posX=this.x+1;
+		else if(this.stair.walkableMonster(this.x-1,this.y))
+			posX=this.x-1;
+		else if(this.stair.walkableMonster(this.x,this.y+1))
+			posY=this.y+1;
+		else if(this.stair.walkableMonster(this.x,this.y-1))
+			posY=this.y-1;
+			
+		child=new Monster(this.stair,posX,posY,this.race);
+		child.setLife(Math.round((this.life+male.getLife())/2));
+		placed=false;
+		for(q=0;q<this.stair.monsters.length;q++)
+		{
+			if(this.stair.monsters[q]==undefined)
+			{
+				this.stair.monsters[q]=child;
+				placed=true;
+			}
+		}
+		if(!placed)
+		{
+			this.stair.monsters[q].push(child);
+		}
+	}
+}
+
+
+/**
  * Run the monster's ia
  */
 Monster.prototype.think=function()
@@ -656,17 +710,29 @@ Monster.prototype.think=function()
 
 		if(target != undefined && target != this)
 		{
-			if(target.getName() != this.name)
-			{
 				if((target.getX()==this.x-1 && target.getY()==this.y) || (target.getX()==this.x+1 && target.getY()==this.y) || (target.getY()==this.y-1 && target.getX()==this.x) || (target.getY()==this.y+1 && target.getX()==this.x))
 				{
-					this.agressivity+=1;
-					result=this.stair.fight(target,this);
+					if(target.getName() != this.name)
+					{
+						this.agressivity+=1;
+						result=this.stair.fight(target,this);
+					}
+					else
+					{
+						if(Client.turn>=this.maturity)
+						{
+							if(this.sexe=="female" && target.getSexe()=="male")
+							{
+								this.procreate(target);
+								this.maturity=Client.turn+Math.floor(Math.random()*200);
+							}
+						}
+					}
 						
 				}
-			} 
 			
-				if(target.getX()>=originX && target.getX()<=originX+side && target.getY()>=originY && target.getY()<=originY+side)
+			
+				if(this.canSee(target.getX(),target.getY()))
 				{
 					if(target.getName()==this.name)
 					{
@@ -820,6 +886,20 @@ Monster.prototype.moveTo=function(xTemp,yTemp)
 	}
 	
 	this.selectDir();
+}
+
+/**
+ * Checks if the player can see the specified position
+ */
+Monster.prototype.canSee=function(xTemp,yTemp)
+{
+	
+	distance=(xTemp-this.x)*(xTemp-this.x)+(yTemp-this.y)*(yTemp-this.y);
+	if(distance>this.light*this.light)
+		return false;
+	else
+		return true;
+	
 }
 
 

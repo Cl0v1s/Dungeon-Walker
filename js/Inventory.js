@@ -43,7 +43,7 @@ Inventory.prototype.update=function()
 	this.inputUpdate();
 	clean();
 	Client.player.draw();
-	Client.dungeon.getCurrentStair().draw();
+	Client.drawEnvironement();
 	surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (0, 0,320,320);
 	if(this.owner.messages != undefined)

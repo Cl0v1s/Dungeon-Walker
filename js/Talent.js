@@ -4,6 +4,7 @@ function Talent(ownerTemp)
 	this.cooking=1;
 	this.survival=1;
 	this.magic=1;
+	this.picking=1;
 }
 
 /**
@@ -32,6 +33,13 @@ Talent.prototype.getMagicTalent=function()
 	return this.magic;
 }
 
+/**
+ * Returns the owner's picking talent
+ */
+Talent.prototype.getPickingTalent=function()
+{
+	return this.picking;
+}
 
 /**
  * Returns the owner can cook
@@ -88,6 +96,29 @@ Talent.prototype.canInvoke=function()
 		this.magic=this.magic/10;
 		if(this.magic==Math.floor(this.magic) || this.magic-0.1==Math.floor(this.magic))
 			this.levelUp("la magie");
+		return true;
+	}
+}
+
+/**
+ * Returns the owner can cook
+ */ 
+Talent.prototype.canPick=function()
+{
+	rand=Math.floor(Math.random()*(Math.floor(this.picking)+1))+1;
+	if(rand==1)
+		return false;
+	else
+	{
+		this.picking=this.picking+((this.picking*10)/100);
+		this.picking=Math.round(this.picking*10);
+		if(this.owner.class==RODEUR)
+			this.picking=this.picking/10;
+		else
+			this.picking=this.picking/100;
+		
+		if(this.picking==Math.floor(this.this.picking) || this.picking-0.1==Math.floor(this.picking))
+			this.levelUp("le crochetage");
 		return true;
 	}
 }

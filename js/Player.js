@@ -792,14 +792,25 @@ Player.prototype.interact=function()
 	}
 	else if(this.previousTile instanceof Chest)
 	{
-		if(!this.previousTile.isLocked() || this.class.Name=="rodeur")
+		if(!this.previousTile.isLocked())
 		{
 			this.sendMessage("Alors que vous ouvrez le coffre, un nuage de poussiere vous saute au visage.");
 			this.hygiene-=Math.round((20*this.hygiene)/100);
 			this.previousTile.open(this);
 		}
 		else
-			this.sendMessage("Vous essayez d'ouvrir le coffre, mais celui-ci resiste, apparament verrouille.");		
+		{
+			this.sendMessage("Le coffre est verrouille, vous essayez donc de crocheter sa serrure.");
+			if(this.talents.canPick())
+			{
+				this.sendMessage("Alors que vous ouvrez le coffre, un nuage de poussiere vous saute au visage.");
+				this.hygiene-=Math.round((20*this.hygiene)/100);
+				this.previousTile.open(this);				
+			}
+			else
+				this.sendMessage("La serrure est trom complexe pour vous. Le contenu du coffre vous restera donc inconnu.");	
+			
+		}	
 		
 	}
 	else
@@ -886,4 +897,52 @@ Player.prototype.isNear=function(value)
 		return true;
 	else
 		return false;
+}
+
+
+/**
+ * Checks if the player can see the specified position
+ */
+Player.prototype.canSee=function(xTemp,yTemp)
+{
+	
+	distance=(xTemp-this.x)*(xTemp-this.x)+(yTemp-this.y)*(yTemp-this.y);
+	if(distance>this.light*this.light)
+		return false;
+	else
+		return true;
+	
+}
+
+
+/**
+ * Returns the player's line of sight
+ */
+Player.prototype.getLineOfSight=function(xO,yO,xE,yE)
+{
+	points = new Array();
+    // Define differences and error check
+    var dx = Math.abs(xE - xO);
+    var dy = Math.abs(yE - yO);
+    var sx = (xO < xE) ? 1 : -1;
+    var sy = (yO < yE) ? 1 : -1;
+    var err = dx - dy;
+    // Set first coordinates
+    points.push(new Array(yO, xO));
+    // Main loop
+    while (!((xO == xE) && (yO == yE))) {
+      var e2 = err << 1;
+      if (e2 > -dy) {
+        err -= dy;
+        xO += sx;
+      }
+      if (e2 < dx) {
+        err += dx;
+        yO += sy;
+      }
+      // Set coordinates
+      points.push(new Array(yO, xO));
+    }
+    // Return the result
+    return points;
 }

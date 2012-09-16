@@ -72,7 +72,7 @@ Chest.prototype.update=function()
 	clean();
 	if(this.owner != undefined)
 	{
-		this.owner.stair.draw();
+		Client.drawEnvironement();
 		this.owner.draw();
 		surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (0, 0,320,320);

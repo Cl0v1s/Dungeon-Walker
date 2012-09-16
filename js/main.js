@@ -1,4 +1,5 @@
 var Scene=new Title();
+var TileSet=new TileSet("Tile.png");
 var surface=undefined;
 var Interval=undefined;
 var LastKey=0;
@@ -19,6 +20,7 @@ window.onload = function() {
 
 function clean()
 {
+	//surface.fillStyle="rgb(43,67,54)";
 	surface.fillStyle="rgb(0,0,0)";
 	surface.fillRect (0, 0,document.getElementById('canvas').width,document.getElementById('canvas').height);
 }
