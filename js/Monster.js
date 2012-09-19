@@ -52,6 +52,7 @@ function Monster(stair,x,y,raceTemp)
 	this.previousTile=1;
 	this.stair.map[this.x][this.y]=0;
 	this.death=false;
+	this.visibleBlockList=new Array();
 	
 	if(Math.floor(Math.random()*2)+1==1)
 		this.sexe="male";
@@ -361,6 +362,8 @@ Monster.prototype.move=function(dir)
 		{
 			this.lap();
 		}
+		
+		this.lightZone();
 	}
 	
 }
@@ -659,7 +662,6 @@ Monster.prototype.isGrouped=function(other)
  */
 Monster.prototype.procreate=function(male)
 {
-	alert("procreate");
 	if(this.sexe=="female")
 	{
 		posX=this.x;
@@ -674,7 +676,7 @@ Monster.prototype.procreate=function(male)
 			posY=this.y-1;
 			
 		child=new Monster(this.stair,posX,posY,this.race);
-		child.setLife(Math.round((this.life+male.getLife())/2));
+		child.setLife(Math.round((this.life+male.life)/2));
 		placed=false;
 		for(q=0;q<this.stair.monsters.length;q++)
 		{
@@ -686,7 +688,7 @@ Monster.prototype.procreate=function(male)
 		}
 		if(!placed)
 		{
-			this.stair.monsters[q].push(child);
+			this.stair.monsters.push(child);
 		}
 	}
 }
@@ -701,9 +703,6 @@ Monster.prototype.think=function()
 	
 	friendList=new Array();
 	enemyList=new Array();
-	side=this.light;
-	originX=Math.round(this.x-side/2);
-	originY=Math.round(this.y-side/2);
 	for(d=0;d<this.stair.monsters.length;d++)
 	{
 		target=this.stair.monsters[d];
@@ -730,7 +729,6 @@ Monster.prototype.think=function()
 					}
 						
 				}
-			
 			
 				if(this.canSee(target.getX(),target.getY()))
 				{
@@ -844,7 +842,7 @@ Monster.prototype.think=function()
 	}
 	else if(worstEnemy != undefined)
 	{
-		if(drinkDesire>worstEnemy.getAntipathy())
+		if(drinkDesire>worstEnemy.getAntipathy() && water != undefined)
 			this.moveTo(water[0],water[1]);
 			
 		if(this.agressivity>=1)
@@ -889,9 +887,88 @@ Monster.prototype.moveTo=function(xTemp,yTemp)
 }
 
 /**
- * Checks if the player can see the specified position
+ * Checks if the monster can see the specified position
  */
 Monster.prototype.canSee=function(xTemp,yTemp)
+{
+	for(g=0;g<this.visibleBlockList.length;g++)
+	{
+		if(xTemp==Client.player.getX() && yTemp==Client.player.getY())
+		
+		
+		if(this.visibleBlockList[g][0]==xTemp && this.visibleBlockList[g][1]==yTemp)
+			return true;
+	}
+	
+	return false;
+}
+
+
+/**
+ * create the monster's visibility zone
+ */
+Monster.prototype.lightZone=function()
+{
+	this.visibleBlockList=new Array();
+	this.visibleBlockList.push(new Array(this.x,this.y));
+	for(h=0;h<this.visibleBlockList.length;h++)
+	{
+					
+				cX=this.visibleBlockList[h][0];
+				cY=this.visibleBlockList[h][1];
+		
+				if(this.canSeeBlockAt(cX+1,cY))
+					this.visibleBlockList.push(new Array(cX+1,cY));
+				
+				if(this.canSeeBlockAt(cX-1,cY))
+					this.visibleBlockList.push(new Array(cX-1,cY));
+				
+				if(this.canSeeBlockAt(cX,cY+1))
+					this.visibleBlockList.push(new Array(cX,cY+1));
+				
+				if(this.canSeeBlockAt(cX,cY-1))
+					this.visibleBlockList.push(new Array(cX,cY-1));				
+	}
+}
+
+/**
+ * Check if the block can bee seen by monster
+ */
+Monster.prototype.canSeeBlockAt=function(xTemp,yTemp)
+{
+				if(this.stair.walkable(xTemp,yTemp) && !this.isVisible(xTemp,yTemp) && this.isInRange(xTemp,yTemp) && this.bresenham(xTemp,yTemp))
+				{
+						return true;
+				}
+				
+				return false;
+}
+
+/**
+ * Check if the block was already checked
+ */
+Monster.prototype.isVisible=function(xTemp,yTemp)
+{
+	for(e=0;e<this.visibleBlockList.length;e++)
+	{
+		if(this.visibleBlockList[e]==null)
+			continue;
+			
+		if(this.visibleBlockList[e][0]==xTemp && this.visibleBlockList[e][1]==yTemp)
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+
+
+/**
+ * Returns the monster's line of sight
+ */
+Monster.prototype.isInRange=function(xTemp,yTemp)
 {
 	
 	distance=(xTemp-this.x)*(xTemp-this.x)+(yTemp-this.y)*(yTemp-this.y);
@@ -899,8 +976,58 @@ Monster.prototype.canSee=function(xTemp,yTemp)
 		return false;
 	else
 		return true;
-	
+		
 }
+
+/**
+ * Checks if the line between the monster and the specified position is obstructed with the bresenham's algorythm
+ */
+Monster.prototype.bresenham=function(xE,yE)
+{
+    var coordinatesArray = new Array();
+    // Translate coordinates
+    var x1 = this.x;
+    var y1 = this.y;
+    var x2 = xE;
+    var y2 = yE;
+    // Define differences and error check
+    var dx = Math.abs(x2 - x1);
+    var dy = Math.abs(y2 - y1);
+    var sx = (x1 < x2) ? 1 : -1;
+    var sy = (y1 < y2) ? 1 : -1;
+    var err = dx - dy;
+    // Set first coordinates
+    coordinatesArray.push(new Array(x1, y1));
+    // Main loop
+    while (!((x1 == x2) && (y1 == y2))) {
+      var e2 = err << 1;
+      if (e2 > -dy) {
+        err -= dy;
+        x1 += sx;
+      }
+      if (e2 < dx) {
+        err += dx;
+        y1 += sy;
+      }
+      // Set coordinates
+      coordinatesArray.push(new Array(x1, y1));
+    }
+
+	for(t=0;t<coordinatesArray.length;t++)
+	{
+
+		
+		if(!this.stair.walkable(coordinatesArray[t][0],coordinatesArray[t][1]) && this.stair.getMap()[coordinatesArray[t][0]][coordinatesArray[t][1]]!=0)
+		{
+			
+			return false;
+		}
+	}
+
+	return true;
+		
+}
+
 
 
 

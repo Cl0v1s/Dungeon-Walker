@@ -314,8 +314,14 @@ Client.prototype.drawTiles=function()
 {
 	for(o=0;o<88;o++)
 	{
+		if(o<Math.floor((Client.getXPos())/32)-10)
+				continue;
+				
 		for(p=0;p<48;p++)
 		{				
+			if(p<Math.floor((Client.getYPos())/32)-10)
+				continue;
+				
 				if(this.player.getStair().getRoomAt(o,p)!=false)
 				{
 							if(this.player.getStair().getRoomAt(o,p).getBiome()=="plain")
@@ -648,7 +654,7 @@ Client.prototype.drawFire=function(xTemp,yTemp)
  */
 Client.prototype.drawShadow=function(xTemp,yTemp)
 {	
-	if(!this.player.canSee(xTemp,yTemp))
+	if(!this.player.isVisible(xTemp,yTemp))
 		TileSet.draw(1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);	
 }
 
