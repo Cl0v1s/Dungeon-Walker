@@ -33,7 +33,8 @@ var RottenFlesh=new ItemFood("chair infame",2,5,undefined,"Un bout de chair a l'
 var Steak=new ItemFood("steak",2,20,undefined,"Un bon morceau de muscle cuit a point.",15);
 var RawSteak=new ItemFood("steak cru",2,10,Steak,"Un morceau de muscle juteux preleve sur un cadavre.",5);
 var Skewer=new ItemFood("brochette",4,30,undefined,"De bons morceaux de steak embroches sur une pique.",20);
-var GreenPotion=new Item("potion verte",5,0,LifePotion,"Une etrange potion verte, on dirait qu'il y manque quelque chose...",4);
+var GreenPotion=new ItemFood("potion verte",5,0,LifePotion,"Une etrange potion verte, on dirait qu'il y manque quelque chose...",4);
+var GreenSalad=new ItemFood("salde verte",2,10,undefined,"Un mélange d'herbes verte, peu nutritif.",9); 
 
 
 /**
@@ -45,6 +46,7 @@ var LifePotion=new ItemPotion("potion de vie",5,30,0,0,0,0,0,0,50,"Une potion a 
 /**
  * The specials items.
  */
-var Lighter=new ItemLighter("briquet",5,"Un petit briquet constitue d'un pierre et d'un bout de fer rouille.",3);
+var Lighter=new ItemLighter("briquet",3,"Un petit briquet constitue d'un pierre et d'un bout de fer rouille.",3);
 var WaterBucket=new ItemWaterBucket("seau d'eau",12,"Un seau rempli d'eau.",9);
 var Bucket=new ItemBucket("seau",6,"Un seau en fer vide.",9); 
+var WoodenTorch=new ItemTorch("torche en bois",6,2,"Une torche simple constituée d'un simple morceau de bois.",3);

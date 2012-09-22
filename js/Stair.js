@@ -13,6 +13,7 @@ function Stair()
 	this.animationFrame=0;
 	this.fireNumber=1;
 	this.spawnPoint=null;
+	this.lightList=new Array();
 	this.rooms=new Array();
 	this.monsters=new Array();
 	this.roomsNumber=0;
@@ -804,7 +805,39 @@ Stair.prototype.getMap=function()
 Stair.prototype.setFire=function(xTemp,yTemp)
 {
 	if(this.map[xTemp][yTemp]==1)
+	{
 		this.map[xTemp][yTemp]=4;
+		this.addLightSource(new LightSource(xTemp,yTemp,this,2));
+	}
+}
+
+/**
+ * Update the fire's stats
+ */
+Stair.prototype.actualizeFire=function(xTemp,yTemp)
+{
+	rand=Math.floor(Math.random()*100)+1;
+	if(rand==1)
+	{
+		this.map[xTemp][yTemp]=1;
+		this.removeLightSourceFromCoord(xTemp,yTemp);
+		return;
+	}
+	if(rand==6 && this.getRoomAt(xTemp,yTemp)!=false)
+	{
+		if(this.getRoomAt(xTemp,yTemp).getBiome()=="plain")
+		{
+				rand=Math.floor(Math.random()*4)+1;
+				if(rand==1 && this.map[xTemp-1][yTemp]==1)
+					this.map[xTemp-1][yTemp]=4;
+				else if(rand==2 && this.map[xTemp][yTemp-1]==1)
+					this.map[xTemp][yTemp-1]=4;
+				else if(rand==3 && this.map[xTemp+1][yTemp]==1)
+					this.map[xTemp+1][yTemp]=4;
+				else if(rand==4 && this.map[xTemp][yTemp+1]==1)
+					this.map[xTemp][yTemp+1]=4;
+		}
+	}
 }
 
 /**
@@ -831,9 +864,31 @@ Stair.prototype.walkableMonster=function(xTemp,yTemp)
 
 
 /**
- * Return the stair's light
+ * Add the specified light source to the lightList
  */
-Stair.prototype.getLight=function()
+Stair.prototype.addLightSource=function(lightTemp)
 {
-	return this.light;
+	for(k=0;k<this.lightList.length;k++)
+	{
+		if(this.lightList[k]==undefined)
+		{
+			this.lightList[k]=lightTemp;
+			return;
+		}
+	}
+	this.lightList.push(lightTemp);
 }
+
+/**
+ * remove light source from it's coordinates
+ */
+Stair.prototype.removeLightSourceFromCoord=function(xTemp,yTemp)
+{
+	for(k=0;k<this.lightList.length;k++)
+	{
+		if(this.lightList[k].getX()==xTemp && this.lightList[k].getY()==yTemp)
+			this.lightList[k]=undefined;
+	}
+}
+
+

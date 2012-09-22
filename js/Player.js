@@ -44,6 +44,7 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.inventory.use();
 	this.inventory.add(LinenTrousers.getId());
 	this.inventory.use();
+	this.inventory.add(WoodenTorch.getId());
 
 	//Stats variables
 	this.hygiene=100;
@@ -878,7 +879,7 @@ Player.prototype.searchForGrass=function()
 				this.stair.map[xTemp][yTemp]=1;
 			}
 		}
-		this.hygiene-=Math.round((30*this.hygiene)/100);
+		this.hygiene-=Math.round((15*this.hygiene)/100);
 	}
 	
 }

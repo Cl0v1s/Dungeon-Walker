@@ -117,7 +117,7 @@ Talent.prototype.canPick=function()
 		else
 			this.picking=this.picking/100;
 		
-		if(this.picking==Math.floor(this.this.picking) || this.picking-0.1==Math.floor(this.picking))
+		if(this.picking==Math.floor(this.picking) || this.picking-0.1==Math.floor(this.picking))
 			this.levelUp("le crochetage");
 		return true;
 	}

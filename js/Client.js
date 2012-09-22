@@ -595,28 +595,8 @@ Client.prototype.drawLava=function(xTemp,yTemp)
  */
 Client.prototype.drawFire=function(xTemp,yTemp)
 {
-	rand=Math.floor(Math.random()*100)+1;
-	if(rand==1)
-	{
-		this.player.getStair().map[xTemp][yTemp]=1;
-		return;
-	}
-	if(rand==6 && this.player.getStair().getRoomAt(xTemp,yTemp)!=false)
-	{
-		if(this.player.getStair().getRoomAt(xTemp,yTemp).getBiome()=="plain")
-		{
-				rand=Math.floor(Math.random()*4)+1;
-				if(rand==1 && this.map[xTemp-1][yTemp]==1)
-					this.player.getStair().map[xTemp-1][yTemp]=4;
-				else if(rand==2 && this.map[xTemp][yTemp-1]==1)
-					this.player.getStair().map[xTemp][yTemp-1]=4;
-				else if(rand==3 && this.map[xTemp+1][yTemp]==1)
-					this.player.getStair().map[xTemp+1][yTemp]=4;
-				else if(rand==4 && this.map[xTemp][yTemp+1]==1)
-					this.player.getStair().map[xTemp][yTemp+1]=4;
-		}
-	}
-	
+
+	this.player.stair.actualizeFire(xTemp,yTemp);
 
 	
 	if(this.animationFrame<=20)
@@ -653,9 +633,19 @@ Client.prototype.drawFire=function(xTemp,yTemp)
  * This method draw the shadows on the screen
  */
 Client.prototype.drawShadow=function(xTemp,yTemp)
-{	
-	if(!this.player.isVisible(xTemp,yTemp))
-		TileSet.draw(1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);	
+{		
+	flag=true;
+	for(l=0;l<this.player.getStair().lightList.length;l++)
+	{
+		if(this.player.getStair().lightList[l] != undefined)
+		{
+			if(this.player.getStair().lightList[l].isVisible(xTemp,yTemp))
+				flag=false;
+		}
+	}
+	
+	if(!this.player.isVisible(xTemp,yTemp) && flag)
+			TileSet.draw(1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);	
 }
 
 

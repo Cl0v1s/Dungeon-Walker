@@ -333,6 +333,9 @@ Monster.prototype.move=function(dir)
 			return;
 		this.fire();
 		this.stair.map[this.x][this.y]=this.previousTile;
+		
+
+		
 		switch(dir)
 		{
 			case "right":
@@ -364,6 +367,7 @@ Monster.prototype.move=function(dir)
 		}
 		
 		this.lightZone();
+	
 	}
 	
 }
@@ -729,10 +733,9 @@ Monster.prototype.think=function()
 					}
 						
 				}
-			
 				if(this.canSee(target.getX(),target.getY()))
 				{
-					if(target.getName()==this.name)
+					if(target.name==this.name)
 					{
 						friendList.push(target);
 					}
@@ -757,6 +760,8 @@ Monster.prototype.think=function()
 		if(bestFriend==undefined || sympathy>bestFriend.getSympathy())
 				bestFriend=target;
 	}
+	
+	
 	worstEnemy=undefined;
 	for(e=0;e<enemyList.length;e++)
 	{
@@ -807,7 +812,7 @@ Monster.prototype.think=function()
 			this.selectDir();
 		}
 		else if(this.agressivity==0)
-		{
+		{	
 			if(this.isNearEntity(bestFriend))
 				this.selectDir();
 			else
@@ -818,7 +823,6 @@ Monster.prototype.think=function()
 	}
 	else if(bestFriend != undefined)
 	{
-		
 		if(drinkDesire>bestFriend.getSympathy())
 			this.moveTo(water[0],water[1]);
 			
@@ -828,7 +832,7 @@ Monster.prototype.think=function()
 		}
 
 		if(this.agressivity<2)
-		{
+		{	
 			if(this.isNearEntity(bestFriend))
 				this.selectDir();
 			else
@@ -862,28 +866,16 @@ Monster.prototype.think=function()
  */
 Monster.prototype.moveTo=function(xTemp,yTemp)
 {
-	if(xTemp>this.x)
-	{
+
+	if(xTemp>this.x && this.stair.walkableMonster(this.x+1,this.y))
 		this.move("right");
-		return;
-	}
-	if(xTemp<this.x)
-	{
+	else if(xTemp<this.x && this.stair.walkableMonster(this.x-1,this.y))
 		this.move("left");
-		return;
-	}	
-	if(yTemp>this.y)
-	{
+	else if(yTemp>this.y && this.stair.walkableMonster(this.x,this.y+1))
 		this.move("down");
-		return;
-	}
-	if(yTemp<this.y)
-	{
-		this.move("up");
-		return;
-	}
+	else if(yTemp<this.y && this.stair.walkableMonster(this.x,this.y-1))
+		this.move("up");	
 	
-	this.selectDir();
 }
 
 /**
@@ -892,10 +884,7 @@ Monster.prototype.moveTo=function(xTemp,yTemp)
 Monster.prototype.canSee=function(xTemp,yTemp)
 {
 	for(g=0;g<this.visibleBlockList.length;g++)
-	{
-		if(xTemp==Client.player.getX() && yTemp==Client.player.getY())
-		
-		
+	{	
 		if(this.visibleBlockList[g][0]==xTemp && this.visibleBlockList[g][1]==yTemp)
 			return true;
 	}
