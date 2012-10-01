@@ -44,7 +44,7 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.inventory.use();
 	this.inventory.add(LinenTrousers.getId());
 	this.inventory.use();
-	this.inventory.add(WoodenTorch.getId());
+	this.inventory.add(Lighter.getId());
 
 	//Stats variables
 	this.hygiene=100;

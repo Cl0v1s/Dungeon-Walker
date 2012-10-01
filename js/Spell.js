@@ -75,7 +75,7 @@ Spell.prototype.use=function(caller)
  */
 Spell.prototype.launch=function(caller)
 {
-	this.cursor=new Cursor(caller.getX(),caller.getY(),this.light);
+	this.cursor=new Cursor(caller.getX(),caller.getY(),this.light,caller);
 }
 
 

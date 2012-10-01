@@ -20,21 +20,25 @@
   /**
    * Head
    */
-   var LeatherHood=new ItemEquipement("capuche de cuir",2,"head",0,2,0,0,0,"Une capuche de cuir legere, masquant a peine votre visage.",6);
-   
+   var LeatherHood=new ItemEquipement("capuche de cuir",2,"head",0,3,0,0,0,"Une capuche de cuir legere, masquant a peine votre visage.",6);
+   var IronHelmet=new ItemEquipement("casque de fer",10,"head",0,9,0,0,0,"Un lourd casque de fer, il protege parfaitement le sommet de votre crane.",50);   
    
    /**
     * Torso
     */
     var LinenShirt=new ItemEquipement("chemise de lin",4,"torso",0,1,0,0,0,"Une legere chemise de lin, vieille et trouee.",3);
+    var Ironbreastplate=new ItemEquipement("plaque de fer ventrale",20,"torso",0,15,0,0,0,"Une plaque de fer imposante, couvrant votre torse mais laissant quelque points morts visibles.",60); 
     
     /**
      * Legs
      */
      var LinenTrousers=new ItemEquipement("pantalon de lin",4,"legs",0,1,0,0,0,"Un pantalon de lin ayant deja servi un moment.",3);
+     var IronSkirt=new ItemEquipement("jupe de mailles",12,"legs",0,12,0,0,0,"Une jupe de mailles serres, vous donnant un petit air effemine.",53); 
      
      /**
-      * Feets
+      * Feet
       */
+	  var LeatherBoots=new ItemEquipement("botte de cuir",8,"feet",0,3,0,0,0,"De lourdes bottes en cuir de creatures des marais.",10);
+	  var SoldierBoots=new ItemEquipement("botte de soldat",10,"feet",0,7,0,0,0,"De lourdes bottes en cuir de creatures des marais renforcees par des anneaux de fer.",15);  
 
 

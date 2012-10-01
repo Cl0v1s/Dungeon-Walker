@@ -426,6 +426,30 @@ Stair.prototype.generateObstacles=function()
 										continue;
 									this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp]=5;
 							}
+							else if(rand==2)
+							{
+									xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+									yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;
+									tentatives=0;
+									while(this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp] != 1 && tentatives < 50)
+									{
+										tentatives+=1;
+										xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+										yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;									
+									}
+									if(tentatives>=50)
+										continue;
+									tentative=0;
+									while((this.map[roomTemp.getX()+xTemp-1][roomTemp.getY()+yTemp] != 1 || this.map[roomTemp.getX()+xTemp+1][roomTemp.getY()+yTemp] != 1 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp+1] != 1 || this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp-1] != 1) && tentative<50)
+									{
+										tentatives+=1;
+										xTemp=Math.floor(Math.random()*(roomTemp.getWidth()-2))+2;
+										yTemp=Math.floor(Math.random()*(roomTemp.getHeight()-2))+2;
+									}
+									if(tentatives>=50)
+										continue;
+									this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp]=5;
+							}
 						}
 						else if(roomTemp.getBiome()=="cave")
 						{
@@ -886,8 +910,11 @@ Stair.prototype.removeLightSourceFromCoord=function(xTemp,yTemp)
 {
 	for(k=0;k<this.lightList.length;k++)
 	{
-		if(this.lightList[k].getX()==xTemp && this.lightList[k].getY()==yTemp)
-			this.lightList[k]=undefined;
+		if(this.lightList[k] != undefined)
+		{
+			if(this.lightList[k].getX()==xTemp && this.lightList[k].getY()==yTemp)
+				this.lightList[k]=undefined;
+		}
 	}
 }
 

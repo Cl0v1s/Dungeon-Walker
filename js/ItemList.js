@@ -22,8 +22,14 @@ var SpiderLeg=new Item("patte d'arai.",2,"Une patte velue arachee du corps d'une
 var SpiderEye=new Item("oeil d'arai.",2,"Un oeil visqueux arachee du corps d'une enorme araignee.",2,"drop");
 var GrassGreen=new Item("herbe verte",1,"une poignee d'herbe aux proprietes curatives.",3,"grass");
 var Stick=new Item("baton",2,"Un petit bout de bois.",1,"grass");
+var LightMushroom=new Item("champ. phospho.",3,"Un champignon qui semble emmetre de la lumiere dans le noir.",5,"grass");
 
 
+/**
+ * The potions
+ */
+var LifePotion=new ItemPotion("potion de vie",5,30,0,0,0,0,0,0,50,"Une potion a l'etrange couleur verte.",50);
+var LittleLightPotion=new ItemPotion("petit potion lumineuse",5,20,2,0,0,0,0,0,0,"Cette potion semble emmetre de la lumiere dans le noir.",50);
 
 
 /**
@@ -35,12 +41,6 @@ var RawSteak=new ItemFood("steak cru",2,10,Steak,"Un morceau de muscle juteux pr
 var Skewer=new ItemFood("brochette",4,30,undefined,"De bons morceaux de steak embroches sur une pique.",20);
 var GreenPotion=new ItemFood("potion verte",5,0,LifePotion,"Une etrange potion verte, on dirait qu'il y manque quelque chose...",4);
 var GreenSalad=new ItemFood("salde verte",2,10,undefined,"Un mélange d'herbes verte, peu nutritif.",9); 
-
-
-/**
- * The potions
- */
-var LifePotion=new ItemPotion("potion de vie",5,30,0,0,0,0,0,0,50,"Une potion a l'etrange couleur verte.",50);
 
 
 /**

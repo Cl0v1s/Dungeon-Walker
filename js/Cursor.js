@@ -1,10 +1,11 @@
-function Cursor(xTemp,yTemp,lightTemp)
+function Cursor(xTemp,yTemp,lightTemp,ownerTemp)
 {
 	this.x=xTemp;
 	this.y=yTemp;
 	this.xOrigin=this.x;
 	this.yOrigin=this.y;
 	this.light=lightTemp;
+	this.owner=ownerTemp;
 }
 
 
@@ -13,25 +14,22 @@ function Cursor(xTemp,yTemp,lightTemp)
  */
 Cursor.prototype.move=function(dir)
 {
-	side=this.light;
-	originX=Math.round(this.xOrigin-side/2);
-	originY=Math.round(this.yOrigin-side/2);
 	switch(dir)
 	{
 		case "right":
-			if(this.x<originX+side)
+			if(this.isInRange(this.x+1,this.y) && this.owner.isInRange(this.x+1,this.y))
 				this.x+=1;
 		break;
 		case "left":
-			if(this.x>originX)
+			if(this.isInRange(this.x-1,this.y) && this.owner.isInRange(this.x-1,this.y))
 				this.x-=1;
 		break;
 		case "up":
-			if(this.y>originY)
+			if(this.isInRange(this.x,this.y-1) && this.owner.isInRange(this.x,this.y-1))
 				this.y-=1;
 		break;
 		case "down":
-			if(this.y<originY+side)
+			if(this.isInRange(this.x,this.y+1) && this.owner.isInRange(this.x,this.y+1))
 				this.y+=1;
 		break;	
 	}
@@ -60,6 +58,20 @@ Cursor.prototype.getY=function()
 Cursor.prototype.getOrigin=function()
 {
 		return new Array(xOrigin,yOrigin);
+}
+
+/**
+ * Returns the cursor's line of sight
+ */
+Cursor.prototype.isInRange=function(xTemp,yTemp)
+{
+	
+	distance=(xTemp-this.x)*(xTemp-this.x)+(yTemp-this.y)*(yTemp-this.y);
+	if(distance>this.light*this.light)
+		return false;
+	else
+		return true;
+		
 }
 
 

@@ -17,8 +17,7 @@ ItemLighter.prototype.use=function(owner)
 	y=owner.getY();
 	if(owner.stair.getMap()[x][y+1] == 1)
 	{
-		rand=Math.floor(Math.random()*2)+1;
-		if(rand==1)
+		if(owner.talents.canSurvive())
 		{
 			owner.sendMessage("Apres avoir produit vainement quelques etincelles vous reussissez enfin a allumer un petit feu.");
 			owner.stair.setFire(x,y+1);

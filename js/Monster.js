@@ -794,7 +794,7 @@ Monster.prototype.think=function()
 
 	if(bestFriend != undefined && worstEnemy != undefined)
 	{
-		if(drinkDesire>worstEnemy.getAntipathy() && drinkDesire>bestFriend.getSympathy())
+		if(drinkDesire>worstEnemy.getAntipathy() && drinkDesire>bestFriend.getSympathy() && water != undefined)
 			this.moveTo(water[0],water[1]);
 			
 			
@@ -823,7 +823,7 @@ Monster.prototype.think=function()
 	}
 	else if(bestFriend != undefined)
 	{
-		if(drinkDesire>bestFriend.getSympathy())
+		if(drinkDesire>bestFriend.getSympathy() && water != undefined)
 			this.moveTo(water[0],water[1]);
 			
 		if(this.isNearEntity(bestFriend))

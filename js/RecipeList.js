@@ -12,5 +12,10 @@
   * Eatables
   */
   var SkewerRecipe=new Recipe("recette de brochettes",Skewer,new Array(Steak,Stick));
-  var GreenPotionRecipe=new Recipe("recette de potion de vie",GreenPotion,new Array(WaterBucket,GrassGreen));
   var GreenSaladRecipe=new Recipe("recette de salade verte",GreenSalad,new Array(GrassGreen,GrassGreen,GrassGreen));
+  
+  /**
+   * Potions
+   */
+  var GreenPotionRecipe=new Recipe("recette de potion de vie",GreenPotion,new Array(WaterBucket,GrassGreen));   
+  var LittleLightPotionRecipe=new Recipe("recette de petite potion de lumiere",LittleLightPotion,new Array(WaterBucket,LightMushroom,LightMushroom)); 
