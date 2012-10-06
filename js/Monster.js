@@ -48,6 +48,10 @@ function Monster(stair,x,y,raceTemp)
 
 	this.onFire=false;
 	this.fireFrame=0;
+	this.frame=0;
+	this.spriteFrame=1;
+	this.sprite=new Image();
+	this.sprite.src="graphics/characters/spider/spider-1.png";
 	this.fireInterval=5;
 	this.previousTile=1;
 	this.stair.map[this.x][this.y]=0;
@@ -188,39 +192,60 @@ Monster.prototype.draw=function(intancity)
 		this.kill();
 		return;
 	}
-	surface.font = "30px pixel";
-	if(this.agressivity==0)
+	this.sleep();
+	if(!Parameters.isTiled())
 	{
-		r=0;
-		g=0;
-		b=70;
+		surface.font = "30px pixel";
+		if(this.agressivity==0)
+		{
+			r=0;
+			g=0;
+			b=70;
+		}
+		else if(this.agressivity==1)
+		{
+			r=100;
+			g=0;
+			b=0;
+		}
+		else if(this.agressivity>=2)
+		{
+			r=200;
+			g=0;
+			b=0;
+		}
+		if(this.isSleeping)
+				intancity-=10;
+
+		surface.fillStyle="rgb("+Math.floor(r*intancity)+","+Math.floor(g*intancity)+","+Math.floor(b*intancity)+")";
+		surface.fillText(this.image, Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
+		if(this.onFire==true)
+		{
+			surface.fillStyle="rgb(250,50,50)";
+			surface.fillText("W",Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
+		}
 	}
-	else if(this.agressivity==1)
+	else
 	{
-		r=100;
-		g=0;
-		b=0;
-	}
-	else if(this.agressivity>=2)
-	{
-		r=200;
-		g=0;
-		b=0;
+		TileSet.draw(Client.traduceInTileIndex(this.previousTile,this.stair,this.x,this.y),Client.getXPos()+this.x*32,Client.getYPos()+this.y*32);
+		Client.drawShadow(this.x,this.y);
+		this.frame+=1;
+		if(this.frame>20)
+		{
+			this.spriteFrame+=1;
+			this.frame=0;
+			if(this.spriteFrame>3)
+				this.spriteFrame=1;
+			this.sprite.src="graphics/characters/spider/spider-"+this.spriteFrame+".png";
+		}
+		surface.drawImage(this.sprite,Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);	
 	}
 	
-	this.sleep();
-	if(this.isSleeping)
-		intancity-=10;
 
-	surface.fillStyle="rgb("+Math.floor(r*intancity)+","+Math.floor(g*intancity)+","+Math.floor(b*intancity)+")";
+	
 
 
-	surface.fillText(this.image, Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
-	if(this.onFire==true)
-	{
-		surface.fillStyle="rgb(250,50,50)";
-		surface.fillText("W",Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
-	}
+
 }
 
 /**

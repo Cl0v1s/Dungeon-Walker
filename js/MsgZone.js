@@ -4,6 +4,8 @@ function MsgZone(x,y)
 	this.y=y;
 	this.history=new Array();
 	this.mode="normal";
+	this.help=new Window(-20,0,document.getElementById('canvas').width+40,40,"<br><br>[I]nventory   [E]quipement   [P]repare   [L]ap   [S]leep   [M]agic   [enter]Interact",21);
+	this.statBack=new Window(0,this.y*32+7*17,document.getElementById('canvas').width,300,"");
 }
 
 MsgZone.prototype.draw=function()
@@ -28,31 +30,40 @@ MsgZone.prototype.draw=function()
 		}
 
 	}
-		surface.font = "32px pixel";
+		surface.font = "26px pixel";
 		surface.fillStyle="rgb(50,250,50)";
-		if(player.life<=50)
+		if(Client.player.life<=50)
 			surface.fillStyle="rgb("+(200+player.life)+",50,50)";
 		
-
-		surface.fillText("Vie:"+player.life, this.x*32, this.y*32+6*17+20);
-		surface.fillStyle="rgb(95,54,14)";		
-		surface.fillText("Faim:"+Math.floor((-1*player.faim+100)), this.x*32+3*32, this.y*32+6*17+20);
-		surface.fillStyle="rgb(16,124,117)";		
-		surface.fillText("Soif:"+Math.floor((-1*player.soif+100)), this.x*32+7*32, this.y*32+6*17+20);
-		surface.fillStyle="rgb(10,78,73)";		
-		surface.fillText("Hygiene:"+Math.floor(player.hygiene), this.x*32+11*32, this.y*32+6*17+20);
-		surface.fillStyle="rgb(263,225,255)";		
-		surface.fillText("Sommeil:"+Math.floor((-1*player.sommeil+100)), this.x*32, this.y*32+6*17+20+32);
-		surface.fillStyle="rgb(255,181,33)";		
-		surface.fillText("Score:"+player.score, this.x*32+7*32, this.y*32+6*17+20+32);
+		if(Parameters.isTiled())
+			this.statBack.draw();
+			
+			surface.fillText("Vie:"+player.life, this.x*32, this.y*32+8*17+20);
+			surface.fillStyle="rgb(95,54,14)";		
+			surface.fillText("Faim:"+Math.floor((-1*player.faim+100)), this.x*32+2.5*32, this.y*32+8*17+20);
+			surface.fillStyle="rgb(16,124,117)";		
+			surface.fillText("Soif:"+Math.floor((-1*player.soif+100)), this.x*32+5*32, this.y*32+8*17+20);
+			surface.fillStyle="rgb(10,78,73)";		
+			surface.fillText("Hygiene:"+Math.floor(player.hygiene), this.x*32+7.5*32, this.y*32+8*17+20);
+			surface.fillStyle="rgb(263,225,255)";		
+			surface.fillText("Sommeil:"+Math.floor((-1*player.sommeil+100)), this.x*32+11*32, this.y*32+8*17+20);
+			surface.fillStyle="rgb(255,181,33)";		
+			surface.fillText("Score:"+player.score, this.x*32+14.5*32, this.y*32+8*17+20);
 		
-		if(Scene == Client)
+		if(Scene == Client && Parameters.isHelped())
 		{
-			surface.font = "21px pixel";
-			surface.fillStyle="rgb(0,0,0)";
-			surface.fillRect (0, 0,document.getElementById('canvas').width,34);
-			surface.fillStyle="rgb(50,50,50)";
-			surface.fillText("[I]nventory   [E]quipement   [P]repare   [L]ap   [S]leep   [M]agic   [enter]Interact", 10, 32);	
+			if(!Parameters.isTiled())
+			{
+				surface.font = "21px pixel";
+				surface.fillStyle="rgb(0,0,0)";
+				surface.fillRect (0, 0,document.getElementById('canvas').width,34);
+				surface.fillStyle="rgb(50,50,50)";
+				surface.fillText("[I]nventory   [E]quipement   [P]repare   [L]ap   [S]leep   [M]agic   [enter]Interact", 10, 32);	
+			}
+			else
+			{
+				this.help.draw();
+			}
 		}
 
 

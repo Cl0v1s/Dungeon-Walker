@@ -70,7 +70,7 @@ function TileSet(file)
 /**
  * This method draws the specified tile on the screen.
  */
-TileSet.prototype.draw=function(index,x,y,brightness)
+TileSet.prototype.draw=function(index,x,y)
 {
 	surface.drawImage(this.image,index*32, 0, 32, 32,x, y, 32, 32);	
 }

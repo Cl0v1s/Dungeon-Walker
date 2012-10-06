@@ -364,7 +364,7 @@ Client.prototype.drawTiles=function()
 				else if(this.player.getStair().map[o][p]==3)
 							this.drawWater(o,p);
 				else if(this.player.getStair().map[o][p]==4)
-							this.drawFire(o,p);
+							this.drawFire(o,p);	
 							
 				this.drawShadow(o,p);			
 							
@@ -505,7 +505,7 @@ Client.prototype.drawNoTiles=function(side,originX,originY)
  */
 Client.prototype.drawWater=function(xTemp,yTemp)
 {
-	if(this.animationFrame<=50)
+	if(this.animationFrame<=10)
 	{
 		if(!(Parameters.isTiled()))
 			surface.fillText(DungeonTile.Water_1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
@@ -513,7 +513,7 @@ Client.prototype.drawWater=function(xTemp,yTemp)
 			TileSet.draw(4,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
 		
 	}
-	else if(this.animationFrame>50 && this.animationFrame<=100)
+	else if(this.animationFrame>10 && this.animationFrame<=20)
 	{
 		if(!(Parameters.isTiled()))
 			surface.fillText(DungeonTile.Water_2,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
@@ -535,7 +535,7 @@ Client.prototype.drawWater=function(xTemp,yTemp)
  */
 Client.prototype.drawLava=function(xTemp,yTemp)
 {
-	if(this.animationFrame<=70)
+	if(this.animationFrame<=15)
 	{
 		surface.fillStyle = CaveTile.Lava_1Color;
 		if(!(Parameters.isTiled()))
@@ -543,7 +543,7 @@ Client.prototype.drawLava=function(xTemp,yTemp)
 		else
 			TileSet.draw(10,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
 	}
-	else if(this.animationFrame>70 && this.animationFrame<=140)
+	else if(this.animationFrame>15 && this.animationFrame<=30)
 	{
 		surface.fillStyle = CaveTile.Lava_2Color;
 		if(!(Parameters.isTiled()))
@@ -553,7 +553,6 @@ Client.prototype.drawLava=function(xTemp,yTemp)
 	}
 	else
 	{
-			this.animationFrame=0;
 			surface.fillStyle = CaveTile.Lava_1Color;
 		if(!(Parameters.isTiled()))
 			surface.fillText(CaveTile.Lava_1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
@@ -623,6 +622,65 @@ Client.prototype.drawShadow=function(xTemp,yTemp)
 	else if(!this.player.isVisible(xTemp,yTemp) && flag && !Parameters.isTiled())
 			surface.fillStyle="rgb("+10+","+10+","+10+")";
 		
+}
+
+
+/**
+ * Return the tileset's index of the specified real index
+ */
+Client.prototype.traduceInTileIndex=function(indexTemp,stairTemp,o,p)
+{
+				if(stairTemp.getRoomAt(o,p)!=false)
+				{
+							if(stairTemp.getRoomAt(o,p).getBiome()=="plain")
+							{
+								if(indexTemp==1)
+									return 12;
+								else if(indexTemp==5)
+									return 7;
+							}
+							else if(stairTemp.getRoomAt(o,p).getBiome()=="dungeon")
+							{
+								if(indexTemp==1)
+										return 0;
+								else if(indexTemp==5)
+									return 13;
+								else if(stairTemp.map[o][p] instanceof Chest)
+									return 6;
+							}
+							else if(stairTemp.getRoomAt(o,p).getBiome()=="cave")
+							{
+								if(indexTemp==1)
+								{
+									//Null
+								}
+								else if(indexTemp==5)
+								{
+									//Null
+								}
+								else if(stairTemp.map[o][p]==6)
+									return 10;
+							}
+				}
+				else 
+				{
+									if(indexTemp==1)
+										return 0;
+				}
+				if(indexTemp==2)
+								return 2;
+				else if(indexTemp=="stair")
+				{
+								//NULL
+				}
+				else if(indexTemp>=10)
+				{
+								//NULL
+				}
+				else if(indexTemp==3)
+							return 10;
+				else if(indexTemp==4)
+							return 8;
 }
 
 

@@ -28,8 +28,8 @@ var LightMushroom=new Item("champ. phospho.",3,"Un champignon qui semble emmetre
 /**
  * The potions
  */
-var LifePotion=new ItemPotion("potion de vie",5,30,0,0,0,0,0,0,50,"Une potion a l'etrange couleur verte.",50);
-var LittleLightPotion=new ItemPotion("petit potion lumineuse",5,20,2,0,0,0,0,0,0,"Cette potion semble emmetre de la lumiere dans le noir.",50);
+var LifePotion=new ItemPotion("potion vie",5,30,0,0,0,0,0,0,50,"Une potion a l'etrange couleur verte.",50);
+var LittleLightPotion=new ItemPotion("peti. poti. lumi.",5,20,2,0,0,0,0,0,0,"Cette potion semble emmetre de la lumiere dans le noir.",50);
 
 
 /**
