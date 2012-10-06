@@ -1,6 +1,6 @@
 function GameParameter()
 {
-	this.tiled=true;
+	this.tiled=false;
 	
 }
 

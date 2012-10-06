@@ -387,14 +387,7 @@ Client.prototype.drawTiles=function()
  * This method draws the player's environement without tiles
  */
 Client.prototype.drawNoTiles=function(side,originX,originY)
-{
-	if(this.player.getStair().getRoomAt(this.player.getX(),this.player.getY()) != false && this.player.getStair().getRoomAt(this.player.getX(),this.player.getY()).getBiome()=="plain")
-		side=Math.round(this.player.getLight()*1.35);
-	else 
-		side=this.player.getLight();
-				
-	originX=Math.floor(this.player.getX()-side/2);
-	originY=Math.floor(this.player.getY()-side/2);
+{				
 	for(o=0;o<88;o++)
 	{
 		for(p=0;p<48;p++)
@@ -439,26 +432,7 @@ Client.prototype.drawNoTiles=function(side,originX,originY)
 				else if(this.player.getStair().map[o][p]>=10)
 							surface.fillStyle="rgb(248,214,0)";
 							
-							if(o<originX)
-							{
-										value=10-Math.abs(originX-o);
-										surface.fillStyle="rgb("+value+","+value+","+value+")";
-							}
-							if(o>originX+side)
-							{
-										value=10-Math.abs((originX+side)-o);
-										surface.fillStyle="rgb("+value+","+value+","+value+")";
-							}
-							if(p<originY)
-							{
-										value=10-Math.abs(originY-p);
-										surface.fillStyle="rgb("+value+","+value+","+value+")";
-							}
-							if(p>originY+side)
-							{
-										value=10-Math.abs(originY-p);
-										surface.fillStyle="rgb("+value+","+value+","+value+")";
-							}
+				this.drawShadow(o,p)
 		
 						
 				if(this.player.getStair().getRoomAt(o,p)!=false)
@@ -644,8 +618,11 @@ Client.prototype.drawShadow=function(xTemp,yTemp)
 		}
 	}
 	
-	if(!this.player.isVisible(xTemp,yTemp) && flag)
+	if(!this.player.isVisible(xTemp,yTemp) && flag && Parameters.isTiled())
 			TileSet.draw(1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);	
+	else if(!this.player.isVisible(xTemp,yTemp) && flag && !Parameters.isTiled())
+			surface.fillStyle="rgb("+10+","+10+","+10+")";
+		
 }
 
 
