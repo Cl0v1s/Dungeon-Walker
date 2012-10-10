@@ -15,7 +15,7 @@ function Inventory(owner)
  */
 Inventory.prototype.add=function(id)
 {
-	if(this.size<this.owner.getPound())
+	if(this.size+ItemList[id].getPod()<this.owner.getPound())
 	{
 		for(i=0;i<=this.contains.length;i++)
 		{

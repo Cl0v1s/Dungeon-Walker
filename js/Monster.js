@@ -45,6 +45,9 @@ function Monster(stair,x,y,raceTemp)
 	
 	this.sommeil=100;
 	this.soif=100;
+	
+	this.enemy=undefined;
+	this.friend=undefined;
 
 	this.onFire=false;
 	this.fireFrame=0;
@@ -674,6 +677,20 @@ Monster.prototype.addEffect=function(effect)
 
 
 /**
+ * Search if the specified effect is in the effects list
+ */
+Monster.prototype.searchEffect=function(nameTemp)
+{
+	for(l=0;l<this.effectList.length;l++)
+	{
+		if(this.effectList[l].getName()==nameTemp)
+			return this.effectList[l];
+	}
+	return false;
+}
+
+
+/**
  * If the monster is near his bestfriend, adds an grouped effect to the monster and his bestfriend
  */
 Monster.prototype.isGrouped=function(other)
@@ -729,7 +746,8 @@ Monster.prototype.procreate=function(male)
 Monster.prototype.think=function()
 {
 
-	
+	bestFriend=undefined;
+	worstEnemy=undefined;
 	friendList=new Array();
 	enemyList=new Array();
 	for(d=0;d<this.stair.monsters.length;d++)
@@ -769,40 +787,48 @@ Monster.prototype.think=function()
 				}
 		}
 	}
-	bestFriend=undefined;
-	for(e=0;e<friendList.length;e++)
+	if(bestFriend==undefined)
 	{
-		target=friendList[e];
-		total=target.atk;
-		for(i=0;i<target.launch;i++)
+		for(e=0;e<friendList.length;e++)
 		{
-			lancer=Math.random()*6+1;
-			lancer=Math.floor(lancer);
-			total=total+Math.round(target.atk/lancer);
+			target=friendList[e];
+			total=target.atk;
+			for(i=0;i<target.launch;i++)
+			{
+				lancer=Math.random()*6+1;
+				lancer=Math.floor(lancer);
+				total=total+Math.round(target.atk/lancer);
+			}
+			sympathy=total*(6-Math.sqrt(Math.pow(target.getX()-this.x,2)+Math.pow(target.getY()-this.y,2)))-2*this.agressivity;
+			target.setSympathy(sympathy);
+			if(bestFriend==undefined || sympathy>bestFriend.getSympathy())
+					bestFriend=target;
 		}
-		sympathy=total*(6-Math.sqrt(Math.pow(target.getX()-this.x,2)+Math.pow(target.getY()-this.y,2)))-2*this.agressivity;
-		target.setSympathy(sympathy);
-		if(bestFriend==undefined || sympathy>bestFriend.getSympathy())
-				bestFriend=target;
 	}
 	
-	
-	worstEnemy=undefined;
-	for(e=0;e<enemyList.length;e++)
+	if(worstEnemy==undefined)
 	{
-		target=enemyList[e];
-		total=this.atk;
-		for(i=0;i<this.launch;i++)
+		for(e=0;e<enemyList.length;e++)
 		{
-			lancer=Math.random()*6+1;
-			lancer=Math.floor(lancer);
-			total=total+Math.round(this.atk/lancer);
+			target=enemyList[e];
+			total=this.atk;
+			for(i=0;i<this.launch;i++)
+			{
+				lancer=Math.random()*6+1;
+				lancer=Math.floor(lancer);
+				total=total+Math.round(this.atk/lancer);
+			}
+			antipathy=total*(6-Math.sqrt(Math.pow(target.getX()-this.x,2)+Math.pow(target.getY()-this.y,2)))-2*this.agressivity;
+			target.setAntipathy(antipathy);
+			if(worstEnemy==undefined || antipathy>worstEnemy.getAntipathy())
+					worstEnemy=target;
 		}
-		antipathy=total*(6-Math.sqrt(Math.pow(target.getX()-this.x,2)+Math.pow(target.getY()-this.y,2)))-2*this.agressivity;
-		target.setAntipathy(antipathy);
-		if(worstEnemy==undefined || antipathy>worstEnemy.getAntipathy())
-				worstEnemy=target;
 	}
+	
+	this.enemy=worstEnemy;
+	this.friend=bestFriend;
+	
+	
 	water=this.searchFor(3);
 	drinkDesire=0;
 	if(water != undefined)	
@@ -826,6 +852,7 @@ Monster.prototype.think=function()
 		if(this.isNearEntity(bestFriend))
 		{
 			this.isGrouped(bestFriend);
+			worstEnemy=bestFriend.enemy;
 		}
 		
 		if(this.agressivity>=2)
@@ -854,6 +881,7 @@ Monster.prototype.think=function()
 		if(this.isNearEntity(bestFriend))
 		{
 			this.isGrouped(bestFriend);
+			worstEnemy=bestFriend.enemy;
 		}
 
 		if(this.agressivity<2)
@@ -882,7 +910,8 @@ Monster.prototype.think=function()
 	}
 
 	this.selectDir();
-
+	if(this.enemy != undefined || this.friend != undefined)
+	console.log(this.enemy+"/"+this.friend);
 	
 }
 

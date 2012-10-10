@@ -240,7 +240,13 @@ Chest.prototype.upList=function()
  */
 Chest.prototype.getObject=function()
 {
-	this.owner.inventory.add(this.inventory.contains[this.inventory.index].getId());
-	this.owner.sendMessage("Vous sortez l'objet du coffre et le glissez dans votre sac.");
-	this.inventory.remove(this.inventory.index);
+	if(this.owner.inventory.add(this.inventory.contains[this.inventory.index].getId()))
+	{
+		this.owner.sendMessage("Vous sortez l'objet du coffre et le glissez dans votre sac.");
+		this.inventory.remove(this.inventory.index);
+	}
+	else
+	{
+		this.owner.sendMessage("Malheureusement l'objet n'entre pas dans votre sac.");
+	}
 }

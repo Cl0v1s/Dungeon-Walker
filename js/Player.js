@@ -34,7 +34,7 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	//Inventory,Talent and Equipement variables
 	this.talents=new Talent(this);
 	this.equipement=new Equipement(this);
-	this.pound=Math.floor(((this.taille*2+this.constitution)/3)/4);
+	this.pound=Math.floor(((this.taille*2+this.constitution)/3)/4)+20;
 	this.inventory=new Inventory(this);
 	this.inventory.add(this.class.Weapon.getId());
 	this.inventory.use();
@@ -344,6 +344,8 @@ Player.prototype.move=function(dir)
 	}
 	else
 		this.spell.move(dir);
+		
+		this.changeStat();
 }
 
 /**
@@ -431,9 +433,9 @@ Player.prototype.heal=function()
  */
 Player.prototype.changeStat=function()
 {
-	this.soif-=(100/5);
-	this.sommeil-=(50/3);
-	this.faim-=30+(Math.floor(Math.random()*20));
+	this.faim=this.faim-(((5/216)*((Math.random()*1.5)+1)));
+	this.soif=this.soif-(((5/54)*((Math.random()*1.5)+1)));
+	this.sommeil=this.sommeil-(((5/48)*((Math.random()*1.5)+1)));
 }
 
 
@@ -938,7 +940,7 @@ Player.prototype.canSeeBlockAt=function(xTemp,yTemp)
 {
 				if(this.stair.walkable(xTemp,yTemp) && !this.isVisible(xTemp,yTemp) && this.isInRange(xTemp,yTemp) && this.bresenham(xTemp,yTemp))
 						return true;
-				
+
 				return false;
 }
 

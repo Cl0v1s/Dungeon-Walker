@@ -3,7 +3,7 @@ function Client()
 	this.player=undefined;
 	this.dungeon=undefined;
 	this.turn=0;
-	this.dayInterval=144;
+	this.dayInterval=1440/2;
 	this.time="Day";
 	this.xPos=0;
 	this.yPos=0;
@@ -236,11 +236,6 @@ Client.prototype.newTurn=function()
 	{
 		if(this.time=="Day")
 		{
-			for(i=0;i<this.dungeon.getCurrentStair().monsters.length;i++)
-			{
-				if(this.dungeon.getCurrentStair().monsters[i] != undefined)
-					this.dungeon.getCurrentStair().monsters[i].changeStat();
-			}
 			player.sendMessage("La temperature diminue peu a peu, il semblerait que le soleil se couche...");
 			this.time="Night";
 		}
@@ -572,7 +567,7 @@ Client.prototype.drawFire=function(xTemp,yTemp)
 	this.player.stair.actualizeFire(xTemp,yTemp);
 
 	
-	if(this.animationFrame<=20)
+	if(this.animationFrame<=5)
 	{
 		surface.fillStyle = DungeonTile.Fire_1Color;
 		if(!(Parameters.isTiled()))
@@ -581,7 +576,7 @@ Client.prototype.drawFire=function(xTemp,yTemp)
 			TileSet.draw(8,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
 		
 	}
-	else if(this.animationFrame>20 && this.animationFrame<=40)
+	else if(this.animationFrame>10 && this.animationFrame<=20)
 	{
 		surface.fillStyle = DungeonTile.Fire_2Color;
 		if(!(Parameters.isTiled()))

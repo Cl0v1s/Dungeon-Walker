@@ -22,6 +22,15 @@ function StatEffect(ownerTemp,nameTemp,ligthTemp,forceTemp,constTemp,tailleTemp,
 		this.apply();
 }
 
+
+/**
+ * Returns the statEffect's name
+ */
+StatEffect.prototype.getName=function()
+{
+	return this.name;
+}
+
 /**
  * Sets the effect owner
  */
