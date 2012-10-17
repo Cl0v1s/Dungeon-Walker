@@ -69,6 +69,9 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.antipathy=0;
 	
 	//Other variables
+	this.frame=0;
+	this.sprite=new Image();
+	this.spriteFrame=1;
 	this.lastTile=1;
 	this.score=0;
 	this.img=this.class.Img;
@@ -259,13 +262,31 @@ Player.prototype.draw=function()
 
 	this.messages.draw();
 
-	surface.font = "30px pixel";
-	surface.fillStyle="rgb(50,150,50)";
-	surface.fillText(this.img, Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
-	if(this.onFire==true)
+	if(!Parameters.isTiled())
 	{
-		surface.fillStyle="rgb(250,50,50)";
-		surface.fillText("W", Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
+		surface.font = "30px pixel";
+		surface.fillStyle="rgb(50,150,50)";
+		surface.fillText(this.img, Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
+		if(this.onFire==true)
+		{
+			surface.fillStyle="rgb(250,50,50)";
+			surface.fillText("W", Client.getXPos()+this.x*32, Client.getYPos()+this.y*32);
+		}
+	}
+	else
+	{
+		TileSet.draw(Client.traduceInTileIndex(this.previousTile,this.stair,this.x,this.y),Client.getXPos()+this.x*32,Client.getYPos()+this.y*32);
+		Client.drawShadow(this.x,this.y);
+		this.frame+=1;
+		if(this.frame>20)
+		{
+			this.spriteFrame+=1;
+			this.frame=0;
+			if(this.spriteFrame>2)
+				this.spriteFrame=1;
+			this.sprite.src="graphics/characters/barbarian/barbarian-"+this.spriteFrame+".png";
+		}
+		surface.drawImage(this.sprite,Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);			
 	}
 }
 
@@ -912,24 +933,28 @@ Player.prototype.isNear=function(value)
 Player.prototype.lightZone=function()
 {
 	this.visibleBlockList=new Array();
-	this.visibleBlockList.push(new Array(this.x,this.y));
+	this.visibleBlockList.push(new Array(this.x,this.y,true));
 	for(d=0;d<this.visibleBlockList.length;d++)
 	{
-					
 				cX=this.visibleBlockList[d][0];
 				cY=this.visibleBlockList[d][1];
+				if(!this.visibleBlockList[d][2])
+					continue;
+
+				
 		
-				if(this.canSeeBlockAt(cX+1,cY))
-					this.visibleBlockList.push(new Array(cX+1,cY));
+				result=this.canSeeBlockAt(cX+1,cY);
+				this.visibleBlockList.push(new Array(cX+1,cY,result));
 				
-				if(this.canSeeBlockAt(cX-1,cY))
-					this.visibleBlockList.push(new Array(cX-1,cY));
+				result=this.canSeeBlockAt(cX-1,cY);
+				this.visibleBlockList.push(new Array(cX-1,cY,result));
 				
-				if(this.canSeeBlockAt(cX,cY+1))
-					this.visibleBlockList.push(new Array(cX,cY+1));
+				result=this.canSeeBlockAt(cX,cY+1);
+				this.visibleBlockList.push(new Array(cX,cY+1,result));
 				
-				if(this.canSeeBlockAt(cX,cY-1))
-					this.visibleBlockList.push(new Array(cX,cY-1));				
+				result=this.canSeeBlockAt(cX,cY-1);
+				this.visibleBlockList.push(new Array(cX,cY-1,result));		
+							
 	}
 }
 

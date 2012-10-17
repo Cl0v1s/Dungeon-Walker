@@ -54,7 +54,7 @@ function Monster(stair,x,y,raceTemp)
 	this.frame=0;
 	this.spriteFrame=1;
 	this.sprite=new Image();
-	this.sprite.src="graphics/characters/spider/spider-1.png";
+	this.sprite.src="graphics/characters/"+this.name+"/"+this.name+"-"+this.spriteFrame+".png";
 	this.fireInterval=5;
 	this.previousTile=1;
 	this.stair.map[this.x][this.y]=0;
@@ -239,7 +239,7 @@ Monster.prototype.draw=function(intancity)
 			this.frame=0;
 			if(this.spriteFrame>3)
 				this.spriteFrame=1;
-			this.sprite.src="graphics/characters/spider/spider-"+this.spriteFrame+".png";
+			this.sprite.src="graphics/characters/"+this.name+"/"+this.name+"-"+this.spriteFrame+".png";
 		}
 		surface.drawImage(this.sprite,Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);	
 	}
@@ -855,7 +855,7 @@ Monster.prototype.think=function()
 			worstEnemy=bestFriend.enemy;
 		}
 		
-		if(this.agressivity>=2)
+		if(worstEnemy != undefined && this.agressivity>=2)
 		{
 			this.moveTo(worstEnemy.getX(),worstEnemy.getY());
 		}

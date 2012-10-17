@@ -640,8 +640,6 @@ Client.prototype.traduceInTileIndex=function(indexTemp,stairTemp,o,p)
 										return 0;
 								else if(indexTemp==5)
 									return 13;
-								else if(stairTemp.map[o][p] instanceof Chest)
-									return 6;
 							}
 							else if(stairTemp.getRoomAt(o,p).getBiome()=="cave")
 							{
@@ -653,8 +651,7 @@ Client.prototype.traduceInTileIndex=function(indexTemp,stairTemp,o,p)
 								{
 									//Null
 								}
-								else if(stairTemp.map[o][p]==6)
-									return 10;
+
 							}
 				}
 				else 
@@ -673,9 +670,14 @@ Client.prototype.traduceInTileIndex=function(indexTemp,stairTemp,o,p)
 								//NULL
 				}
 				else if(indexTemp==3)
-							return 10;
+							return 4;
 				else if(indexTemp==4)
 							return 8;
+				else if(indexTemp instanceof Chest)
+							return 6;
+				else if(indexTemp==6)
+							return 10;
+							
 }
 
 
