@@ -21,11 +21,11 @@ function Client()
 Client.prototype.start=function(par1)
 {
 		this.player=par1;
-		x=this.dungeon.getCurrentStair().getSpawnPoint()[0]+this.dungeon.getCurrentStair().getSpawnPoint()[2].getX();
-		y=this.dungeon.getCurrentStair().getSpawnPoint()[1]+this.dungeon.getCurrentStair().getSpawnPoint()[2].getY();
+		x=this.dungeon.stairs[0].getSpawnPoint()[0]+this.dungeon.stairs[0].getSpawnPoint()[2].getX();
+		y=this.dungeon.stairs[0].getSpawnPoint()[1]+this.dungeon.stairs[0].getSpawnPoint()[2].getY();
 		this.player.setX(x);
 		this.player.setY(y);
-		this.dungeon.getCurrentStair().addEntityToList(this.player);
+		this.dungeon.stairs[0].addEntityToList(this.player);
 }
 
 /**
@@ -76,8 +76,8 @@ Client.prototype.resetCanvas=function()
 Client.prototype.generateDungeon=function()
 {
 	this.dungeon=new Dungeon();
-	this.dungeon.getCurrentStair().generateMonsters();
-	return this.dungeon.getCurrentStair();
+	this.dungeon.stairs[0].generateMonsters();
+	return this.dungeon.stairs[0];
 }
 
 
@@ -117,8 +117,13 @@ Client.prototype.loading=function()
  */
 Client.prototype.update=function()
 {
-	
-	clean();
+	if(!(Parameters.isTiled()))
+		clean();
+	else
+	{
+		surface.fillStyle="rgb(167,186,74)";
+		surface.fillRect (0, 0,document.getElementById('canvas').width,document.getElementById('canvas').height);
+	}
 	if(!this.canvasPlaced)
 		this.moveCanvas();
 	else
@@ -246,7 +251,7 @@ Client.prototype.newTurn=function()
 		}
 		this.dayInterval+=this.turn;
 	}
-	this.dungeon.getCurrentStair().moveMonsters();
+	this.player.getStair().moveMonsters();
 }
 
 
@@ -338,9 +343,9 @@ Client.prototype.drawTiles=function()
 							else if(this.player.getStair().getRoomAt(o,p).getBiome()=="cave")
 							{
 								if(this.player.getStair().map[o][p]==1)
-									surface.fillText(CaveTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
+									TileSet.draw(3,Client.getXPos()+o*32, Client.getYPos()+p*32);
 								else if(this.player.getStair().map[o][p]==5)
-									surface.fillText(CaveTile.Stone,Client.getXPos()+o*32, Client.getYPos()+p*32);
+									TileSet.draw(16,Client.getXPos()+o*32, Client.getYPos()+p*32);
 								else if(this.player.getStair().map[o][p]==6)
 									this.drawLava(o,p);
 							}
@@ -645,7 +650,7 @@ Client.prototype.traduceInTileIndex=function(indexTemp,stairTemp,o,p)
 							{
 								if(indexTemp==1)
 								{
-									//Null
+									return 3;
 								}
 								else if(indexTemp==5)
 								{

@@ -4,6 +4,7 @@ function Dungeon()
 		this.stairIndex=0;
 		this.stairs=new Array();
 		this.generateStair();
+		this.turn=0;
 }
 
 /**
@@ -25,7 +26,7 @@ Dungeon.prototype.generateStair=function(ownerTemp)
 	
 	if(!this.stairExists(this.stairIndex))
 	{
-			this.stairs[this.stairIndex]=new Stair();
+			this.stairs[this.stairIndex]=new Stair(this,this.stairIndex);
 			if(this.stairIndex==0)
 				if(ownerTemp != undefined)
 					ownerTemp.sendMessage("Vous penetrez dans un donjon sombre et sale");
@@ -62,18 +63,12 @@ Dungeon.prototype.downStair=function(ownerTemp)
 	return this.generateStair(ownerTemp);
 }
 
-/**
- * This method returns the stair where the player is
- */
-Dungeon.prototype.getCurrentStair=function()
-{
-		return this.stairs[this.stairIndex];
-}
 
 /**
- * This method returns the current stair's id
+ * Actualize the dungeon for multiplayer
  */
-Dungeon.prototype.getCurrentStairId=function()
+Dungeon.prototype.actualize=function()
 {
-		return this.stairIndex;
+	
 }
+

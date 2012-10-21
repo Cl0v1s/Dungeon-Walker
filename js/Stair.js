@@ -1,5 +1,7 @@
-function Stair()
+function Stair(dungeonTemp,idTemp)
 {
+	this.dungeon=dungeonTemp;
+	this.id=idTemp;
 	this.map=new Array();
 	for(i=0;i<88;i++)
 	{
@@ -172,7 +174,7 @@ Stair.prototype.checkWalls=function()
  */
 Stair.prototype.generateMonsters=function()
 {
-	nb=Math.floor(Math.random()*Client.dungeon.getCurrentStairId()*this.rooms.length)+20;
+	nb=Math.floor(Math.random()*this.id*this.rooms.length)+20;
 	for(n=0;n<nb;n++)
 	{
 		xTemp=0;
@@ -182,13 +184,13 @@ Stair.prototype.generateMonsters=function()
 			xTemp=Math.floor(Math.random()*88)+1;
 			yTemp=Math.floor(Math.random()*48)+1;
 		}
-		id=-1;
+		idTemp=-1;
 		attempt=0;
-		while(id==-1 || MonsterList[id]==undefined || MonsterList[id].biome != this.getRoomAt(xTemp,yTemp).getBiome())
+		while(idTemp==-1 || MonsterList[idTemp]==undefined || MonsterList[idTemp].biome != this.getRoomAt(xTemp,yTemp).getBiome())
 		{
 			attempt+=1;
-			
-			id=Math.floor(Math.random()*Client.dungeon.getCurrentStairId());
+
+			idTemp=Math.floor(Math.random()*this.id);
 			if(attempt>=50)
 				break;
 		}
@@ -197,7 +199,7 @@ Stair.prototype.generateMonsters=function()
 			this.monsters[n]=undefined;
 			continue;
 		}
-		this.monsters[n]=new Monster(this,xTemp,yTemp,MonsterList[id]);
+		this.monsters[n]=new Monster(this,xTemp,yTemp,MonsterList[idTemp]);
 	}
 }
 
