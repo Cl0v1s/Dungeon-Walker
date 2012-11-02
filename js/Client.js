@@ -117,13 +117,7 @@ Client.prototype.loading=function()
  */
 Client.prototype.update=function()
 {
-	if(!(Parameters.isTiled()))
-		clean();
-	else
-	{
-		surface.fillStyle="rgb(167,186,74)";
-		surface.fillRect (0, 0,document.getElementById('canvas').width,document.getElementById('canvas').height);
-	}
+	clean();
 	if(!this.canvasPlaced)
 		this.moveCanvas();
 	else
@@ -366,7 +360,8 @@ Client.prototype.drawTiles=function()
 				else if(this.player.getStair().map[o][p]==4)
 							this.drawFire(o,p);	
 							
-				this.drawShadow(o,p);			
+				if(this.player.getStair().map[o][p] !=0)
+					this.drawShadow(o,p);			
 							
 				
 		}

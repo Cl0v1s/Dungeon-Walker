@@ -1,4 +1,4 @@
-function Spell(nameTemp,effectTemp,lightTemp)
+function Spell(nameTemp,effectTemp,lightTemp,descTemp)
 {
 	this.name=nameTemp;
 	this.effect=effectTemp;
@@ -6,6 +6,7 @@ function Spell(nameTemp,effectTemp,lightTemp)
 	this.cursor=undefined;
 	SpellList.push(this);
 	this.id=SpellList.length;
+	this.description=descTemp;
 }
 
 /**
@@ -57,7 +58,9 @@ Spell.prototype.use=function(caller)
 				this.effect.apply();
 				target.addEffect(this.effect);
 				caller.sendMessage("Vous lancez le sort "+this.name+" qui atteint sa cible.");
-				target.sendMessage("Vous avez ete touche par le sort "+this.name+".");					
+				caller.sendMessage(this.description);
+				target.sendMessage("Vous avez ete touche par le sort "+this.name+".");
+				target.sendMessage(this.description);					
 			}
 			else
 				caller.sendMessage("Vous lancez votre sort "+this.name+" dans le vide...");

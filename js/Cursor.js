@@ -6,6 +6,12 @@ function Cursor(xTemp,yTemp,lightTemp,ownerTemp)
 	this.yOrigin=this.y;
 	this.light=lightTemp;
 	this.owner=ownerTemp;
+	this.image=undefined;
+	if(Parameters.isTiled)
+	{
+		this.image=new Image();
+		this.image.src="graphics/cursor.png";
+	}
 }
 
 
@@ -82,5 +88,8 @@ Cursor.prototype.draw=function()
 {
 		surface.font = "30px pixel";
 		surface.fillStyle="rgb(250,0,0)";
-		surface.fillText("[ ]", Client.getXPos()+this.x*32-2, Client.getYPos()+this.y*32-2);	
+		if(!Parameters.isTiled)
+			surface.fillText("[ ]", Client.getXPos()+this.x*32-2, Client.getYPos()+this.y*32-2);	
+		else
+			surface.drawImage(this.image,Client.getXPos()+this.x*32-2, Client.getYPos()+this.y*32-2);	
 }

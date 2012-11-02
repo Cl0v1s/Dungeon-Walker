@@ -1,4 +1,4 @@
-function StatEffect(ownerTemp,nameTemp,ligthTemp,forceTemp,constTemp,tailleTemp,dexTemp,lifeTemp,launchTemp,lrmTemp,turnLengthTemp,permanentLifeTemp)
+function StatEffect(ownerTemp,nameTemp,ligthTemp,forceTemp,constTemp,tailleTemp,dexTemp,lifeTemp,launchTemp,lrmTemp,turnLengthTemp,permanentLifeTemp,burnTemp)
 {
 	this.owner=ownerTemp;
 	this.name=nameTemp;
@@ -12,6 +12,7 @@ function StatEffect(ownerTemp,nameTemp,ligthTemp,forceTemp,constTemp,tailleTemp,
 	this.lrm=lrmTemp;
 	this.endTurn=-1;
 	this.turnLength=turnLengthTemp;
+	this.burn=burnTemp;
 	if(permanentLifeTemp != undefined)
 		this.permanentLife=permanentLifeTemp;
 	else
@@ -71,6 +72,9 @@ StatEffect.prototype.apply=function()
 		owner.setLife(value);
 		
 		this.endTurn=Client.turn+this.turnLength;
+		
+		if(this.burn)
+			owner.setFire();
 }
 
 /**

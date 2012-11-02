@@ -76,6 +76,7 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.score=0;
 	this.img=this.class.Img;
 	this.visibleBlockList=new Array();
+	this.fireEffect=new VisualEffect(0);
 	
 }
 
@@ -103,6 +104,14 @@ Player.prototype.getStair=function()
 Player.prototype.reset=function()
 {
 	this.spell=false;
+}
+
+/**
+ * Sets the onFire trigger to true.
+ */
+Player.prototype.setFire=function()
+{
+	this.onFire=true;
 }
 
 
@@ -286,7 +295,9 @@ Player.prototype.draw=function()
 				this.spriteFrame=1;
 			this.sprite.src="graphics/characters/barbarian/barbarian-"+this.spriteFrame+".png";
 		}
-		surface.drawImage(this.sprite,Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);			
+		surface.drawImage(this.sprite,Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);
+		if(this.onFire)	
+			this.fireEffect.draw(Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);		
 	}
 }
 
@@ -389,12 +400,12 @@ Player.prototype.sick=function()
 			if(this.life>=10)
 			{
 				this.sendMessage("La maladie vous affaiblie.");
-				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
+				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval,0,false));
 			}
 			else
 			{
 				this.sendMessage("Vous toussez dans votre main et essuyez le sang qui s'y trouve sur vos vetements.");
-				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
+				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval,0,false));
 			}
 			this.sickFrame=0;
 		}

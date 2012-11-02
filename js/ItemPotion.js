@@ -25,5 +25,5 @@ ItemPotion.prototype=new Item();
 ItemPotion.prototype.use=function(owner)
 {
 	owner.sendMessage("Vous buvez "+this.name+" jusqu'a la derniere goutte malgre son gout repugnant.");
-	owner.addEffect(new StatEffect(owner,this.name,this.light,this.force,this.con,this.tail,this.dex,this.life,this.launch,this.lrm,this.effectLength,this.permanentLife));
+	owner.addEffect(new StatEffect(owner,this.name,this.light,this.force,this.con,this.tail,this.dex,this.life,this.launch,this.lrm,this.effectLength,this.permanentLife,false));
 }

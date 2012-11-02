@@ -60,6 +60,7 @@ function Monster(stair,x,y,raceTemp)
 	this.stair.map[this.x][this.y]=0;
 	this.death=false;
 	this.visibleBlockList=new Array();
+	this.fireEffect=new VisualEffect(0);
 	
 	if(Math.floor(Math.random()*2)+1==1)
 		this.sexe="male";
@@ -113,12 +114,12 @@ Monster.prototype.sick=function()
 			if(this.life>=10)
 			{
 				this.sendMessage("La maladie vous affaiblie.");
-				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
+				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval,0,false));
 			}
 			else
 			{
 				this.sendMessage("Vous toussez dans votre main et essuyez le sang qui s'y trouve sur vos vetements.");
-				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval));
+				this.addEffect(new StatEffect(this,"sick",-2,0,-Math.round(20*this.constitution/100),0,0,-Math.round(this.life/2),0,0,this.sickInterval,0,false));
 			}
 			this.sickFrame=0;
 		}
@@ -242,6 +243,8 @@ Monster.prototype.draw=function(intancity)
 			this.sprite.src="graphics/characters/"+this.name+"/"+this.name+"-"+this.spriteFrame+".png";
 		}
 		surface.drawImage(this.sprite,Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);	
+		if(this.onFire)	
+			this.fireEffect.draw(Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);	
 	}
 	
 
@@ -412,7 +415,7 @@ Monster.prototype.fire=function()
 			if(this.fireFrame>=this.fireInterval)
 			{
 				this.fireFrame=0;
-				this.life-=(20*this.life_max/100);
+				this.life-=10;
 				this.life=Math.floor(this.life);
 				if(this.life<=0)
 				{
@@ -695,10 +698,10 @@ Monster.prototype.searchEffect=function(nameTemp)
  */
 Monster.prototype.isGrouped=function(other)
 {
-	this.addEffect(new StatEffect(this,"grouped",0,0,0,0,5,0,5,0,1));
+	this.addEffect(new StatEffect(this,"grouped",0,0,0,0,5,0,5,0,1,0,false));
 	if(other != undefined)
 	{
-		other.addEffect(new StatEffect(this,"leader",0,0,0,0,5,0,5,0,1));
+		other.addEffect(new StatEffect(this,"leader",0,0,0,0,5,0,5,0,1,0,false));
 	}
 }
 
@@ -758,6 +761,9 @@ Monster.prototype.think=function()
 		{
 				if((target.getX()==this.x-1 && target.getY()==this.y) || (target.getX()==this.x+1 && target.getY()==this.y) || (target.getY()==this.y-1 && target.getX()==this.x) || (target.getY()==this.y+1 && target.getX()==this.x))
 				{
+					if(this.onFire && Math.floor(Math.random()*2+1)==1)
+						target.setFire();
+		
 					if(target.getName() != this.name)
 					{
 						this.agressivity+=1;
