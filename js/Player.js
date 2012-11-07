@@ -70,6 +70,7 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	
 	//Other variables
 	this.frame=0;
+	this.image=this.class.File;
 	this.sprite=new Image();
 	this.spriteFrame=1;
 	this.lastTile=1;
@@ -293,7 +294,7 @@ Player.prototype.draw=function()
 			this.frame=0;
 			if(this.spriteFrame>2)
 				this.spriteFrame=1;
-			this.sprite.src="graphics/characters/barbarian/barbarian-"+this.spriteFrame+".png";
+			this.sprite.src="graphics/characters/"+this.image+"/"+this.image+"-"+this.spriteFrame+".png";
 		}
 		surface.drawImage(this.sprite,Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);
 		if(this.onFire)	
@@ -863,19 +864,19 @@ Player.prototype.interact=function()
  */
 Player.prototype.searchForGrass=function()
 {
-	if(this.stair.getMap()[this.x-1][this.y]==5 || this.stair.getMap()[this.x+1][this.y]==5 || this.stair.getMap()[this.x][this.y-1]==5 || this.stair.getMap()[this.x][this.y+1]==5)
+	if(this.stair.getMap()[this.x-1][this.y] instanceof Grass|| this.stair.getMap()[this.x+1][this.y] instanceof Grass|| this.stair.getMap()[this.x][this.y-1] instanceof Grass|| this.stair.getMap()[this.x][this.y+1] instanceof Grass)
 	{
-		if(this.stair.getMap()[this.x-1][this.y]==5)
+		if(this.stair.getMap()[this.x-1][this.y] instanceof Grass)
 		{
 			xTemp=this.x-1;
 			yTemp=this.y;
 		}
-		else if(this.stair.getMap()[this.x+1][this.y]==5)
+		else if(this.stair.getMap()[this.x+1][this.y] instanceof Grass)
 		{
 			xTemp=this.x+1;
 			yTemp=this.y;
 		}
-		else if(this.stair.getMap()[this.x][this.y-1]==5)
+		else if(this.stair.getMap()[this.x][this.y-1] instanceof Grass)
 		{
 			xTemp=this.x;
 			yTemp=this.y-1;
@@ -893,24 +894,15 @@ Player.prototype.searchForGrass=function()
 			{
 				if(this.talents.canSurvive())
 				{
-					list=new Array();
-					for(i=0;i<ItemList.length;i++)
-					{
-						if(ItemList[i] != undefined)
-						{
-							type=ItemList[i].getType();
-							if(type=="grass")
-								list.push(ItemList[i]);
-						}
-					}
-					rand=Math.floor(Math.random()*list.length);
-					object=list[rand];
+					object=this.stair.map[xTemp][yTemp].harvest();
 					this.sendMessage("Apres un rapide exament, vous decouvrez l'objet "+object.getName()+".");
 					this.inventory.add(object.getId());
 				}
 				else
+				{
 					this.sendMessage("Vous n'avez rien trouve d'interessant...");
-				this.stair.map[xTemp][yTemp]=1;
+					this.stair.map[xTemp][yTemp]=1;
+				}
 			}
 		}
 		this.hygiene-=Math.round((15*this.hygiene)/100);

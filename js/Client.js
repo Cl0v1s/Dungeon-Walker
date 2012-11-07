@@ -25,6 +25,7 @@ Client.prototype.start=function(par1)
 		y=this.dungeon.stairs[0].getSpawnPoint()[1]+this.dungeon.stairs[0].getSpawnPoint()[2].getY();
 		this.player.setX(x);
 		this.player.setY(y);
+		this.player.move();
 		this.dungeon.stairs[0].addEntityToList(this.player);
 }
 
@@ -144,6 +145,11 @@ Client.prototype.inputUpdate=function()
 		if(!Input.equals(0) && LastKey != 13)
 		{
 			this.newTurn();
+		}
+		
+		if(Input.equals(82))
+		{
+			console.log(this.player.stair.getRoomAt(this.player.getX(),this.player.getY()).getBiome());
 		}
 			
 		if(Input.equals(39))
@@ -322,8 +328,8 @@ Client.prototype.drawTiles=function()
 							{
 								if(this.player.getStair().map[o][p]==1)
 									TileSet.draw(12,Client.getXPos()+o*32, Client.getYPos()+p*32);
-								else if(this.player.getStair().map[o][p]==5)
-									TileSet.draw(7,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p] instanceof Grass)
+									this.player.getStair().map[o][p].draw();
 							}
 							else if(this.player.getStair().getRoomAt(o,p).getBiome()=="dungeon")
 							{
@@ -352,7 +358,7 @@ Client.prototype.drawTiles=function()
 				if(this.player.getStair().map[o][p]==2)
 								TileSet.draw(2,Client.getXPos()+o*32, Client.getYPos()+p*32);
 				else if(this.player.getStair().map[o][p]=="stair")
-								surface.fillText(DungeonTile.Stair,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								TileSet.draw(17,Client.getXPos()+o*32, Client.getYPos()+p*32);
 				else if(this.player.getStair().map[o][p]>=10)
 								surface.fillText("$",Client.getXPos()+o*32, Client.getYPos()+p*32);
 				else if(this.player.getStair().map[o][p]==3)
@@ -394,7 +400,7 @@ Client.prototype.drawNoTiles=function(side,originX,originY)
 							{
 								if(this.player.getStair().map[o][p]==1)
 									surface.fillStyle = PlainTile.GroundColor;
-								else if(this.player.getStair().map[o][p]==5)
+								else if(this.player.getStair().map[o][p] instanceof Grass)
 									surface.fillStyle = PlainTile.TreeColor;
 							}
 							else if(this.player.getStair().getRoomAt(o,p).getBiome()=="dungeon")
@@ -436,8 +442,9 @@ Client.prototype.drawNoTiles=function(side,originX,originY)
 							{
 								if(this.player.getStair().map[o][p]==1)
 									surface.fillText(PlainTile.Ground,Client.getXPos()+o*32, Client.getYPos()+p*32);
-								else if(this.player.getStair().map[o][p]==5)
-									surface.fillText(PlainTile.Tree,Client.getXPos()+o*32, Client.getYPos()+p*32);
+								else if(this.player.getStair().map[o][p] instanceof Grass)
+									this.player.getStair().map[o][p].draw();
+									
 							}
 							else if(this.player.getStair().getRoomAt(o,p).getBiome()=="dungeon")
 							{

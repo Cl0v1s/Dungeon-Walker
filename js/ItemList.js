@@ -50,3 +50,4 @@ var Lighter=new ItemLighter("briquet",3,"Un petit briquet constitue d'un pierre 
 var WaterBucket=new ItemWaterBucket("seau d'eau",12,"Un seau rempli d'eau.",9);
 var Bucket=new ItemBucket("seau",6,"Un seau en fer vide.",9); 
 var WoodenTorch=new ItemTorch("torche bois",6,2,"Une torche simple constituée d'un simple morceau de bois.",3);
+var Seed=new ItemSeed("graine",1,"Une petie graine fragile.",1);

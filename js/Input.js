@@ -31,6 +31,16 @@ Input.prototype.equals=function(value)
 }
 
 /**
+ * Shows an elert with the last key id
+ **/
+Input.prototype.show=function()
+{
+	console.log(LastKey);
+}
+
+
+
+/**
  * Returns the last pressed key
  */
 Input.prototype.getLastKey=function()

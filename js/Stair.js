@@ -398,7 +398,7 @@ Stair.prototype.generateObstacles=function()
 									}
 									if(tentatives>=50)
 										continue;
-									this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp]=5;
+									this.map[roomTemp.getX()+xTemp][roomTemp.getY()+yTemp]=new Grass(roomTemp.getX()+xTemp,roomTemp.getY()+yTemp,this);
 							}
 						}
 						else if(roomTemp.getBiome()=="dungeon")
@@ -871,7 +871,7 @@ Stair.prototype.actualizeFire=function(xTemp,yTemp)
  */
 Stair.prototype.walkable=function(xTemp,yTemp)
 {
-		if(this.map[xTemp][yTemp]==2 || this.map[xTemp][yTemp]==0 || this.map[xTemp][yTemp]==5)
+		if(this.map[xTemp][yTemp]==2 || this.map[xTemp][yTemp]==0 || this.map[xTemp][yTemp]==5 || this.map[xTemp][yTemp] instanceof Grass)
 			return false;
 		else
 			return true;
