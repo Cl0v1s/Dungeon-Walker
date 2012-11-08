@@ -855,13 +855,13 @@ Stair.prototype.actualizeFire=function(xTemp,yTemp)
 		{
 				rand=Math.floor(Math.random()*4)+1;
 				if(rand==1 && this.map[xTemp-1][yTemp]==1)
-					this.map[xTemp-1][yTemp]=4;
+					this.setFire(xTemp-1,yTemp);
 				else if(rand==2 && this.map[xTemp][yTemp-1]==1)
-					this.map[xTemp][yTemp-1]=4;
+					this.setFire(xTemp,yTemp-1);
 				else if(rand==3 && this.map[xTemp+1][yTemp]==1)
-					this.map[xTemp+1][yTemp]=4;
+					this.setFire(xTemp+1,yTemp);
 				else if(rand==4 && this.map[xTemp][yTemp+1]==1)
-					this.map[xTemp][yTemp+1]=4;
+					this.setFire(xTemp,yTemp+1);
 		}
 	}
 }
@@ -871,7 +871,7 @@ Stair.prototype.actualizeFire=function(xTemp,yTemp)
  */
 Stair.prototype.walkable=function(xTemp,yTemp)
 {
-		if(this.map[xTemp][yTemp]==2 || this.map[xTemp][yTemp]==0 || this.map[xTemp][yTemp]==5 || this.map[xTemp][yTemp] instanceof Grass)
+		if(this.map[xTemp][yTemp]==2 || this.map[xTemp][yTemp]==0 || this.map[xTemp][yTemp]==5 || this.map[xTemp][yTemp] instanceof Grass|| this.map[xTemp][yTemp] instanceof Torch)
 			return false;
 		else
 			return true;

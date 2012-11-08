@@ -18,6 +18,25 @@ function Equipement(ownerTemp)
 }
 
 /**
+ *Sets the index
+ **/
+Equipement.prototype.setIndex=function(indexTemp)
+{
+	this.index=indexTemp;
+}
+
+
+/**
+ * Returns the current handled item id
+ **/
+Equipement.prototype.getHandledItem=function()
+{
+	if(this.contains["weapon"] != undefined)
+		return this.contains["weapon"];
+	return undefined;
+}
+
+/**
  * Place the specified object in it's slot
  */
 Equipement.prototype.wear=function(object)
@@ -33,13 +52,18 @@ Equipement.prototype.wear=function(object)
 /**
  * Removes the current object of the equipment list and sends it to the owner's inventory
  */
-Equipement.prototype.remove=function()
+Equipement.prototype.remove=function(place,ret)
 {
-		object=this.contains[this.index];
+		if(place==undefined)
+			object=this.contains[this.index];
+		else
+			object=this.contains[place];
+			
 		if(object != undefined)
 		{
 			object.unWear(this.owner);
-			this.owner.inventory.add(object.getId());
+			if(ret==undefined || ret==true)
+				this.owner.inventory.add(object.getId());
 		}
 		this.contains[object.getPlace()]=undefined;
 }

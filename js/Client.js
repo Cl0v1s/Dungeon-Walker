@@ -300,6 +300,8 @@ Client.prototype.drawEnvironement=function()
 {
 	surface.font = "32px pixel";
 	this.animationFrame+=1;
+	if(this.animationFrame>=30)
+		this.animationFrame=0;
 	if(!(Parameters.isTiled()))
 		this.drawNoTiles();
 	else
@@ -365,6 +367,8 @@ Client.prototype.drawTiles=function()
 							this.drawWater(o,p);
 				else if(this.player.getStair().map[o][p]==4)
 							this.drawFire(o,p);	
+				else if(this.player.getStair().map[o][p] instanceof Torch)
+							this.player.getStair().map[o][p].draw();
 							
 				if(this.player.getStair().map[o][p] !=0)
 					this.drawShadow(o,p);			
@@ -377,7 +381,22 @@ Client.prototype.drawTiles=function()
 				intancity=1;
 				if(this.player.getStair().monsters[p] != undefined)
 				{
-					this.player.getStair().monsters[p].draw(intancity);
+					xTemp=this.player.getStair().monsters[p].getX();
+					yTemp=this.player.getStair().monsters[p].getY();
+					flag=false;
+					for(l=0;l<this.player.getStair().lightList.length;l++)
+					{
+						if(this.player.getStair().lightList[l] != undefined)
+						{
+							if(this.player.getStair().lightList[l].isVisible(xTemp,yTemp))
+								flag=true;
+						}
+					}
+					
+					if(this.player.isVisible(xTemp,yTemp) || flag)
+						this.player.getStair().monsters[p].draw(intancity,true);
+					else
+						this.player.getStair().monsters[p].draw(intancity,false);
 				}
 		}
 }
@@ -480,6 +499,8 @@ Client.prototype.drawNoTiles=function(side,originX,originY)
 							this.drawWater(o,p);
 				else if(this.player.getStair().map[o][p]==4)
 							this.drawFire(o,p);
+				else if(this.player.getStair().map[o][p] instanceof Torch)
+							this.player.getStair().map[o][p].draw();
 				
 		}
 	}
@@ -524,7 +545,6 @@ Client.prototype.drawWater=function(xTemp,yTemp)
 	}
 	else
 	{
-			this.animationFrame=0;
 		if(!(Parameters.isTiled()))
 			surface.fillText(DungeonTile.Water_1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
 		else
@@ -583,7 +603,7 @@ Client.prototype.drawFire=function(xTemp,yTemp)
 			TileSet.draw(8,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
 		
 	}
-	else if(this.animationFrame>10 && this.animationFrame<=20)
+	else if(this.animationFrame>5 && this.animationFrame<=10)
 	{
 		surface.fillStyle = DungeonTile.Fire_2Color;
 		if(!(Parameters.isTiled()))
@@ -591,15 +611,22 @@ Client.prototype.drawFire=function(xTemp,yTemp)
 		else
 			TileSet.draw(9,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
 	}
-	else
+	else if(this.animationFrame>10 && this.animationFrame<=15)
 	{
-			this.animationFrame=0;
 			surface.fillStyle = DungeonTile.Fire_1Color;
 		if(!(Parameters.isTiled()))
 			surface.fillText(DungeonTile.Fire_1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
 		else
 			TileSet.draw(8,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
 		
+	}
+	else
+	{
+		surface.fillStyle = DungeonTile.Fire_2Color;
+		if(!(Parameters.isTiled()))
+			surface.fillText(DungeonTile.Fire_2,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+		else
+			TileSet.draw(9,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);	
 	}
 	
 }

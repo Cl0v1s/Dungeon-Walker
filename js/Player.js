@@ -45,6 +45,7 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.inventory.add(LinenTrousers.getId());
 	this.inventory.use();
 	this.inventory.add(Lighter.getId());
+	this.inventory.add(WoodenTorch.getId());
 
 	//Stats variables
 	this.hygiene=100;
@@ -852,12 +853,56 @@ Player.prototype.interact=function()
 		}	
 		
 	}
-	else
+	else if(!this.searchForGrass() && !this.searchForTorch())
 	{
-		this.searchForGrass();
+		if(this.equipement.getHandledItem() instanceof ItemTorch)
+		{
+			if(this.stair.getMap()[this.x][this.y+1]==1)
+			{
+				this.stair.map[this.x][this.y+1]=new Torch(this.x,this.y+1,this.stair,this.equipement.getHandledItem());
+				this.equipement.remove("weapon",false);
+			}
+		}
+
 	}
 	
 }
+
+/**
+ * Checks if the player is near a Torch and get it
+ */
+Player.prototype.searchForTorch=function()
+{
+	if(this.stair.getMap()[this.x-1][this.y] instanceof Torch|| this.stair.getMap()[this.x+1][this.y] instanceof Torch|| this.stair.getMap()[this.x][this.y-1] instanceof Torch|| this.stair.getMap()[this.x][this.y+1] instanceof Torch)
+	{
+		if(this.stair.getMap()[this.x-1][this.y] instanceof Torch)
+		{
+			xTemp=this.x-1;
+			yTemp=this.y;
+		}
+		else if(this.stair.getMap()[this.x+1][this.y] instanceof Torch)
+		{
+			xTemp=this.x+1;
+			yTemp=this.y;
+		}
+		else if(this.stair.getMap()[this.x][this.y-1] instanceof Torch)
+		{
+			xTemp=this.x;
+			yTemp=this.y-1;
+		}
+		else
+		{
+			xTemp=this.x;
+			yTemp=this.y+1;
+		}
+		this.inventory.add(this.stair.map[xTemp][yTemp].remove());
+		return true;
+	}
+	else
+		return false;
+}
+
+
 
 /**
  * Checks if the player is near a bush and, generate adds a new grass type item to his inventory
@@ -895,8 +940,13 @@ Player.prototype.searchForGrass=function()
 				if(this.talents.canSurvive())
 				{
 					object=this.stair.map[xTemp][yTemp].harvest();
-					this.sendMessage("Apres un rapide exament, vous decouvrez l'objet "+object.getName()+".");
-					this.inventory.add(object.getId());
+					if(object != undefined)
+					{
+						this.sendMessage("Apres un rapide exament, vous decouvrez l'objet "+object.getName()+".");
+						this.inventory.add(object.getId());
+					}
+					else
+						this.sendMessage("La plante etait trop jeune, quel gachis.");
 				}
 				else
 				{
@@ -906,8 +956,10 @@ Player.prototype.searchForGrass=function()
 			}
 		}
 		this.hygiene-=Math.round((15*this.hygiene)/100);
+		return true;
 	}
-	
+	else
+		return false;
 }
 
 /**

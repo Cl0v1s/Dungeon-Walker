@@ -25,3 +25,12 @@ ItemTorch.prototype.unWear=function(owner)
 	value=value-this.light;
 	owner.light=value;
 }
+
+
+/**
+ * Returns the light amount of the torch
+ */
+ItemTorch.prototype.getLight=function()
+{
+	return this.light;
+}

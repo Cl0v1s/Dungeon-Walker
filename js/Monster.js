@@ -189,7 +189,7 @@ Monster.prototype.setLife=function(nb)
 /**
  * Draws the monster on the screen
  */
-Monster.prototype.draw=function(intancity)
+Monster.prototype.draw=function(intancity,visible)
 {
 	if(this.life<=0 || this.soif<=0)
 	{
@@ -242,9 +242,12 @@ Monster.prototype.draw=function(intancity)
 				this.spriteFrame=1;
 			this.sprite.src="graphics/characters/"+this.name+"/"+this.name+"-"+this.spriteFrame+".png";
 		}
-		surface.drawImage(this.sprite,Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);	
-		if(this.onFire)	
-			this.fireEffect.draw(Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);	
+		if(visible)
+		{
+			surface.drawImage(this.sprite,Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);	
+			if(this.onFire)	
+				this.fireEffect.draw(Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);
+		}
 	}
 	
 
