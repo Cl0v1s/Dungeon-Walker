@@ -348,8 +348,6 @@ Client.prototype.drawTiles=function()
 									TileSet.draw(3,Client.getXPos()+o*32, Client.getYPos()+p*32);
 								else if(this.player.getStair().map[o][p]==5)
 									TileSet.draw(16,Client.getXPos()+o*32, Client.getYPos()+p*32);
-								else if(this.player.getStair().map[o][p]==6)
-									this.drawLava(o,p);
 							}
 				}
 				else 
@@ -359,7 +357,7 @@ Client.prototype.drawTiles=function()
 				}
 				if(this.player.getStair().map[o][p]==2)
 								TileSet.draw(2,Client.getXPos()+o*32, Client.getYPos()+p*32);
-				else if(this.player.getStair().map[o][p]=="stair")
+				else if(this.player.getStair().map[o][p]=="upstair" || this.player.getStair().map[o][p]=="downstair")
 								TileSet.draw(17,Client.getXPos()+o*32, Client.getYPos()+p*32);
 				else if(this.player.getStair().map[o][p]>=10)
 								surface.fillText("$",Client.getXPos()+o*32, Client.getYPos()+p*32);
@@ -369,6 +367,8 @@ Client.prototype.drawTiles=function()
 							this.drawFire(o,p);	
 				else if(this.player.getStair().map[o][p] instanceof Torch)
 							this.player.getStair().map[o][p].draw();
+				else if(this.player.getStair().map[o][p]==6)
+							this.drawLava(o,p);
 							
 				if(this.player.getStair().map[o][p] !=0)
 					this.drawShadow(o,p);			
@@ -445,7 +445,7 @@ Client.prototype.drawNoTiles=function(side,originX,originY)
 						surface.fillStyle = DungeonTile.WallColor;	
 				}
 				
-				if(this.player.getStair().map[o][p]==2 || this.player.getStair().map[o][p]=="stair")
+				if(this.player.getStair().map[o][p]==2 || this.player.getStair().map[o][p]=="upstair")
 							surface.fillStyle = DungeonTile.WallColor;
 				else if(this.player.getStair().map[o][p]==3)
 							surface.fillStyle = DungeonTile.Water_1Color;
@@ -491,8 +491,10 @@ Client.prototype.drawNoTiles=function(side,originX,originY)
 				}
 				if(this.player.getStair().map[o][p]==2)
 								surface.fillText(DungeonTile.Wall,Client.getXPos()+o*32, Client.getYPos()+p*32);
-				else if(this.player.getStair().map[o][p]=="stair")
+				else if(this.player.getStair().map[o][p]=="upstair")
 								surface.fillText(DungeonTile.Stair,Client.getXPos()+o*32, Client.getYPos()+p*32);
+				else if(this.player.getStair().map[o][p]=="downstair")
+								surface.fillText("<",Client.getXPos()+o*32, Client.getYPos()+p*32);
 				else if(this.player.getStair().map[o][p]>=10)
 								surface.fillText("$",Client.getXPos()+o*32, Client.getYPos()+p*32);
 				else if(this.player.getStair().map[o][p]==3)
@@ -695,9 +697,9 @@ Client.prototype.traduceInTileIndex=function(indexTemp,stairTemp,o,p)
 				}
 				if(indexTemp==2)
 								return 2;
-				else if(indexTemp=="stair")
+				else if(indexTemp=="downstair")
 				{
-								//NULL
+					return 17;
 				}
 				else if(indexTemp>=10)
 				{

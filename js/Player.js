@@ -329,51 +329,85 @@ Player.prototype.move=function(dir)
 			switch(dir)
 			{				
 				case "right":
-					if(stair.walkable(this.x+1,this.y))
-					{
-						this.x+=1;
-						Client.setXPos(Client.getXPos()-32);
-					}
+					xTemp=this.x+1;
 					break;
 				case "left":
-					if(stair.walkable(this.x-1,this.y))
-					{
-						this.x-=1;
-						Client.setXPos(Client.getXPos()+32);
-					}
+					xTemp=this.x-1;
 					break;
 				case "down":
-					if(stair.walkable(this.x,this.y+1))
-					{
-						this.y+=1;
-						Client.setYPos(Client.getYPos()-32);
-					}
+					yTemp=this.y+1;
 					break;
 				case "up" :		
-					if(stair.walkable(this.x,this.y-1))
-					{
-						this.y-=1;
-						Client.setYPos(Client.getYPos()+32);
-					}
+					yTemp=this.y-1;
 					break;
 			}
-			this.lightZone();
-			this.getObject();
-			this.previousTile=stair.getMap()[this.x][this.y];
-			this.contextMessage();
-			stair.map[this.x][this.y]=0;
-			
-			if(this.stair.getMap()[this.x+1][this.y]==0)
-					this.stair.getMap()[this.x+1][this.y]=1;
-					
-			if(this.stair.getMap()[this.x-1][this.y]==0)
-					this.stair.getMap()[this.x-1][this.y]=1;
-					
-			if(this.stair.getMap()[this.x][this.y+1]==0)
-					this.stair.getMap()[this.x][this.y+1]=1;
-					
-			if(this.stair.getMap()[this.x][this.y-1]==0)
-					this.stair.getMap()[this.x-1][this.y]=1;
+			passable=true;
+			for(p=0;p<this.stair.monsters.length;p++)
+			{
+				if(this.stair.monsters[i] != undefined && this.stair.monsters[i].getX()==xTemp && this.stair.monsters[i].getY()==yTemp)
+				{
+					passable=false
+				}
+			}
+			if(passable)
+			{
+				switch(dir)
+				{				
+					case "right":
+						if(stair.walkable(this.x+1,this.y))
+						{
+							this.x+=1;
+							Client.setXPos(Client.getXPos()-32);
+						}
+						break;
+					case "left":
+						if(stair.walkable(this.x-1,this.y))
+						{
+							this.x-=1;
+							Client.setXPos(Client.getXPos()+32);
+						}
+						break;
+					case "down":
+						if(stair.walkable(this.x,this.y+1))
+						{
+							this.y+=1;
+							Client.setYPos(Client.getYPos()-32);
+						}
+						break;
+					case "up" :		
+						if(stair.walkable(this.x,this.y-1))
+						{
+							this.y-=1;
+							Client.setYPos(Client.getYPos()+32);
+						}
+						break;
+				}
+				this.lightZone();
+				this.getObject();
+				this.previousTile=stair.getMap()[this.x][this.y];
+				this.contextMessage();
+				stair.map[this.x][this.y]=0;
+				
+				if(this.stair.getMap()[this.x+1][this.y]==0)
+				{
+						this.stair.getMap()[this.x+1][this.y]=1;
+				}
+						
+				if(this.stair.getMap()[this.x-1][this.y]==0)
+				{
+						this.stair.getMap()[this.x-1][this.y]=1;
+				}
+						
+				if(this.stair.getMap()[this.x][this.y+1]==0)
+				{
+						this.stair.getMap()[this.x][this.y+1]=1;
+				}
+						
+				if(this.stair.getMap()[this.x][this.y-1]==0)
+				{
+						this.stair.getMap()[this.x-1][this.y]=1;
+				}
+			}
 		}
 	}
 	else
@@ -718,8 +752,9 @@ Player.prototype.contextMessage=function()
 		}
 	}
 		
-		if(this.stair.getMap()[this.x][this.y]=="stair")
+		if(this.stair.getMap()[this.x][this.y]=="upstair")
 		{
+			this.stair.removeEntityFromList(this);
 			this.previousTile=1;
 			this.stair=Client.dungeon.upStair(this);
 			x=this.stair.getSpawnPoint()[0]+this.stair.getSpawnPoint()[2].getX();
@@ -735,10 +770,33 @@ Player.prototype.contextMessage=function()
 			if(this.stair.map[x][y-1]!=2)
 				this.stair.map[x][y-1]=1;
 
-			this.previousTile=1;
 			this.move("right");
 			this.stair.generateMonsters();
 			this.stair.addEntityToList(this);
+			Client.resetCanvas();
+			this.previousTile="downstair";
+		}
+
+		if(this.stair.getMap()[this.x][this.y]=="downstair")
+		{
+			this.stair.removeEntityFromList(this);
+			this.previousTile=1;
+			this.stair=Client.dungeon.downStair(this);
+			x=this.stair.getSpawnPoint()[0]+this.stair.getSpawnPoint()[2].getX();
+			y=this.stair.getSpawnPoint()[1]+this.stair.getSpawnPoint()[2].getY();
+			this.setX(x);
+			this.setY(y);
+			if(this.stair.map[x+1][y]!=2)
+				this.stair.map[x+1][y]=1;
+			if(this.stair.map[x-1][y]!=2)
+				this.stair.map[x-1][y]=1;
+			if(this.stair.map[x][y+1]!=2)
+				this.stair.map[x][y+1]=1;
+			if(this.stair.map[x][y-1]!=2)
+				this.stair.map[x][y-1]=1;
+
+			this.previousTile=1;
+			this.move("right");
 			Client.resetCanvas();
 		}
 }

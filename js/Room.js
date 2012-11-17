@@ -185,7 +185,7 @@ Room.prototype.placeStair=function()
 		xTemp=Math.floor(Math.random()*(this.width-1))+1;
 		yTemp=Math.floor(Math.random()*(this.height-1))+1;
 	}
-	this.setCell(xTemp,yTemp,"stair");
+	this.setCell(xTemp,yTemp,"upstair");
 	return [xTemp,yTemp];
 }
 

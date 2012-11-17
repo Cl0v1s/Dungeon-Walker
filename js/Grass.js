@@ -87,7 +87,6 @@ Grass.prototype.grow=function()
 				}
 				rand=Math.floor(Math.random()*list.length);
 				this.drop=list[rand];
-				console.log("up");
 			}
 		}
 	}

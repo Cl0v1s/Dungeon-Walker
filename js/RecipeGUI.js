@@ -18,7 +18,7 @@ RecipeGUI.prototype.update=function()
 	Client.player.messages.draw();
 	this.updateInput();
 	surface.fillStyle="rgb(0,0,0)";
-	surface.fillRect (this.x, this.y,this.width,this.height);
+	surface.fillRect (this.x, this.y-42,this.width,this.height+42);
 	surface.font = "22px pixel";
 	surface.fillStyle = "rgb(150,150,150)";
 	for(a=0;a<RecipeList.length;a++)

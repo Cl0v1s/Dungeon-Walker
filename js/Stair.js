@@ -174,6 +174,7 @@ Stair.prototype.checkWalls=function()
  */
 Stair.prototype.generateMonsters=function()
 {
+	this.monsters.push(new MonsterList[1](this,xTemp,yTemp));
 	nb=Math.floor(Math.random()*this.id*this.rooms.length)+20;
 	for(n=0;n<nb;n++)
 	{
@@ -186,20 +187,24 @@ Stair.prototype.generateMonsters=function()
 		}
 		idTemp=-1;
 		attempt=0;
-		while(idTemp==-1 || MonsterList[idTemp]==undefined || MonsterList[idTemp].biome != this.getRoomAt(xTemp,yTemp).getBiome())
+		biome=undefined;
+		while((idTemp == -1 || biome==undefined)|| (MonsterList[idTemp] != undefined && biome != this.getRoomAt(xTemp,yTemp).getBiome()))
 		{
-			attempt+=1;
-
-			idTemp=Math.floor(Math.random()*this.id);
-			if(attempt>=50)
+			attempt=attempt+1;
+			idTemp=Math.floor(Math.random()*this.id)+1;
+			if(MonsterList[idTemp] != undefined)
+			{
+				biome=new MonsterList[idTemp](this,xTemp,yTemp,false,idTemp);
+				biome=biome.getBiome();
+			}
+			if(attempt>50)
 				break;
 		}
-		if(attempt>=50)
+		if(attempt>50)
 		{
-			this.monsters[n]=undefined;
 			continue;
 		}
-		this.monsters[n]=new Monster(this,xTemp,yTemp,MonsterList[idTemp]);
+		this.monsters.push(new MonsterList[idTemp](this,xTemp,yTemp,true,idTemp));
 	}
 }
 
@@ -209,6 +214,20 @@ Stair.prototype.generateMonsters=function()
 Stair.prototype.addEntityToList=function(entity)
 {
 	this.monsters.push(entity);
+}
+
+/**
+ * Removes an entity of the monsters list
+ */
+Stair.prototype.removeEntityFromList=function(entity)
+{
+	for(p=0;p<this.monsters.length;p++)
+	{
+		if(this.monsters[p]==entity)
+		{
+			this.monsters[p]=undefined;
+		}
+	}
 }
 
 /**
@@ -806,7 +825,7 @@ Stair.prototype.placeStairAndPlayer=function()
 	while(room==0 && this.rooms[room].getSpawn() != false)
 		room=Math.floor(Math.random()*(this.rooms.length));
 	emp=this.rooms[room].placeStair();		
-	this.map[this.rooms[room].getX()+emp[0]][this.rooms[room].getY()+emp[1]]="stair";
+	this.map[this.rooms[room].getX()+emp[0]][this.rooms[room].getY()+emp[1]]="upstair";
 }
 
 /**
@@ -871,6 +890,7 @@ Stair.prototype.actualizeFire=function(xTemp,yTemp)
  */
 Stair.prototype.walkable=function(xTemp,yTemp)
 {
+
 		if(this.map[xTemp][yTemp]==2 || this.map[xTemp][yTemp]==0 || this.map[xTemp][yTemp]==5 || this.map[xTemp][yTemp] instanceof Grass|| this.map[xTemp][yTemp] instanceof Torch)
 			return false;
 		else

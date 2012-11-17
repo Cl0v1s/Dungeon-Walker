@@ -56,7 +56,10 @@ Recipe.prototype.craft=function(caller)
 							got=got+1;
 							if(got==this.elements.length)
 							{
-								caller.inventory.add(this.result.getId());
+								for(o=0;i<this.result.length;o++)
+								{
+									caller.inventory.add(this.result[o].getId());
+								}
 								return;
 							}
 						}

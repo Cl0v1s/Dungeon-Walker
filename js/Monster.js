@@ -4,13 +4,13 @@ function Monster(stair,x,y,raceTemp)
 	this.y=y;
 	this.race=raceTemp;
 	this.stair=stair;
-	this.name=this.race.name;;
-	this.light=this.race.light;
-	this.biome=this.race.biome;
-	this.image=this.race.image;
-	this.launch=this.race.launch;
-	this.lrm=this.race.lrm;
-	this.life=this.race.life;
+	this.name="";
+	this.light=0;
+	this.biome="";
+	this.image="";
+	this.launch=0;
+	this.lrm=0;
+	this.life=0;
 	total=0;
 	for(d=0;d<this.launch;d++)
 	{
@@ -21,11 +21,11 @@ function Monster(stair,x,y,raceTemp)
 	total=total*this.lrm;
 	this.life+=total;
 	this.atk=1;
-	this.force=this.race.force;
-	this.constitution=this.race.constitution;
-	this.taille=this.race.taille;
-	this.dexterite=this.race.dexterite;
-	this.agressivity=this.race.agressivity;
+	this.force=0;
+	this.constitution=0;
+	this.taille=0;
+	this.dexterite=0;
+	this.agressivity=0;
 	this.sympathy=0;
 	this.antipathy=0;
 	
@@ -34,14 +34,12 @@ function Monster(stair,x,y,raceTemp)
 	this.sickInterval=10;
 	this.sickFrame=0;
 	
-	this.score=this.race.score;
-	this.drop=this.race.drop;	
+	this.score=0;
+	this.drop=new Array();	
 	this.effectList=new Array();
 	this.pound=100;
 	this.inventory=new Inventory(this);
 	this.equipement=new Equipement(this);
-	this.inventory.add(this.race.weapon.getId());
-	this.inventory.use();
 	
 	this.sommeil=100;
 	this.soif=100;
@@ -54,10 +52,8 @@ function Monster(stair,x,y,raceTemp)
 	this.frame=0;
 	this.spriteFrame=1;
 	this.sprite=new Image();
-	this.sprite.src="graphics/characters/"+this.name+"/"+this.name+"-"+this.spriteFrame+".png";
 	this.fireInterval=5;
 	this.previousTile=1;
-	this.stair.map[this.x][this.y]=0;
 	this.death=false;
 	this.visibleBlockList=new Array();
 	this.fireEffect=new VisualEffect(0);
@@ -68,6 +64,15 @@ function Monster(stair,x,y,raceTemp)
 		this.sexe="female";
 		
 	this.maturity=Client.turn+Math.floor(Math.random()*200);
+}
+
+
+/**
+ * Returns the monster's biome
+ **/
+Monster.prototype.getBiome=function()
+{
+	return this.biome;
 }
 
 
@@ -160,8 +165,8 @@ Monster.prototype.sleep=function()
  */
 Monster.prototype.changeStat=function()
 {
-	this.sommeil-=(50/3);
-	this.soif-=(100/5);
+	this.soif=this.soif-(((5/54)*((Math.random()*15.5)+1)));
+	this.sommeil=this.sommeil-(((5/48)*((Math.random()*15.5)+1)));
 }
 
 /**
@@ -238,7 +243,7 @@ Monster.prototype.draw=function(intancity,visible)
 		{
 			this.spriteFrame+=1;
 			this.frame=0;
-			if(this.spriteFrame>3)
+			if(this.spriteFrame>2)
 				this.spriteFrame=1;
 			this.sprite.src="graphics/characters/"+this.name+"/"+this.name+"-"+this.spriteFrame+".png";
 		}
@@ -727,7 +732,7 @@ Monster.prototype.procreate=function(male)
 		else if(this.stair.walkableMonster(this.x,this.y-1))
 			posY=this.y-1;
 			
-		child=new Monster(this.stair,posX,posY,this.race);
+		child=new MonsterList[this.race](this.stair,posX,posY,true,this.race);
 		child.setLife(Math.round((this.life+male.life)/2));
 		placed=false;
 		for(q=0;q<this.stair.monsters.length;q++)
@@ -742,16 +747,25 @@ Monster.prototype.procreate=function(male)
 		{
 			this.stair.monsters.push(child);
 		}
+		console.log("procreate");
 	}
 }
 
 
 /**
- * Run the monster's ia
- */
+ * Runs the monster's ia
+ **/
 Monster.prototype.think=function()
 {
+	this.Ia_basic();
+}
 
+/**
+ * The basic silly monster's ia
+ */
+Monster.prototype.Ia_basic=function()
+{
+	this.changeStat();
 	bestFriend=undefined;
 	worstEnemy=undefined;
 	friendList=new Array();
@@ -864,7 +878,7 @@ Monster.prototype.think=function()
 			worstEnemy=bestFriend.enemy;
 		}
 		
-		if(worstEnemy != undefined && this.agressivity>=2)
+		if(worstEnemy != undefined && this.agressivity>=2 && !this.isNearEntity(worstEnemy))
 		{
 			this.moveTo(worstEnemy.getX(),worstEnemy.getY());
 		}
@@ -911,7 +925,7 @@ Monster.prototype.think=function()
 		if(drinkDesire>worstEnemy.getAntipathy() && water != undefined)
 			this.moveTo(water[0],water[1]);
 			
-		if(this.agressivity>=1)
+		if(this.agressivity>=1 && !this.isNearEntity(worstEnemy))
 			this.moveTo(worstEnemy.getX(),worstEnemy.getY());
 		else
 			this.selectDir();
@@ -919,8 +933,6 @@ Monster.prototype.think=function()
 	}
 
 	this.selectDir();
-	if(this.enemy != undefined || this.friend != undefined)
-	console.log(this.enemy+"/"+this.friend);
 	
 }
 
