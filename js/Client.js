@@ -697,7 +697,7 @@ Client.prototype.traduceInTileIndex=function(indexTemp,stairTemp,o,p)
 				}
 				if(indexTemp==2)
 								return 2;
-				else if(indexTemp=="downstair")
+				else if(indexTemp=="downstair" || indexTemp=="upstair")
 				{
 					return 17;
 				}

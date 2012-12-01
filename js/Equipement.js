@@ -1,6 +1,7 @@
 function Equipement(ownerTemp)
 {
 	this.index=0;
+	this.back=new Window((608-321), 0,320,320,"","");
 	this.owner=ownerTemp;
 	this.contains=new Array();
 	this.contains[0]=undefined;
@@ -88,53 +89,54 @@ Equipement.prototype.update=function()
 		return;
 	}
 	this.inputUpdate();
-	surface.fillStyle="rgb(0,0,0)";
-	surface.fillRect (document.getElementById('canvas').width-321, 0,320,320);
+	this.back.draw();
 	if(this.owner.messages != undefined)
 	{
-		surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
+		surface.fillStyle = "rgb(0,0,0)";
+		if(!Parameters.isTiled())
+			surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
 		this.owner.messages.draw();
 	}
 	surface.font = "24px pixel";
-	surface.fillStyle = "rgb(150,150,150)";
-	surface.fillText("(e) examiner     (r) retirer",document.getElementById('canvas').width-310,24);
+	surface.fillStyle = "rgb(83,122,62)";
+	surface.fillText("(e) examiner     (r) retirer",(608-301),44);
 	surface.font = "20px pixel";
 	try
 	{
-		surface.fillText("tete: "+this.contains[0].getName(),document.getElementById('canvas').width-310,56);
+		surface.fillText("tete: "+this.contains[0].getName(),document.getElementById('canvas').width-285,78);
 	}
 	catch(error)
 	{
 	}
 	try
 	{
-		surface.fillText("torse: "+this.contains[1].getName(),document.getElementById('canvas').width-310,56+20);
+		surface.fillText("torse: "+this.contains[1].getName(),document.getElementById('canvas').width-285,78+20);
 	}
 	catch(error)
 	{
 	}
 	try
 	{
-		surface.fillText("arme: "+this.contains[2].getName(),document.getElementById('canvas').width-310,56+20*2);
+		surface.fillText("arme: "+this.contains[2].getName(),document.getElementById('canvas').width-285,78+20*2);
 	}
 	catch(error)
 	{
 	}
 	try
 	{
-		surface.fillText("jambes: "+this.contains[3].getName(),document.getElementById('canvas').width-310,56+20*3);
+		surface.fillText("jambes: "+this.contains[3].getName(),document.getElementById('canvas').width-285,78+20*3);
 	}
 	catch(error)
 	{
 	}
 	try
 	{
-		surface.fillText("pieds: "+this.contains[4].getName(),document.getElementById('canvas').width-310,56+20*4);
+		surface.fillText("pieds: "+this.contains[4].getName(),document.getElementById('canvas').width-285,78+20*4);
 	}
 	catch(error)
 	{
 	}
-	surface.fillText(">",document.getElementById('canvas').width-320,56+20*this.index);
+	surface.fillText(">",document.getElementById('canvas').width-300,78+20*this.index);
 }
 
 /**
@@ -206,18 +208,19 @@ Equipement.prototype.examine=function(id)
 			return;
 		}
 
-		surface.fillStyle="rgb(0,0,0)";
-		surface.fillRect (document.getElementById('canvas').width-321, 0,320,320);
+		this.back.draw()
 		if(this.owner.messages != undefined)
 		{
-			surface.fillRect (this.owner.messages.x*32-100, this.owner.messages.y*32,600,500);
+			surface.fillStyle = "rgb(0,0,0)";
+			if(!Parameters.isTiled())
+				surface.fillRect (this.owner.messages.x*32-100, this.owner.messages.y*32,600,500);
 			this.owner.messages.draw();
 		}
 		surface.font = "24px pixel";
-		surface.fillStyle = "rgb(150,150,150)";
-		surface.fillText("(e) fermer     (r) retirer",document.getElementById('canvas').width-315,24);
+		surface.fillStyle = "rgb(83,122,62)";
+		surface.fillText("(e) fermer     (r) retirer",document.getElementById('canvas').width-301,44);
 		surface.font="28px pixel";
-		surface.fillText(this.contains[id].getName()+" :",document.getElementById('canvas').width-315,56+24);
+		surface.fillText(this.contains[id].getName()+" :",document.getElementById('canvas').width-301,56+24);
 		surface.font="20px pixel";
 		surface.fillStyle="rgb(150,150,150)";
 		word=this.contains[id].getDesc().split("");
@@ -238,6 +241,6 @@ Equipement.prototype.examine=function(id)
 			}
 			x+=1;
 			if(jump==false)
-				surface.fillText(word[i],document.getElementById('canvas').width-315+x*10, 56+28+24+y*20);
+				surface.fillText(word[i],document.getElementById('canvas').width-301+x*10, 56+28+24+y*20);
 		}
 }

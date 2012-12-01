@@ -17,9 +17,13 @@ function Window(xTemp,yTemp,widthTemp,heightTemp,txtTemp,sizeTemp)
 Window.prototype.draw=function()
 {
 	surface.font = this.size+"px pixel";
-	surface.fillStyle = "rgb(83,122,62)";
-	surface.drawImage(this.image,0, 0, 600, 600,this.x, this.y, this.width,this.height);	
+	surface.fillStyle = "rgb(0,0,0)";
+	if(Parameters.isTiled())
+		surface.drawImage(this.image,0, 0, 600, 600,this.x, this.y, this.width,this.height);	
+	else
+		surface.fillRect(this.x,this.y,this.width,this.height);
 	table=this.txt.split("<br>");
+	surface.fillStyle = "rgb(83,122,62)";
 	for(w=0;w<table.length;w++)
 	{
 		surface.fillText(table[w],this.x+(6*this.width/100), this.y+(20*this.height/100)+w*(this.size/2));

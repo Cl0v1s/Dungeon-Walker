@@ -10,6 +10,16 @@ function Spell(nameTemp,effectTemp,lightTemp,descTemp)
 }
 
 /**
+ * Returns the spell's description
+ **/
+Spell.prototype.getDescription=function()
+{
+	return this.description;
+}
+
+
+
+/**
  * Returns the spell's name
  */
 Spell.prototype.getName=function()

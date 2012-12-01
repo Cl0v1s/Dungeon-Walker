@@ -15,6 +15,7 @@ function Stair(dungeonTemp,idTemp)
 	this.animationFrame=0;
 	this.fireNumber=1;
 	this.spawnPoint=null;
+	this.stairPoint=null;
 	this.lightList=new Array();
 	this.rooms=new Array();
 	this.monsters=new Array();
@@ -826,6 +827,7 @@ Stair.prototype.placeStairAndPlayer=function()
 		room=Math.floor(Math.random()*(this.rooms.length));
 	emp=this.rooms[room].placeStair();		
 	this.map[this.rooms[room].getX()+emp[0]][this.rooms[room].getY()+emp[1]]="upstair";
+	this.stairPoint=new Array(this.rooms[room].getX()+emp[0],this.rooms[room].getY()+emp[1]);
 }
 
 /**

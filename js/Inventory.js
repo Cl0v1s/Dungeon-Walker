@@ -21,9 +21,14 @@ Inventory.prototype.add=function(id)
 		{
 			if(typeof this.contains[i]=="undefined")
 			{
-				this.contains[i]=ItemList[id];
-				this.owner.sendMessage("Vous placez l'objet "+ItemList[id].getName()+" dans votre sac.");
-				this.size+=ItemList[id].getPod();
+				//special modification fort scrolls only
+				if(ItemList[id] instanceof ItemScroll)
+					object=new ItemScroll("pchm. sort",2,"Un vieux parchemin raccornis.",10);
+				else
+					object=ItemList[id];
+				this.contains[i]=object;
+				this.owner.sendMessage("Vous placez l'objet "+object.getName()+" dans votre sac.");
+				this.size+=object.getPod();
 				return true;
 			}
 		}

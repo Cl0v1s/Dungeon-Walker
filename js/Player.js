@@ -45,7 +45,7 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.inventory.add(LinenTrousers.getId());
 	this.inventory.use();
 	this.inventory.add(Lighter.getId());
-	this.inventory.add(WoodenTorch.getId());
+	this.inventory.add(Scroll.getId());
 
 	//Stats variables
 	this.hygiene=100;
@@ -782,8 +782,8 @@ Player.prototype.contextMessage=function()
 			this.stair.removeEntityFromList(this);
 			this.previousTile=1;
 			this.stair=Client.dungeon.downStair(this);
-			x=this.stair.getSpawnPoint()[0]+this.stair.getSpawnPoint()[2].getX();
-			y=this.stair.getSpawnPoint()[1]+this.stair.getSpawnPoint()[2].getY();
+			x=this.stair.stairPoint[0];
+			y=this.stair.stairPoint[1];
 			this.setX(x);
 			this.setY(y);
 			if(this.stair.map[x+1][y]!=2)
@@ -798,6 +798,7 @@ Player.prototype.contextMessage=function()
 			this.previousTile=1;
 			this.move("right");
 			Client.resetCanvas();
+			this.previousTile="upstair";
 		}
 }
 
