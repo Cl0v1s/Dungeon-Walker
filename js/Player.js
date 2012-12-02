@@ -1,7 +1,7 @@
 function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 {
 	
-	this.messages=new MsgZone(1,11);
+	this.messages=new HUD(1,11);
 	
 	//Position variables
 	this.x=x;
@@ -79,6 +79,7 @@ function Player(stairTemp,x,y,FOR,CON,TAI,DEX,race)
 	this.img=this.class.Img;
 	this.visibleBlockList=new Array();
 	this.fireEffect=new VisualEffect(0);
+	this.ohi=new OHI(this);
 	
 }
 
@@ -136,6 +137,7 @@ Player.prototype.rest=function()
 	{
 		this.isSleeping=true;
 		this.sendMessage("Vous vous allongez par terre et penetrez dans un sommeil profond...");
+		this.light=0;
 	}
 }
 
@@ -148,13 +150,15 @@ Player.prototype.sleep=function()
 		if(this.sleepFrame>=20)
 		{
 			this.sommeil+=1;
-			Client.newTurn();
+			this.move();
+			this.lightZone();
 			this.sleepFrame=0;
 		}
 		if(this.sommeil>=100)
 		{
 				this.isSleeping=false;
 				this.light=this.class.Light;
+				this.lightZone();
 				this.sendMessage("Vous vous reveillez enfin, apres avoir passe une mauvaise nuit.");
 				if(this.previousTile==3)
 				{
@@ -166,7 +170,7 @@ Player.prototype.sleep=function()
 }
 
 /**
- * Show a message in the player's msgZone
+ * Show a message in the player's HUD
  */
 Player.prototype.sendMessage=function(msg)
 {
@@ -301,6 +305,7 @@ Player.prototype.draw=function()
 		if(this.onFire)	
 			this.fireEffect.draw(Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);		
 	}
+	this.ohi.draw();
 }
 
 /**
@@ -770,8 +775,7 @@ Player.prototype.contextMessage=function()
 			if(this.stair.map[x][y-1]!=2)
 				this.stair.map[x][y-1]=1;
 
-			this.move("right");
-			this.stair.generateMonsters();
+			this.move();
 			this.stair.addEntityToList(this);
 			Client.resetCanvas();
 			this.previousTile="downstair";
@@ -794,9 +798,8 @@ Player.prototype.contextMessage=function()
 				this.stair.map[x][y+1]=1;
 			if(this.stair.map[x][y-1]!=2)
 				this.stair.map[x][y-1]=1;
-
-			this.previousTile=1;
-			this.move("right");
+			this.move();
+			this.stair.addEntityToList(this);
 			Client.resetCanvas();
 			this.previousTile="upstair";
 		}

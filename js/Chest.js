@@ -21,7 +21,7 @@ function Chest()
 }
 
 /**
- * Show a message in the chest's msgZone
+ * Show a message in the chest's HUD
  * Useless
  */
 Chest.prototype.sendMessage=function(msg)

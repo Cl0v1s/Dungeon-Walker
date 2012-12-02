@@ -47,6 +47,7 @@ function Stair(dungeonTemp,idTemp)
 	this.generateChest();
 	this.checkWalls();
 	this.placeStairAndPlayer();
+	this.generateMonsters();
 }
 
 
@@ -298,7 +299,8 @@ Stair.prototype.fight=function(fighter1,fighter2)
 
 
 	}
-
+	fighter1.ohi.send("-"+dmg2);
+	fighter2.ohi.send("-"+dmg1);
 	fighter1.sendMessage(sentence);
 	fighter1.sendMessage(sentence2);
 	fighter2.sendMessage(sentence);

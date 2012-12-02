@@ -1,4 +1,4 @@
-function MsgZone(x,y)
+function HUD(x,y)
 {
 	this.x=x;
 	this.y=y;
@@ -8,7 +8,7 @@ function MsgZone(x,y)
 	this.statBack=new Window(0,this.y*32+7*17,document.getElementById('canvas').width,300,"");
 }
 
-MsgZone.prototype.draw=function()
+HUD.prototype.draw=function()
 {
 	r=50;
 	v=50;
@@ -45,7 +45,7 @@ MsgZone.prototype.draw=function()
 			surface.fillText("Soif:"+Math.floor((-1*player.soif+100)), this.x*32+5*32, this.y*32+8*17+20);
 			surface.fillStyle="rgb(10,78,73)";		
 			surface.fillText("Hygiene:"+Math.floor(player.hygiene), this.x*32+7.5*32, this.y*32+8*17+20);
-			surface.fillStyle="rgb(263,225,255)";		
+			surface.fillStyle="rgb(5,50,73)";		
 			surface.fillText("Sommeil:"+Math.floor((-1*player.sommeil+100)), this.x*32+11*32, this.y*32+8*17+20);
 			surface.fillStyle="rgb(255,181,33)";		
 			surface.fillText("Score:"+player.score, this.x*32+14.5*32, this.y*32+8*17+20);
@@ -69,7 +69,7 @@ MsgZone.prototype.draw=function()
 
 }
 
-MsgZone.prototype.add=function(msg)
+HUD.prototype.add=function(msg)
 {
 	for(i=1;i<(this.history.length);i++)
 	{
@@ -79,7 +79,7 @@ MsgZone.prototype.add=function(msg)
 
 }
 
-MsgZone.prototype.changeMode=function(value)
+HUD.prototype.changeMode=function(value)
 {
 	this.mode=value;
 }

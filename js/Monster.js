@@ -46,7 +46,7 @@ function Monster(stair,x,y,raceTemp)
 	
 	this.enemy=undefined;
 	this.friend=undefined;
-
+	this.ohi=new OHI(this);
 	this.onFire=false;
 	this.fireFrame=0;
 	this.frame=0;
@@ -170,7 +170,7 @@ Monster.prototype.changeStat=function()
 }
 
 /**
- * Show a message in the monster's msgZone
+ * Show a message in the monster's HUD
  */
 Monster.prototype.sendMessage=function(msg)
 {}
@@ -254,7 +254,7 @@ Monster.prototype.draw=function(intancity,visible)
 				this.fireEffect.draw(Client.getXPos()+(this.x)*32,Client.getYPos()+this.y*32);
 		}
 	}
-	
+	this.ohi.draw();
 
 	
 

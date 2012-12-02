@@ -8,6 +8,7 @@ function Inventory(owner)
 	this.pointer_x=0;
 	this.pointer_y=1;
 	this.examination=0;
+	this.back=new Window(0, 0,320,320,"","");
 }
 
 /**
@@ -49,20 +50,21 @@ Inventory.prototype.update=function()
 	clean();
 	Client.player.draw();
 	Client.drawEnvironement();
-	surface.fillStyle="rgb(0,0,0)";
-	surface.fillRect (0, 0,320,320);
+	this.back.draw();
 	if(this.owner.messages != undefined)
 	{
-		surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
+		surface.fillStyle = "rgb(0,0,0)";
+		if(!Parameters.isTiled())
+			surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
 		this.owner.messages.draw();
 	}
-	surface.font = "24px pixel";
-	surface.fillStyle = "rgb(150,150,150)";
-	surface.fillText("(e) examiner     (enter) utiliser",5,24);
+	surface.font = "20px pixel";
+	surface.fillStyle = "rgb(83,122,62)";
+	surface.fillText("(e) examiner     (enter) utiliser",21,42);
 	//if(!(this.owner.previousTile instanceof Chest)) 
-		surface.fillText("(c) cuire        (d) lacher",5,48);
+		surface.fillText("(c) cuire        (d) lacher",21,64);
 	//else
-	//	surface.fillText("(c) cuire        (d) placer dans le coffre",5,48);		
+	//	surface.fillText("(c) cuire        (d) placer dans le coffre",,64);		
 		
 	surface.font = "20px pixel";
 	x=0;
@@ -73,10 +75,10 @@ Inventory.prototype.update=function()
 		surface.fillStyle = "rgb(150,150,150)";
 		if(typeof this.contains[i] !="undefined")
 		{
-			surface.fillText(this.contains[i].getName(),20+x*100,56+20*y);
+			surface.fillText(this.contains[i].getName(),35+x*100,74+20*y);
 		}
 		else
-			surface.fillText("vide",20+x*100,56+20*y);				
+			surface.fillText("vide",35+x*100,74+20*y);				
 
 		if(y>=13)
 		{
@@ -86,7 +88,7 @@ Inventory.prototype.update=function()
 	}
 	surface.fillStyle = "rgb(150,150,150)";
 
-	surface.fillText(">",0+this.pointer_x*100,56+20*this.pointer_y);
+	surface.fillText(">",20+this.pointer_x*100,74+20*this.pointer_y);
 	
 	if(this.examination==1)
 	{
@@ -260,19 +262,20 @@ Inventory.prototype.examine=function(id)
 			return;
 		}
 
-		surface.fillStyle="rgb(0,0,0)";
-		surface.fillRect (0, 0,320,320);
+		this.back.draw()
 		if(this.owner.messages != undefined)
 		{
-			surface.fillRect (this.owner.messages.x*32-100, this.owner.messages.y*32,600,500);
+			surface.fillStyle = "rgb(0,0,0)";
+			if(!Parameters.isTiled())
+				surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
 			this.owner.messages.draw();
 		}
-	surface.font = "24px pixel";
-	surface.fillStyle = "rgb(150,150,150)";
-	surface.fillText("(e) fermer     (enter) utiliser",5,24);
-	surface.fillText("(d) lacher",5,48);
+	surface.font = "20px pixel";
+	surface.fillStyle = "rgb(83,122,62)";
+	surface.fillText("(e) fermer     (enter) utiliser",21,42);
+	surface.fillText("(d) lacher",21,64);
 		surface.font="28px pixel";
-		surface.fillText(this.contains[id].getName()+" :",5,56+24);
+		surface.fillText(this.contains[id].getName()+" :",21,84);
 		surface.font="20px pixel";
 		surface.fillStyle="rgb(150,150,150)";
 		word=this.contains[id].getDesc().split("");
@@ -293,6 +296,6 @@ Inventory.prototype.examine=function(id)
 			}
 			x+=1;
 			if(jump==false)
-				surface.fillText(word[i],5+x*10, 56+28+24+y*20);
+				surface.fillText(word[i],20+x*10, 84+28+y*20);
 		}
 }
