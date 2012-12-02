@@ -206,7 +206,8 @@ Stair.prototype.generateMonsters=function()
 		{
 			continue;
 		}
-		this.monsters.push(new MonsterList[idTemp](this,xTemp,yTemp,true,idTemp));
+		if(typeof MonsterList[idTemp] !="undefined") 
+			this.monsters.push(new MonsterList[idTemp](this,xTemp,yTemp,true,idTemp));
 	}
 }
 

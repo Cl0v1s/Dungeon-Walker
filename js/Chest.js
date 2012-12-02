@@ -1,5 +1,6 @@
 function Chest()
 {
+	this.back=new Window(0, 0,320,320,"","");
 	this.owner=undefined;
 	this.pound=20;
 	this.examination=0;
@@ -74,15 +75,19 @@ Chest.prototype.update=function()
 	{
 		Client.drawEnvironement();
 		this.owner.draw();
-		surface.fillStyle="rgb(0,0,0)";
-	surface.fillRect (0, 0,320,320);
-	surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
-	this.owner.messages.draw();
+		this.back.draw();
+		if(this.owner.messages != undefined)
+		{
+			surface.fillStyle = "rgb(0,0,0)";
+			if(!Parameters.isTiled())
+				surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
+			this.owner.messages.draw();
+		}
 	}
 
 	surface.font = "24px pixel";
-	surface.fillStyle = "rgb(150,150,150)";
-	surface.fillText("(e) examiner     (enter) recuperer",5,24);
+	surface.fillStyle = "rgb(83,122,62)";
+	surface.fillText("(e) examiner     (enter) recuperer",20,44);
 	surface.font = "20px pixel";
 	x=0;
 	y=0;
@@ -98,10 +103,10 @@ Chest.prototype.update=function()
 				continue;
 			}
 		
-			surface.fillText(this.inventory.contains[i].getName(),20+x*100,56+20*y);
+			surface.fillText(this.inventory.contains[i].getName(),30+x*100,56+20*y);
 		}
 		else
-			surface.fillText("vide",20+x*100,56+20*y);				
+			surface.fillText("vide",30+x*100,56+20*y);				
 
 		if(y>=13)
 		{
@@ -111,7 +116,7 @@ Chest.prototype.update=function()
 	}
 	surface.fillStyle = "rgb(150,150,150)";
 
-	surface.fillText(">",0+this.inventory.pointer_x*100,56+20*this.inventory.pointer_y);
+	surface.fillText(">",20+this.inventory.pointer_x*100,56+20*this.inventory.pointer_y);
 	
 	if(this.examination==1)
 	{
@@ -129,7 +134,8 @@ Chest.prototype.updateInput=function()
 	{
 			if(this.examination==0)
 			{
-				this.owner.sendMessage("Vous regardez l'objet "+this.inventory.contains[this.inventory.index].getName()+" de plus pres.");
+				if(this.inventory.contains[this.inventory.index] != undefined)
+					this.owner.sendMessage("Vous regardez l'objet "+this.inventory.contains[this.inventory.index].getName()+" de plus pres.");
 				this.examination+=1;
 				return;
 			}
@@ -168,15 +174,19 @@ Chest.prototype.examine=function(id)
 			return;
 		}
 
-		surface.fillStyle="rgb(0,0,0)";
-		surface.fillRect (0, 0,320,320);
-		surface.fillRect (this.owner.messages.x*32-100, this.owner.messages.y*32,600,500);
-		this.owner.messages.draw();
+		this.back.draw();
+		if(this.owner.messages != undefined)
+		{
+			surface.fillStyle = "rgb(0,0,0)";
+			if(!Parameters.isTiled())
+				surface.fillRect (this.owner.messages.x*32-100, (this.owner.messages.y-1)*32,600,500);
+			this.owner.messages.draw();
+		}
 	surface.font = "24px pixel";
-	surface.fillStyle = "rgb(150,150,150)";
-	surface.fillText("(e) fermer     (enter) recuperer",5,24);
+	surface.fillStyle = "rgb(83,122,62)";
+	surface.fillText("(e) fermer     (enter) recuperer",20,44);
 		surface.font="28px pixel";
-		surface.fillText(this.inventory.contains[id].getName()+" :",5,56+24);
+		surface.fillText(this.inventory.contains[id].getName()+" :",20,50+44);
 		surface.font="20px pixel";
 		surface.fillStyle="rgb(150,150,150)";
 		word=this.inventory.contains[id].getDesc().split("");
@@ -197,7 +207,7 @@ Chest.prototype.examine=function(id)
 			}
 			x+=1;
 			if(jump==false)
-				surface.fillText(word[i],5+x*10, 56+28+24+y*20);
+				surface.fillText(word[i],20+x*10, 50+28+44+y*20);
 		}
 }
 

@@ -724,6 +724,7 @@ Player.prototype.getPound=function()
  */
 Player.prototype.kill=function()
 {
+	this.ohi.send("dead");
 	Scene=new GameOver();
 }
 

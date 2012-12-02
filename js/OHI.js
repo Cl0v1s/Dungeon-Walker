@@ -14,7 +14,7 @@ OHI.prototype.send=function(msgTemp)
 	{
 		this.list[i-1]=this.list[i];
 	}
-	this.list[2]=msgTemp;
+	this.list[1]=new Array(msgTemp,0);
 	this.opacity=100;
 }
 
@@ -24,30 +24,23 @@ OHI.prototype.send=function(msgTemp)
 OHI.prototype.draw=function()
 {
 	x=this.owner.getX();
-	y=this.owner.getY()-1.5;
-	this.opacity-=2;
-	r=255;
-	v=50;
-	b=50;
-	if(r>=0)
-	{
-
+	y=this.owner.getY();
+	this.opacity-=1;
 		for(i=0;i>(this.list.length*(-1));i--)
 		{
 			surface.font = "25px pixel";
-			surface.fillStyle="rgba("+r+","+v+","+b+","+this.opacity/10+")";
+			if(this.owner instanceof Player)
+				surface.fillStyle="rgba(255,10,10,"+(this.opacity-30*i)/100+")";
+			else 
+				surface.fillStyle="rgba(10,10,255,"+(this.opacity-30*i)/100+")";
 
-
-			if(typeof this.list[(i*(-1))] !="undefined")
+			if(typeof this.list[(i*(-1))] !="undefined" && typeof this.list[(i*(-1))][0] !="undefined" && this.list[(i*(-1))][0] !="-undefined" )
 			{
-				surface.fillText(this.list[(i*(-1))],Client.getXPos()+x*32, Client.getYPos()+y*32+(-26*i)-5);
-				r=r-50;
-				v=v-25;
-				b=b-12.5;
+				surface.fillText(this.list[(i*(-1))][0],Client.getXPos()+x*32, Client.getYPos()+y*32-this.list[(i*(-1))][1]);
+				this.list[(i*(-1))][1]+=1;
 			}
 
 		}
-	}
 	if(this.opacity<=0)
 		this.list=new Array();
 }

@@ -470,6 +470,7 @@ Monster.prototype.isDead=function()
  */
 Monster.prototype.kill=function(reason,by)
 {
+	this.ohi.send("dead");
 	if(reason=="slain")
 	{
 						if(by !=undefined)
@@ -950,6 +951,22 @@ Monster.prototype.moveTo=function(xTemp,yTemp)
 		this.move("down");
 	else if(yTemp<this.y && this.stair.walkableMonster(this.x,this.y-1))
 		this.move("up");	
+	
+}
+
+/**
+ * Moves the monster at the opposite of the specified position
+ */
+Monster.prototype.run=function(xTemp,yTemp)
+{
+	if(xTemp>this.x && this.stair.walkableMonster(this.x-1,this.y))
+		this.move("left");
+	else if(xTemp<this.x && this.stair.walkableMonster(this.x+1,this.y))
+		this.move("right");
+	else if(yTemp>this.y && this.stair.walkableMonster(this.x,this.y-1))
+		this.move("up");
+	else if(yTemp<this.y && this.stair.walkableMonster(this.x,this.y+1))
+		this.move("down");	
 	
 }
 
