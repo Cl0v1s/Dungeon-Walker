@@ -398,12 +398,10 @@ Monster.prototype.move=function(dir)
 		this.isGrouped();
 		if(this.previousTile==4)
 			this.setFire();
-		this.stair.map[this.x][this.y]=0;
+		this.stair.map[this.x][this.y]=-1;
 		
 		if(this.isNear(3))
-		{
 			this.lap();
-		}
 		
 		this.lightZone();
 	

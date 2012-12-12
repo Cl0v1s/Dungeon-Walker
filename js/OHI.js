@@ -25,7 +25,7 @@ OHI.prototype.draw=function()
 {
 	x=this.owner.getX();
 	y=this.owner.getY();
-	this.opacity-=1;
+	this.opacity-=2;
 		for(i=0;i>(this.list.length*(-1));i--)
 		{
 			surface.font = "25px pixel";
@@ -37,7 +37,7 @@ OHI.prototype.draw=function()
 			if(typeof this.list[(i*(-1))] !="undefined" && typeof this.list[(i*(-1))][0] !="undefined" && this.list[(i*(-1))][0] !="-undefined" )
 			{
 				surface.fillText(this.list[(i*(-1))][0],Client.getXPos()+x*32, Client.getYPos()+y*32-this.list[(i*(-1))][1]);
-				this.list[(i*(-1))][1]+=1;
+				this.list[(i*(-1))][1]+=2;
 			}
 
 		}

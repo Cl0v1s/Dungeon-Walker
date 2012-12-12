@@ -50,7 +50,7 @@ Client.prototype.getYPos=function()
  */
 Client.prototype.setXPos=function(value)
 {
-	this.xPos=value;
+		this.xPos=value;
 }
 
 /**
@@ -118,7 +118,9 @@ Client.prototype.loading=function()
  */
 Client.prototype.update=function()
 {
-	clean();
+	if(!Parameters.isTiled() || Parameters.isFast())
+		clean();
+
 	if(!this.canvasPlaced)
 		this.moveCanvas();
 	else
@@ -356,7 +358,20 @@ Client.prototype.drawTiles=function()
 										TileSet.draw(0,Client.getXPos()+o*32, Client.getYPos()+p*32);
 				}
 				if(this.player.getStair().map[o][p]==2)
-								TileSet.draw(2,Client.getXPos()+o*32, Client.getYPos()+p*32);
+				{
+					if(this.player.getStair().map[o][p-1]==0 && this.player.getStair().map[o][p+1]!=0 && this.player.getStair().map[o][p+1]!=2 && this.player.getStair().map[o-1][p]==2 && this.player.getStair().map[o+1][p]==2)
+						TileSet.draw(22,Client.getXPos()+o*32, Client.getYPos()+p*32);	
+					else if(this.player.getStair().map[o][p+1]==0 && this.player.getStair().map[o][p-1]!=0 && this.player.getStair().map[o][p-1]!=2 && this.player.getStair().map[o-1][p]==2 && this.player.getStair().map[o+1][p]==2)
+						TileSet.draw(23,Client.getXPos()+o*32, Client.getYPos()+p*32);
+					else if(this.player.getStair().map[o-1][p]==0 && this.player.getStair().map[o+1][p]!=0 && this.player.getStair().map[o+1][p]!=2  && this.player.getStair().map[o][p-1]==2 && this.player.getStair().map[o][p+1]==2)
+						TileSet.draw(24,Client.getXPos()+o*32, Client.getYPos()+p*32);
+					else if(this.player.getStair().map[o+1][p]==0 && this.player.getStair().map[o-1][p]!=0 && this.player.getStair().map[o-1][p]!=2 && this.player.getStair().map[o][p-1]==2 && this.player.getStair().map[o][p+1]==2)
+						TileSet.draw(25,Client.getXPos()+o*32, Client.getYPos()+p*32);	
+					else 
+						TileSet.draw(26,Client.getXPos()+o*32, Client.getYPos()+p*32);	
+						
+						
+				}
 				else if(this.player.getStair().map[o][p]=="upstair" || this.player.getStair().map[o][p]=="downstair")
 								TileSet.draw(17,Client.getXPos()+o*32, Client.getYPos()+p*32);
 				else if(this.player.getStair().map[o][p]>=10)
@@ -369,8 +384,10 @@ Client.prototype.drawTiles=function()
 							this.player.getStair().map[o][p].draw();
 				else if(this.player.getStair().map[o][p]==6)
 							this.drawLava(o,p);
-							
-				if(this.player.getStair().map[o][p] !=0)
+				else if(this.player.getStair().map[o][p]==0 && !Parameters.isFast())
+						TileSet.draw(2,Client.getXPos()+o*32, Client.getYPos()+p*32);			
+				
+				if(this.player.getStair().map[o][p]!=0)
 					this.drawShadow(o,p);			
 							
 				
@@ -647,9 +664,10 @@ Client.prototype.drawShadow=function(xTemp,yTemp)
 				flag=false;
 		}
 	}
-	
-	if(!this.player.isVisible(xTemp,yTemp) && flag && Parameters.isTiled())
-			TileSet.draw(1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);	
+	if((!this.player.isVisible(xTemp,yTemp) && flag && Parameters.isTiled()))
+			TileSet.draw(1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
+	else if(this.player.getStair().map[xTemp][yTemp]==0)
+			TileSet.draw(1,this.getXPos()+xTemp*32, this.getYPos()+yTemp*32);
 	else if(!this.player.isVisible(xTemp,yTemp) && flag && !Parameters.isTiled())
 			surface.fillStyle="rgb("+10+","+10+","+10+")";
 		

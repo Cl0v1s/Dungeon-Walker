@@ -193,7 +193,7 @@ Stair.prototype.generateMonsters=function()
 		while((idTemp == -1 || biome==undefined)|| (MonsterList[idTemp] != undefined && biome != this.getRoomAt(xTemp,yTemp).getBiome()))
 		{
 			attempt=attempt+1;
-			idTemp=Math.floor(Math.random()*this.id)+1;
+			idTemp=Math.floor(Math.random()*10)+1;
 			if(MonsterList[idTemp] != undefined)
 			{
 				biome=new MonsterList[idTemp](this,xTemp,yTemp,false,idTemp);
@@ -286,15 +286,21 @@ Stair.prototype.fight=function(fighter1,fighter2)
 
 
 	rand=Math.floor((Math.random()*2)+1);
+	sentence="";
+	sentence2="";
 	switch(rand)
 	{
 		case 1:
-			sentence=prio.name+" tente un engagement contre "+sec.name+" et lui inflige "+dmg1+" degats,";
-			sentence2= sec.name+" contre-attaque en infligeant "+dmg2+" degats a son adversaire.";
+			if(dmg1 != undefined)
+				prio.name+" tente un engagement contre "+sec.name+" et lui inflige "+dmg1+" degats,";
+			if(dmg2 != undefined)
+				sentence2= sec.name+" contre-attaque en infligeant "+dmg2+" degats a son adversaire.";
 		break;
 		case 2:
-			sentence=prio.name+" s'elance sur "+sec.name+" et le blesse en lui infligeant "+dmg1+" degats.";
-			sentence2="Malheureusement pour son adversaire, "+sec.name+" pare et "+prio.name+" perd "+dmg2+" points de vie.";
+			if(dmg1 != undefined)
+				sentence=prio.name+" s'elance sur "+sec.name+" et le blesse en lui infligeant "+dmg1+" degats.";
+			if(dmg2 != undefined)
+				sentence2="Malheureusement pour son adversaire, "+sec.name+" pare et "+prio.name+" perd "+dmg2+" points de vie.";
 		break;
 
 
@@ -343,7 +349,7 @@ Stair.prototype.generateRooms=function()
 						break;
 					}
 					roomX=Math.floor(Math.random()*67);
-					roomY=Math.floor(Math.random()*26);
+					roomY=Math.floor(Math.random()*21)+5;
 					
 					for(n=0;n<this.rooms.length-1;n++)
 					{

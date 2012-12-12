@@ -391,7 +391,7 @@ Player.prototype.move=function(dir)
 				this.getObject();
 				this.previousTile=stair.getMap()[this.x][this.y];
 				this.contextMessage();
-				stair.map[this.x][this.y]=0;
+				stair.map[this.x][this.y]=-1;
 				
 				if(this.stair.getMap()[this.x+1][this.y]==0)
 				{

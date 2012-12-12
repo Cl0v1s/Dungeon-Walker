@@ -71,11 +71,14 @@ HUD.prototype.draw=function()
 
 HUD.prototype.add=function(msg)
 {
-	for(i=1;i<(this.history.length);i++)
+	if(msg != undefined && msg != "")
 	{
-		this.history[i-1]=this.history[i];
+		for(i=1;i<(this.history.length);i++)
+		{
+			this.history[i-1]=this.history[i];
+		}
+		this.history[5]=msg;
 	}
-	this.history[5]=msg;
 
 }
 
