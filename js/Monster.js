@@ -693,7 +693,7 @@ Monster.prototype.searchEffect=function(nameTemp)
 {
 	for(l=0;l<this.effectList.length;l++)
 	{
-		if(this.effectList[l].getName()==nameTemp)
+		if(this.effectList[l] != null && this.effectList[l].getName()==nameTemp)
 			return this.effectList[l];
 	}
 	return false;

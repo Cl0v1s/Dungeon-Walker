@@ -738,7 +738,8 @@ Player.prototype.contextMessage=function()
 	{
 		if(this.previousTile==3)
 		{
-			this.sendMessage("Vous marchez dans une flaque d'eau, formee annee apres annee par l'infiltration.");
+			if(!Parameters.isTiled())
+				this.sendMessage("Vous marchez dans une flaque d'eau, formee annee apres annee par l'infiltration.");
 			if(this.onFire==true)
 			{
 				this.sendMessage("Vous laisser l'eau fraiche recouvrir vos brulure...");

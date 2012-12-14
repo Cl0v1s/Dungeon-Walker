@@ -173,7 +173,8 @@ Bat.prototype.think=function()
 			this.run(worstEnemy.getX(),worstEnemy.getY());
 		else
 		{
-			worstEnemy=bestFriend.enemy;
+			if(bestFriend.enemy != undefined)
+				worstEnemy=bestFriend.enemy;
 			this.moveTo(worstEnemy.getX(),worstEnemy.getY());
 		}
 			
